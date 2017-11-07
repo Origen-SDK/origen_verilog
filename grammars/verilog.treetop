@@ -266,7 +266,7 @@ module OrigenVerilog
       #   | task_declaration
       #   | function_declaration
       rule module_or_generate_item_declaration
-        (net_declaration /
+        net_declaration /
         reg_declaration /
         integer_declaration /
         real_declaration /
@@ -275,11 +275,7 @@ module OrigenVerilog
         event_declaration /
         genvar_declaration /
         task_declaration /
-        function_declaration) {
-          def to_ast
-            n :module_or_generate_item_declaration, *elements_to_ast
-          end
-        }
+        function_declaration
       end
       # non_port_module_item ::=
       #   module_or_generate_item
@@ -292,7 +288,11 @@ module OrigenVerilog
          generate_region /
          specify_block /
          ((s attribute_instance)* s parameter_declaration s ";") /
-         ((s attribute_instance)* s specparam_declaration))
+         ((s attribute_instance)* s specparam_declaration)) {
+          def to_ast
+            n :non_port_module_item, *elements_to_ast
+          end
+         }
       end
       # parameter_override ::= defparam list_of_defparam_assignments ;
       rule parameter_override
@@ -525,12 +525,31 @@ module OrigenVerilog
         }
       end
       # output_variable_type ::= integer | time
+      rule output_variable_type
+        integer / time
+      end
       # real_type ::=
       #   real_identifier { dimension }
       #   | real_identifier = constant_expression
+      rule real_type
+        ((real_identifier (s dimension)*) /
+         (real_identifier s "=" s constant_expression)) {
+          def to_ast
+            n :real_type, *elements_to_ast
+          end
+         }
+      end
       # variable_type ::=
       #   variable_identifier { dimension }
       #   | variable_identifier = constant_expression
+      rule variable_type
+        ((variable_identifier (s dimension)*) /
+         (variable_identifier s "=" s constant_expression)) {
+          def to_ast
+            n :variable_type, *elements_to_ast
+          end
+         }
+       end
 
       # A.2.2.2 Strengths
 
@@ -619,7 +638,7 @@ module OrigenVerilog
       # list_of_event_identifiers ::= event_identifier { dimension }
       #   { , event_identifier { dimension } }
       rule list_of_event_identifiers
-        event_identifier s dimension? s (',' s event_identifier s dimension?)*
+        event_identifier (s dimension)* s (',' s event_identifier (s dimension)*)*
       end
       # list_of_net_decl_assignments ::= net_decl_assignment { , net_decl_assignment }
       rule list_of_net_decl_assignments
@@ -751,11 +770,11 @@ module OrigenVerilog
       #   endfunction
       rule function_declaration
         (("function" s automatic? s function_range_or_type? s function_identifier s ";" s
-        function_item_declaration s function_item_declaration* s
+        function_item_declaration (s function_item_declaration)* s
         function_statement s
         "endfunction") /
         ("function" s automatic? s function_range_or_type? s function_identifier s "(" s function_port_list s ")" s ";" s
-        block_item_declaration* s
+        (s block_item_declaration)* s
         function_statement s
         "endfunction")) {
           def to_ast
@@ -789,11 +808,11 @@ module OrigenVerilog
       #   endtask
       rule task_declaration
         (("task" s automatic? s task_identifier s ";" s
-        task_item_declaration* s
+        (s task_item_declaration)* s
         statement_or_null s
         "endtask") /
         ("task" s automatic? s task_identifier s "(" s task_port_list? s ")" s ";" s
-        block_item_declaration* s
+        (s block_item_declaration)* s
         statement_or_null s
         "endtask")) {
           def to_ast
@@ -1373,12 +1392,12 @@ module OrigenVerilog
       #   | release variable_lvalue
       #   | release net_lvalue
       rule procedural_continuous_assignments
-        assign variable_assignment /
-        deassign variable_lvalue /
-        force variable_assignment /
-        force net_assignment /
-        release variable_lvalue /
-        release net_lvalue
+        ("assign" s variable_assignment) /
+        ("deassign" s variable_lvalue) /
+        ("force" s variable_assignment) /
+        ("force" s net_assignment) /
+        ("release" s variable_lvalue) /
+        ("release" s net_lvalue)
       end
       # variable_assignment ::= variable_lvalue = expression
       rule variable_assignment
@@ -1393,8 +1412,22 @@ module OrigenVerilog
 
       # par_block ::= fork [ : block_identifier
       #   { block_item_declaration } ] { statement } join
+      rule par_block
+        "fork" (s ":" s block_identifier (s block_item_declaration)*)? (s statement)* s "join" {
+          def to_ast
+            n :par_block, *elements_to_ast
+          end
+        }
+      end
       # seq_block ::= begin [ : block_identifier
       #   { block_item_declaration } ] { statement } end
+      rule seq_block
+        "begin" (s ":" s block_identifier (s block_item_declaration)*)? (s statement)* s "end" {
+          def to_ast
+            n :seq_block, *elements_to_ast
+          end
+        }
+      end
 
       # A.6.4 Statements
 
@@ -1453,47 +1486,135 @@ module OrigenVerilog
       # delay_control ::=
       #   # delay_value
       #   | # ( mintypmax_expression )
+      rule delay_control
+        (("#" s delay_value) /
+         ("#" s "(" s mintypmax_expression s ")")) {
+          def to_ast
+            n :delay_control, *elements_to_ast
+          end
+         }
+      end
       # delay_or_event_control ::=
       #   delay_control
       #   | event_control
       #   | repeat ( expression ) event_control
+      rule delay_or_event_control
+        (delay_control / event_control / ("repeat" s "(" s expression s ")" s event_control)) {
+          def to_ast
+            n :delay_or_event_control, *elements_to_ast
+          end
+        }
+      end
       # disable_statement ::=
       #   disable hierarchical_task_identifier ;
       #   | disable hierarchical_block_identifier ;
+      rule disable_statement
+        (("disable" s hierarchical_task_identifier s ";") /
+         ("disable" s hierarchical_block_identifier s ";")) {
+          def to_ast
+            n :disable_statement, *elements_to_ast
+          end
+         }
+      end
       # event_control ::=
       #   @ hierarchical_event_identifier
       #   | @ ( event_expression )
       #   | @*
       #   | @ (*)
+      rule event_control
+        (("@" s hierarchical_event_identifier) /
+         ("@" s "(" s event_expression s ")") /
+         ("@" s "*") /
+         ("@" s "(" s "*" s ")")) {
+          def to_ast
+            n :event_control, *elements_to_ast
+          end
+         }
+      end
       # event_trigger ::=
       #   -> hierarchical_event_identifier { [ expression ] } ;
+      rule event_trigger
+        "->" s hierarchical_event_identifier (s "[" s expression s "]")* s ";" {
+          def to_ast
+            n :event_trigger, *elements_to_ast
+          end
+        }
+      end
       # event_expression ::=
       #   expression
       #   | posedge expression
       #   | negedge expression
       #   | event_expression or event_expression
       #   | event_expression , event_expression
+      rule event_expression
+        ((expression event_expression_tail?) /
+         ("posedge" s expression event_expression_tail?) /
+         ("negedge" s expression event_expression_tail?)) {
+          def to_ast
+            n :event_expression, *elements_to_ast
+          end
+        }
+      end
+      rule event_expression_tail
+        (s "or" s event_expression event_expression_tail?) /
+        (s "," s event_expression event_expression_tail?)
+      end
       # procedural_timing_control ::=
       #   delay_control
       #   | event_control
+      rule procedural_timing_control
+        delay_control / event_control
+      end
       # procedural_timing_control_statement ::=
       #   procedural_timing_control statement_or_null
+      rule procedural_timing_control_statement
+        procedural_timing_control s statement_or_null {
+          def to_ast
+            n :procedural_timing_control_statement, *elements_to_ast
+          end
+        }
+      end
       # wait_statement ::=
       #   wait ( expression ) statement_or_null
-      # 
+      rule wait_statement
+        "wait" s "(" s expression s ")" s statement_or_null {
+          def to_ast
+            n :wait_statement, *elements_to_ast
+          end
+        }
+      end
+
       # A.6.6 Conditional statements
-      # 
+
       # conditional_statement ::=
       #   if ( expression )
       #     statement_or_null [ else statement_or_null ]
       #   | if_else_if_statement
+      rule conditional_statement
+        (("if" s "(" s expression s ")" s
+          statement_or_null (s "else" s statement_or_null)?) / 
+          if_else_if_statement) {
+          def to_ast
+            n :conditional_statement, *elements_to_ast
+          end
+        }
+      end
       # if_else_if_statement ::=
       #   if ( expression ) statement_or_null
       #   { else if ( expression ) statement_or_null }
       #   [ else statement_or_null ]
-      # 
+      rule if_else_if_statement
+        "if" s "(" s expression s ")" s statement_or_null 
+        (s "else" s "if" s "(" s expression s ")" s statement_or_null)*
+        (s "else" s statement_or_null)? {
+          def to_ast
+            n :if_else_if_statement, *elements_to_ast
+          end
+        }
+      end
+
       # A.6.7 Case statements
-      # 
+
       # case_statement ::=
       #   case ( expression )
       #     case_item { case_item } endcase
@@ -1501,23 +1622,64 @@ module OrigenVerilog
       #     case_item { case_item } endcase
       #   | casex ( expression )
       #     case_item { case_item } endcase
+      rule case_statement
+        (("case"  s "(" s expression s ")" s case_item (s case_item)* s "endcase") / 
+         ("casez" s "(" s expression s ")" s case_item (s case_item)* s "endcase") /
+         ("casex" s "(" s expression s ")" s case_item (s case_item)* s "endcase")) {
+          def to_ast
+            n :case_statement, *elements_to_ast
+          end
+         }
+      end
       # case_item ::=
       #   expression { , expression } : statement_or_null
       #   | default [ : ] statement_or_null
-      # 
+      rule case_item
+        ((expression (s "," s expression)* s ":" s statement_or_null) /
+         ("default" s ":"? s statement_or_null)) {
+          def to_ast
+            n :case_item, *elements_to_ast
+          end
+         }
+      end
+
       # A.6.8 Looping statements
-      # 
+
       # loop_statement ::=
       #   forever statement
       #   | repeat ( expression ) statement
       #   | while ( expression ) statement
       #   | for ( variable_assignment ; expression ; variable_assignment )
       #   statement
+      rule loop_statement
+        (("forever" s statement) /
+         ("repeat" s "(" s expression s ")" s statement) /
+         ("while" s "(" s expression s ")" s statement) /
+         ("for" s "(" s variable_assignment s ";" s expression s ";" s variable_assignment s ")" s statement)) {
+          def to_ast
+            n :loop_statement, *elements_to_ast
+          end
+         }
+      end
 
       # A.6.9 Task enable statements
 
       # system_task_enable ::= system_task_identifier [ ( [ expression ] { , [ expression ] } ) ] ;
+      rule system_task_enable
+        system_task_identifier (s "(" s expression? s (s "," expression? )* s ")")? s ";" {
+          def to_ast
+            n :system_task_enable, *elements_to_ast
+          end
+        }
+      end
       # task_enable ::= hierarchical_task_identifier [ ( expression { , expression } ) ] ;
+      rule task_enable
+        hierarchical_task_identifier (s "(" s expression (s "," s expression)* s ")")? s ";" {
+          def to_ast
+            n :task_enable, *elements_to_ast
+          end
+        }
+      end
 
       # A.7 Specify section
 
@@ -2063,9 +2225,31 @@ module OrigenVerilog
       # net_lvalue ::=
       #   hierarchical_net_identifier [ { [ constant_expression ] } [ constant_range_expression ] ]
       #   | { net_lvalue { , net_lvalue } }
+      rule net_lvalue
+        ((hierarchical_net_identifier (s (s !net_lvalue_final_value "[" s constant_expression s "]")* net_lvalue_final_value)?) /
+         ("{" s net_lvalue (s "," s net_lvalue)* s "}")) {
+          def to_ast
+            n :net_lvalue, *elements_to_ast
+          end
+        }
+      end
+      rule net_lvalue_final_value
+        "[" s constant_range_expression s "]"
+      end
       # variable_lvalue ::=
       #   hierarchical_variable_identifier [ { [ expression ] } [ range_expression ] ]
       #   | { variable_lvalue { , variable_lvalue } }
+      rule variable_lvalue
+        ((hierarchical_variable_identifier (s (s !variable_lvalue_final_item "[" s expression s "]")* variable_lvalue_final_item)?) /
+         ("{" s variable_lvalue (s "," s variable_lvalue)* s "}")) {
+          def to_ast
+            n :variable_lvalue, *elements_to_ast
+          end
+        }
+      end
+      rule variable_lvalue_final_item
+        "[" s range_expression s "]"
+      end
 
       # A.8.6 Operators
 
@@ -2421,13 +2605,37 @@ module OrigenVerilog
         identifier
       end
       # hierarchical_block_identifier ::= hierarchical_identifier
+      rule hierarchical_block_identifier
+        hierarchical_identifier
+      end
       # hierarchical_event_identifier ::= hierarchical_identifier
+      rule hierarchical_event_identifier
+        hierarchical_identifier
+      end
       # hierarchical_function_identifier ::= hierarchical_identifier
+      rule hierarchical_function_identifier
+        hierarchical_identifier
+      end
       # hierarchical_identifier ::= { identifier [ [ constant_expression ] ] . } identifier
+      rule hierarchical_identifier
+        (identifier ("[" s constant_expression s "]")? "." )* identifier
+      end
       # hierarchical_net_identifier ::= hierarchical_identifier
+      rule hierarchical_net_identifier
+        hierarchical_identifier
+      end
       # hierarchical_parameter_identifier ::= hierarchical_identifier
+      rule hierarchical_parameter_identifier
+        hierarchical_identifier
+      end
       # hierarchical_variable_identifier ::= hierarchical_identifier
+      rule hierarchical_variable_identifier
+        hierarchical_identifier
+      end
       # hierarchical_task_identifier ::= hierarchical_identifier
+      rule hierarchical_task_identifier
+        hierarchical_identifier
+      end
       # identifier ::=
       #   simple_identifier
       #   | escaped_identifier
