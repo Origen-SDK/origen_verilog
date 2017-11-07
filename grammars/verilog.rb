@@ -364,6 +364,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ModuleDeclaration6)
+          r0.extend(ModuleDeclaration6)
         else
           i23, s23 = index, []
           s24, i24 = [], index
@@ -489,7 +491,6 @@ module OrigenVerilog
           if s23.last
             r23 = instantiate_node(SyntaxNode,input, i23...index, s23)
             r23.extend(ModuleDeclaration5)
-            r23.extend(ModuleDeclaration6)
           else
             @index = i23
             r23 = nil
@@ -497,6 +498,8 @@ module OrigenVerilog
           if r23
             r23 = SyntaxNode.new(input, (index-1)...index) if r23 == true
             r0 = r23
+            r0.extend(ModuleDeclaration6)
+            r0.extend(ModuleDeclaration6)
           else
             @index = i0
             r0 = nil
@@ -553,14 +556,8 @@ module OrigenVerilog
       end
 
       module CompilerDirective0
-        def directive
-          elements[0]
-        end
-      end
-
-      module CompilerDirective1
         def to_ast
-          n :compiler_directive, directive.to_ast
+          n :compiler_directive, *elements_to_ast
         end
       end
 
@@ -575,42 +572,40 @@ module OrigenVerilog
           return cached
         end
 
-        i0, s0 = index, []
-        i1 = index
-        r2 = _nt_conditional_compilation_directive
-        if r2
-          r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
-          r1 = r2
+        i0 = index
+        r1 = _nt_conditional_compilation_directive
+        if r1
+          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+          r0 = r1
+          r0.extend(CompilerDirective0)
+          r0.extend(CompilerDirective0)
         else
-          r3 = _nt_error
-          if r3
-            r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
-            r1 = r3
+          r2 = _nt_error
+          if r2
+            r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
+            r0 = r2
+            r0.extend(CompilerDirective0)
+            r0.extend(CompilerDirective0)
           else
-            r4 = _nt_text_macro_definition
-            if r4
-              r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
-              r1 = r4
+            r3 = _nt_text_macro_definition
+            if r3
+              r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
+              r0 = r3
+              r0.extend(CompilerDirective0)
+              r0.extend(CompilerDirective0)
             else
-              r5 = _nt_undefine_compiler_directive
-              if r5
-                r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
-                r1 = r5
+              r4 = _nt_undefine_compiler_directive
+              if r4
+                r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
+                r0 = r4
+                r0.extend(CompilerDirective0)
+                r0.extend(CompilerDirective0)
               else
-                @index = i1
-                r1 = nil
+                @index = i0
+                r0 = nil
               end
             end
           end
-        end
-        s0 << r1
-        if s0.last
-          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(CompilerDirective0)
-          r0.extend(CompilerDirective1)
-        else
-          @index = i0
-          r0 = nil
         end
 
         node_cache[:compiler_directive][start_index] = r0
@@ -1456,12 +1451,6 @@ module OrigenVerilog
 
       end
 
-      module ListOfPortDeclarations2
-        def to_ast
-          n :list_of_port_declarations, *elements_to_ast
-        end
-      end
-
       def _nt_list_of_port_declarations
         start_index = index
         if node_cache[:list_of_port_declarations].has_key?(index)
@@ -1552,7 +1541,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfPortDeclarations1)
-          r0.extend(ListOfPortDeclarations2)
         else
           @index = i0
           r0 = nil
@@ -1731,6 +1719,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(PortExpression2)
+          r0.extend(PortExpression2)
         else
           i2, s2 = index, []
           r3 = _nt_port_reference
@@ -1782,7 +1772,6 @@ module OrigenVerilog
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(PortExpression1)
-            r2.extend(PortExpression2)
           else
             @index = i2
             r2 = nil
@@ -1790,6 +1779,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(PortExpression2)
+            r0.extend(PortExpression2)
           else
             @index = i0
             r0 = nil
@@ -1971,12 +1962,6 @@ module OrigenVerilog
         end
       end
 
-      module PortDeclaration6
-        def to_ast
-          n :port_declaration, *elements_to_ast
-        end
-      end
-
       def _nt_port_declaration
         start_index = index
         if node_cache[:port_declaration].has_key?(index)
@@ -2032,8 +2017,6 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
-          r0.extend(PortDeclaration6)
-          r0.extend(PortDeclaration6)
         else
           i8, s8 = index, []
           s9, i9 = [], index
@@ -2078,8 +2061,6 @@ module OrigenVerilog
           if r8
             r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
             r0 = r8
-            r0.extend(PortDeclaration6)
-            r0.extend(PortDeclaration6)
           else
             i15, s15 = index, []
             s16, i16 = [], index
@@ -2124,8 +2105,6 @@ module OrigenVerilog
             if r15
               r15 = SyntaxNode.new(input, (index-1)...index) if r15 == true
               r0 = r15
-              r0.extend(PortDeclaration6)
-              r0.extend(PortDeclaration6)
             else
               @index = i0
               r0 = nil
@@ -3159,12 +3138,6 @@ module OrigenVerilog
         end
       end
 
-      module NonPortModuleItem4
-        def to_ast
-          n :non_port_module_item, *elements_to_ast
-        end
-      end
-
       def _nt_non_port_module_item
         start_index = index
         if node_cache[:non_port_module_item].has_key?(index)
@@ -3181,22 +3154,16 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
-          r0.extend(NonPortModuleItem4)
-          r0.extend(NonPortModuleItem4)
         else
           r2 = _nt_generate_region
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
-            r0.extend(NonPortModuleItem4)
-            r0.extend(NonPortModuleItem4)
           else
             r3 = _nt_specify_block
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
-              r0.extend(NonPortModuleItem4)
-              r0.extend(NonPortModuleItem4)
             else
               i4, s4 = index, []
               s5, i5 = [], index
@@ -3255,8 +3222,6 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
-                r0.extend(NonPortModuleItem4)
-                r0.extend(NonPortModuleItem4)
               else
                 i13, s13 = index, []
                 s14, i14 = [], index
@@ -3301,8 +3266,6 @@ module OrigenVerilog
                 if r13
                   r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
                   r0 = r13
-                  r0.extend(NonPortModuleItem4)
-                  r0.extend(NonPortModuleItem4)
                 else
                   @index = i0
                   r0 = nil
@@ -3557,24 +3520,6 @@ module OrigenVerilog
           elements[1]
         end
 
-        def s2
-          elements[3]
-        end
-
-        def s3
-          elements[5]
-        end
-
-        def list_of_param_assignments
-          elements[6]
-        end
-      end
-
-      module ParameterDeclaration1
-        def s1
-          elements[1]
-        end
-
         def parameter_type
           elements[2]
         end
@@ -3585,6 +3530,24 @@ module OrigenVerilog
 
         def list_of_param_assignments
           elements[4]
+        end
+      end
+
+      module ParameterDeclaration1
+        def s1
+          elements[1]
+        end
+
+        def s2
+          elements[3]
+        end
+
+        def s3
+          elements[5]
+        end
+
+        def list_of_param_assignments
+          elements[6]
         end
       end
 
@@ -3619,32 +3582,14 @@ module OrigenVerilog
           r3 = _nt_s
           s1 << r3
           if r3
-            r5 = _nt_signed
-            if r5
-              r4 = r5
-            else
-              r4 = instantiate_node(SyntaxNode,input, index...index)
-            end
+            r4 = _nt_parameter_type
             s1 << r4
             if r4
-              r6 = _nt_s
-              s1 << r6
-              if r6
-                r8 = _nt_range
-                if r8
-                  r7 = r8
-                else
-                  r7 = instantiate_node(SyntaxNode,input, index...index)
-                end
-                s1 << r7
-                if r7
-                  r9 = _nt_s
-                  s1 << r9
-                  if r9
-                    r10 = _nt_list_of_param_assignments
-                    s1 << r10
-                  end
-                end
+              r5 = _nt_s
+              s1 << r5
+              if r5
+                r6 = _nt_list_of_param_assignments
+                s1 << r6
               end
             end
           end
@@ -3662,41 +3607,59 @@ module OrigenVerilog
           r0.extend(ParameterDeclaration2)
           r0.extend(ParameterDeclaration2)
         else
-          i11, s11 = index, []
+          i7, s7 = index, []
           if (match_len = has_terminal?("parameter", false, index))
-            r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+            r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
             @index += match_len
           else
             terminal_parse_failure('"parameter"')
-            r12 = nil
+            r8 = nil
           end
-          s11 << r12
-          if r12
-            r13 = _nt_s
-            s11 << r13
-            if r13
-              r14 = _nt_parameter_type
-              s11 << r14
-              if r14
-                r15 = _nt_s
-                s11 << r15
-                if r15
-                  r16 = _nt_list_of_param_assignments
-                  s11 << r16
+          s7 << r8
+          if r8
+            r9 = _nt_s
+            s7 << r9
+            if r9
+              r11 = _nt_signed
+              if r11
+                r10 = r11
+              else
+                r10 = instantiate_node(SyntaxNode,input, index...index)
+              end
+              s7 << r10
+              if r10
+                r12 = _nt_s
+                s7 << r12
+                if r12
+                  r14 = _nt_range
+                  if r14
+                    r13 = r14
+                  else
+                    r13 = instantiate_node(SyntaxNode,input, index...index)
+                  end
+                  s7 << r13
+                  if r13
+                    r15 = _nt_s
+                    s7 << r15
+                    if r15
+                      r16 = _nt_list_of_param_assignments
+                      s7 << r16
+                    end
+                  end
                 end
               end
             end
           end
-          if s11.last
-            r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
-            r11.extend(ParameterDeclaration1)
+          if s7.last
+            r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
+            r7.extend(ParameterDeclaration1)
           else
-            @index = i11
-            r11 = nil
+            @index = i7
+            r7 = nil
           end
-          if r11
-            r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
-            r0 = r11
+          if r7
+            r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
+            r0 = r7
             r0.extend(ParameterDeclaration2)
             r0.extend(ParameterDeclaration2)
           else
@@ -3806,7 +3769,7 @@ module OrigenVerilog
 
       module ParameterType0
         def to_ast
-          text_value
+          n :parameter_type, text_value
         end
       end
 
@@ -3832,6 +3795,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ParameterType0)
+          r0.extend(ParameterType0)
         else
           if (match_len = has_terminal?("real", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -3843,6 +3808,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(ParameterType0)
+            r0.extend(ParameterType0)
           else
             if (match_len = has_terminal?("realtime", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -3854,10 +3821,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(ParameterType0)
+              r0.extend(ParameterType0)
             else
               if (match_len = has_terminal?("time", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(ParameterType0)
                 @index += match_len
               else
                 terminal_parse_failure('"time"')
@@ -3866,6 +3834,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(ParameterType0)
+                r0.extend(ParameterType0)
               else
                 @index = i0
                 r0 = nil
@@ -4890,6 +4860,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(NetDeclaration8)
+          r0.extend(NetDeclaration8)
         else
           i13, s13 = index, []
           r14 = _nt_net_type
@@ -4961,6 +4933,8 @@ module OrigenVerilog
           if r13
             r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
             r0 = r13
+            r0.extend(NetDeclaration8)
+            r0.extend(NetDeclaration8)
           else
             i27, s27 = index, []
             r28 = _nt_net_type
@@ -5058,6 +5032,8 @@ module OrigenVerilog
             if r27
               r27 = SyntaxNode.new(input, (index-1)...index) if r27 == true
               r0 = r27
+              r0.extend(NetDeclaration8)
+              r0.extend(NetDeclaration8)
             else
               i46, s46 = index, []
               r47 = _nt_net_type
@@ -5164,6 +5140,8 @@ module OrigenVerilog
               if r46
                 r46 = SyntaxNode.new(input, (index-1)...index) if r46 == true
                 r0 = r46
+                r0.extend(NetDeclaration8)
+                r0.extend(NetDeclaration8)
               else
                 i67, s67 = index, []
                 r68 = _nt_trireg
@@ -5235,6 +5213,8 @@ module OrigenVerilog
                 if r67
                   r67 = SyntaxNode.new(input, (index-1)...index) if r67 == true
                   r0 = r67
+                  r0.extend(NetDeclaration8)
+                  r0.extend(NetDeclaration8)
                 else
                   i81, s81 = index, []
                   r82 = _nt_trireg
@@ -5306,6 +5286,8 @@ module OrigenVerilog
                   if r81
                     r81 = SyntaxNode.new(input, (index-1)...index) if r81 == true
                     r0 = r81
+                    r0.extend(NetDeclaration8)
+                    r0.extend(NetDeclaration8)
                   else
                     i95, s95 = index, []
                     r96 = _nt_trireg
@@ -5416,6 +5398,8 @@ module OrigenVerilog
                     if r95
                       r95 = SyntaxNode.new(input, (index-1)...index) if r95 == true
                       r0 = r95
+                      r0.extend(NetDeclaration8)
+                      r0.extend(NetDeclaration8)
                     else
                       i117, s117 = index, []
                       r118 = _nt_trireg
@@ -5519,7 +5503,6 @@ module OrigenVerilog
                       if s117.last
                         r117 = instantiate_node(SyntaxNode,input, i117...index, s117)
                         r117.extend(NetDeclaration7)
-                        r117.extend(NetDeclaration8)
                       else
                         @index = i117
                         r117 = nil
@@ -5527,6 +5510,8 @@ module OrigenVerilog
                       if r117
                         r117 = SyntaxNode.new(input, (index-1)...index) if r117 == true
                         r0 = r117
+                        r0.extend(NetDeclaration8)
+                        r0.extend(NetDeclaration8)
                       else
                         @index = i0
                         r0 = nil
@@ -5914,6 +5899,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(NetType0)
+          r0.extend(NetType0)
         else
           if (match_len = has_terminal?("supply1", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5925,6 +5912,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(NetType0)
+            r0.extend(NetType0)
           else
             if (match_len = has_terminal?("tri", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5936,6 +5925,8 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(NetType0)
+              r0.extend(NetType0)
             else
               if (match_len = has_terminal?("triand", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5947,6 +5938,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(NetType0)
+                r0.extend(NetType0)
               else
                 if (match_len = has_terminal?("trior", false, index))
                   r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5958,6 +5951,8 @@ module OrigenVerilog
                 if r5
                   r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
                   r0 = r5
+                  r0.extend(NetType0)
+                  r0.extend(NetType0)
                 else
                   if (match_len = has_terminal?("tri0", false, index))
                     r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5969,6 +5964,8 @@ module OrigenVerilog
                   if r6
                     r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                     r0 = r6
+                    r0.extend(NetType0)
+                    r0.extend(NetType0)
                   else
                     if (match_len = has_terminal?("tri1", false, index))
                       r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5980,6 +5977,8 @@ module OrigenVerilog
                     if r7
                       r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                       r0 = r7
+                      r0.extend(NetType0)
+                      r0.extend(NetType0)
                     else
                       if (match_len = has_terminal?("uwire", false, index))
                         r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -5991,6 +5990,8 @@ module OrigenVerilog
                       if r8
                         r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
                         r0 = r8
+                        r0.extend(NetType0)
+                        r0.extend(NetType0)
                       else
                         if (match_len = has_terminal?("wire", false, index))
                           r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6002,6 +6003,8 @@ module OrigenVerilog
                         if r9
                           r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
                           r0 = r9
+                          r0.extend(NetType0)
+                          r0.extend(NetType0)
                         else
                           if (match_len = has_terminal?("wand", false, index))
                             r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6013,10 +6016,11 @@ module OrigenVerilog
                           if r10
                             r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
                             r0 = r10
+                            r0.extend(NetType0)
+                            r0.extend(NetType0)
                           else
                             if (match_len = has_terminal?("wor", false, index))
                               r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                              r11.extend(NetType0)
                               @index += match_len
                             else
                               terminal_parse_failure('"wor"')
@@ -6025,6 +6029,8 @@ module OrigenVerilog
                             if r11
                               r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
                               r0 = r11
+                              r0.extend(NetType0)
+                              r0.extend(NetType0)
                             else
                               @index = i0
                               r0 = nil
@@ -6319,6 +6325,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(DriveStrength6)
+          r0.extend(DriveStrength6)
         else
           i11, s11 = index, []
           if (match_len = has_terminal?("(", false, index))
@@ -6383,6 +6391,8 @@ module OrigenVerilog
           if r11
             r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
             r0 = r11
+            r0.extend(DriveStrength6)
+            r0.extend(DriveStrength6)
           else
             i21, s21 = index, []
             if (match_len = has_terminal?("(", false, index))
@@ -6447,6 +6457,8 @@ module OrigenVerilog
             if r21
               r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
               r0 = r21
+              r0.extend(DriveStrength6)
+              r0.extend(DriveStrength6)
             else
               i31, s31 = index, []
               if (match_len = has_terminal?("(", false, index))
@@ -6511,6 +6523,8 @@ module OrigenVerilog
               if r31
                 r31 = SyntaxNode.new(input, (index-1)...index) if r31 == true
                 r0 = r31
+                r0.extend(DriveStrength6)
+                r0.extend(DriveStrength6)
               else
                 i41, s41 = index, []
                 if (match_len = has_terminal?("(", false, index))
@@ -6575,6 +6589,8 @@ module OrigenVerilog
                 if r41
                   r41 = SyntaxNode.new(input, (index-1)...index) if r41 == true
                   r0 = r41
+                  r0.extend(DriveStrength6)
+                  r0.extend(DriveStrength6)
                 else
                   i51, s51 = index, []
                   if (match_len = has_terminal?("(", false, index))
@@ -6632,7 +6648,6 @@ module OrigenVerilog
                   if s51.last
                     r51 = instantiate_node(SyntaxNode,input, i51...index, s51)
                     r51.extend(DriveStrength5)
-                    r51.extend(DriveStrength6)
                   else
                     @index = i51
                     r51 = nil
@@ -6640,6 +6655,8 @@ module OrigenVerilog
                   if r51
                     r51 = SyntaxNode.new(input, (index-1)...index) if r51 == true
                     r0 = r51
+                    r0.extend(DriveStrength6)
+                    r0.extend(DriveStrength6)
                   else
                     @index = i0
                     r0 = nil
@@ -6683,6 +6700,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Strength00)
+          r0.extend(Strength00)
         else
           if (match_len = has_terminal?("strong0", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6694,6 +6713,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(Strength00)
+            r0.extend(Strength00)
           else
             if (match_len = has_terminal?("pull0", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6705,10 +6726,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(Strength00)
+              r0.extend(Strength00)
             else
               if (match_len = has_terminal?("weak0", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(Strength00)
                 @index += match_len
               else
                 terminal_parse_failure('"weak0"')
@@ -6717,6 +6739,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(Strength00)
+                r0.extend(Strength00)
               else
                 @index = i0
                 r0 = nil
@@ -6758,6 +6782,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Strength10)
+          r0.extend(Strength10)
         else
           if (match_len = has_terminal?("strong1", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6769,6 +6795,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(Strength10)
+            r0.extend(Strength10)
           else
             if (match_len = has_terminal?("pull1", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -6780,10 +6808,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(Strength10)
+              r0.extend(Strength10)
             else
               if (match_len = has_terminal?("weak1", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(Strength10)
                 @index += match_len
               else
                 terminal_parse_failure('"weak1"')
@@ -6792,6 +6821,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(Strength10)
+                r0.extend(Strength10)
               else
                 @index = i0
                 r0 = nil
@@ -7022,6 +7053,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Delay34)
+          r0.extend(Delay34)
         else
           i5, s5 = index, []
           if (match_len = has_terminal?("#", false, index))
@@ -7143,7 +7176,6 @@ module OrigenVerilog
           if s5.last
             r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
             r5.extend(Delay33)
-            r5.extend(Delay34)
           else
             @index = i5
             r5 = nil
@@ -7151,6 +7183,8 @@ module OrigenVerilog
           if r5
             r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
             r0 = r5
+            r0.extend(Delay34)
+            r0.extend(Delay34)
           else
             @index = i0
             r0 = nil
@@ -7250,6 +7284,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Delay23)
+          r0.extend(Delay23)
         else
           i5, s5 = index, []
           if (match_len = has_terminal?("#", false, index))
@@ -7335,7 +7371,6 @@ module OrigenVerilog
           if s5.last
             r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
             r5.extend(Delay22)
-            r5.extend(Delay23)
           else
             @index = i5
             r5 = nil
@@ -7343,6 +7378,8 @@ module OrigenVerilog
           if r5
             r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
             r0 = r5
+            r0.extend(Delay23)
+            r0.extend(Delay23)
           else
             @index = i0
             r0 = nil
@@ -7392,6 +7429,94 @@ module OrigenVerilog
         r0
       end
 
+      module ListOfDefparamAssignments0
+        def s1
+          elements[0]
+        end
+
+        def s2
+          elements[2]
+        end
+
+        def defparam_assignment
+          elements[3]
+        end
+      end
+
+      module ListOfDefparamAssignments1
+        def defparam_assignment
+          elements[0]
+        end
+
+      end
+
+      def _nt_list_of_defparam_assignments
+        start_index = index
+        if node_cache[:list_of_defparam_assignments].has_key?(index)
+          cached = node_cache[:list_of_defparam_assignments][index]
+          if cached
+            node_cache[:list_of_defparam_assignments][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0, s0 = index, []
+        r1 = _nt_defparam_assignment
+        s0 << r1
+        if r1
+          s2, i2 = [], index
+          loop do
+            i3, s3 = index, []
+            r4 = _nt_s
+            s3 << r4
+            if r4
+              if (match_len = has_terminal?(",", false, index))
+                r5 = true
+                @index += match_len
+              else
+                terminal_parse_failure('","')
+                r5 = nil
+              end
+              s3 << r5
+              if r5
+                r6 = _nt_s
+                s3 << r6
+                if r6
+                  r7 = _nt_defparam_assignment
+                  s3 << r7
+                end
+              end
+            end
+            if s3.last
+              r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
+              r3.extend(ListOfDefparamAssignments0)
+            else
+              @index = i3
+              r3 = nil
+            end
+            if r3
+              s2 << r3
+            else
+              break
+            end
+          end
+          r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
+          s0 << r2
+        end
+        if s0.last
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(ListOfDefparamAssignments1)
+        else
+          @index = i0
+          r0 = nil
+        end
+
+        node_cache[:list_of_defparam_assignments][start_index] = r0
+
+        r0
+      end
+
       module ListOfEventIdentifiers0
         def s1
           elements[1]
@@ -7420,12 +7545,6 @@ module OrigenVerilog
           elements[3]
         end
 
-      end
-
-      module ListOfEventIdentifiers2
-        def to_ast
-          n :list_of_event_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_event_identifiers
@@ -7511,7 +7630,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfEventIdentifiers1)
-          r0.extend(ListOfEventIdentifiers2)
         else
           @index = i0
           r0 = nil
@@ -7541,12 +7659,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfNetDeclAssignments2
-        def to_ast
-          n :list_of_net_decl_assignments, *elements_to_ast
-        end
       end
 
       def _nt_list_of_net_decl_assignments
@@ -7606,7 +7718,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfNetDeclAssignments1)
-          r0.extend(ListOfNetDeclAssignments2)
         else
           @index = i0
           r0 = nil
@@ -7653,12 +7764,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfNetIdentifiers4
-        def to_ast
-          n :list_of_net_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_net_identifiers
@@ -7766,7 +7871,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfNetIdentifiers3)
-          r0.extend(ListOfNetIdentifiers4)
         else
           @index = i0
           r0 = nil
@@ -7796,12 +7900,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfParamAssignments2
-        def to_ast
-          n :list_of_param_assignments, *elements_to_ast
-        end
       end
 
       def _nt_list_of_param_assignments
@@ -7861,7 +7959,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfParamAssignments1)
-          r0.extend(ListOfParamAssignments2)
         else
           @index = i0
           r0 = nil
@@ -7891,12 +7988,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfPortIdentifiers2
-        def to_ast
-          n :list_of_port_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_port_identifiers
@@ -7956,7 +8047,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfPortIdentifiers1)
-          r0.extend(ListOfPortIdentifiers2)
         else
           @index = i0
           r0 = nil
@@ -7986,12 +8076,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfRealIdentifiers2
-        def to_ast
-          n :list_of_real_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_real_identifiers
@@ -8051,7 +8135,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfRealIdentifiers1)
-          r0.extend(ListOfRealIdentifiers2)
         else
           @index = i0
           r0 = nil
@@ -8081,12 +8164,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfSpecparamAssignments2
-        def to_ast
-          n :list_of_specparam_assignments, *elements_to_ast
-        end
       end
 
       def _nt_list_of_specparam_assignments
@@ -8146,7 +8223,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfSpecparamAssignments1)
-          r0.extend(ListOfSpecparamAssignments2)
         else
           @index = i0
           r0 = nil
@@ -8176,12 +8252,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfVariableIdentifiers2
-        def to_ast
-          n :list_of_variable_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_variable_identifiers
@@ -8241,7 +8311,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfVariableIdentifiers1)
-          r0.extend(ListOfVariableIdentifiers2)
         else
           @index = i0
           r0 = nil
@@ -8300,12 +8369,6 @@ module OrigenVerilog
           elements[0]
         end
 
-      end
-
-      module ListOfVariablePortIdentifiers4
-        def to_ast
-          n :list_of_variable_port_identifiers, *elements_to_ast
-        end
       end
 
       def _nt_list_of_variable_port_identifiers
@@ -8437,7 +8500,6 @@ module OrigenVerilog
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
           r0.extend(ListOfVariablePortIdentifiers3)
-          r0.extend(ListOfVariablePortIdentifiers4)
         else
           @index = i0
           r0 = nil
@@ -9615,6 +9677,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(FunctionDeclaration2)
+          r0.extend(FunctionDeclaration2)
         else
           i22, s22 = index, []
           if (match_len = has_terminal?("function", false, index))
@@ -9751,7 +9815,6 @@ module OrigenVerilog
           if s22.last
             r22 = instantiate_node(SyntaxNode,input, i22...index, s22)
             r22.extend(FunctionDeclaration1)
-            r22.extend(FunctionDeclaration2)
           else
             @index = i22
             r22 = nil
@@ -9759,6 +9822,8 @@ module OrigenVerilog
           if r22
             r22 = SyntaxNode.new(input, (index-1)...index) if r22 == true
             r0 = r22
+            r0.extend(FunctionDeclaration2)
+            r0.extend(FunctionDeclaration2)
           else
             @index = i0
             r0 = nil
@@ -9963,6 +10028,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(TaskDeclaration2)
+          r0.extend(TaskDeclaration2)
         else
           i17, s17 = index, []
           if (match_len = has_terminal?("task", false, index))
@@ -10091,7 +10158,6 @@ module OrigenVerilog
           if s17.last
             r17 = instantiate_node(SyntaxNode,input, i17...index, s17)
             r17.extend(TaskDeclaration1)
-            r17.extend(TaskDeclaration2)
           else
             @index = i17
             r17 = nil
@@ -10099,6 +10165,8 @@ module OrigenVerilog
           if r17
             r17 = SyntaxNode.new(input, (index-1)...index) if r17 == true
             r0 = r17
+            r0.extend(TaskDeclaration2)
+            r0.extend(TaskDeclaration2)
           else
             @index = i0
             r0 = nil
@@ -10549,6 +10617,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(GateInstantiation18)
+          r0.extend(GateInstantiation18)
         else
           i16, s16 = index, []
           r17 = _nt_enable_gatetype
@@ -10651,6 +10721,8 @@ module OrigenVerilog
           if r16
             r16 = SyntaxNode.new(input, (index-1)...index) if r16 == true
             r0 = r16
+            r0.extend(GateInstantiation18)
+            r0.extend(GateInstantiation18)
           else
             i34, s34 = index, []
             r35 = _nt_mos_switchtype
@@ -10740,6 +10812,8 @@ module OrigenVerilog
             if r34
               r34 = SyntaxNode.new(input, (index-1)...index) if r34 == true
               r0 = r34
+              r0.extend(GateInstantiation18)
+              r0.extend(GateInstantiation18)
             else
               i49, s49 = index, []
               r50 = _nt_n_input_gatetype
@@ -10842,6 +10916,8 @@ module OrigenVerilog
               if r49
                 r49 = SyntaxNode.new(input, (index-1)...index) if r49 == true
                 r0 = r49
+                r0.extend(GateInstantiation18)
+                r0.extend(GateInstantiation18)
               else
                 i67, s67 = index, []
                 r68 = _nt_n_output_gatetype
@@ -10944,6 +11020,8 @@ module OrigenVerilog
                 if r67
                   r67 = SyntaxNode.new(input, (index-1)...index) if r67 == true
                   r0 = r67
+                  r0.extend(GateInstantiation18)
+                  r0.extend(GateInstantiation18)
                 else
                   i85, s85 = index, []
                   r86 = _nt_pass_en_switchtype
@@ -11033,6 +11111,8 @@ module OrigenVerilog
                   if r85
                     r85 = SyntaxNode.new(input, (index-1)...index) if r85 == true
                     r0 = r85
+                    r0.extend(GateInstantiation18)
+                    r0.extend(GateInstantiation18)
                   else
                     i100, s100 = index, []
                     r101 = _nt_pass_switchtype
@@ -11109,6 +11189,8 @@ module OrigenVerilog
                     if r100
                       r100 = SyntaxNode.new(input, (index-1)...index) if r100 == true
                       r0 = r100
+                      r0.extend(GateInstantiation18)
+                      r0.extend(GateInstantiation18)
                     else
                       i112, s112 = index, []
                       if (match_len = has_terminal?("pulldown", false, index))
@@ -11204,6 +11286,8 @@ module OrigenVerilog
                       if r112
                         r112 = SyntaxNode.new(input, (index-1)...index) if r112 == true
                         r0 = r112
+                        r0.extend(GateInstantiation18)
+                        r0.extend(GateInstantiation18)
                       else
                         i127, s127 = index, []
                         if (match_len = has_terminal?("pullup", false, index))
@@ -11292,7 +11376,6 @@ module OrigenVerilog
                         if s127.last
                           r127 = instantiate_node(SyntaxNode,input, i127...index, s127)
                           r127.extend(GateInstantiation17)
-                          r127.extend(GateInstantiation18)
                         else
                           @index = i127
                           r127 = nil
@@ -11300,6 +11383,8 @@ module OrigenVerilog
                         if r127
                           r127 = SyntaxNode.new(input, (index-1)...index) if r127 == true
                           r0 = r127
+                          r0.extend(GateInstantiation18)
+                          r0.extend(GateInstantiation18)
                         else
                           @index = i0
                           r0 = nil
@@ -11468,6 +11553,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(PulldownStrength3)
+          r0.extend(PulldownStrength3)
         else
           i11, s11 = index, []
           if (match_len = has_terminal?("(", false, index))
@@ -11532,6 +11619,8 @@ module OrigenVerilog
           if r11
             r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
             r0 = r11
+            r0.extend(PulldownStrength3)
+            r0.extend(PulldownStrength3)
           else
             i21, s21 = index, []
             if (match_len = has_terminal?("(", false, index))
@@ -11567,7 +11656,6 @@ module OrigenVerilog
             if s21.last
               r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
               r21.extend(PulldownStrength2)
-              r21.extend(PulldownStrength3)
             else
               @index = i21
               r21 = nil
@@ -11575,6 +11663,8 @@ module OrigenVerilog
             if r21
               r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
               r0 = r21
+              r0.extend(PulldownStrength3)
+              r0.extend(PulldownStrength3)
             else
               @index = i0
               r0 = nil
@@ -11737,6 +11827,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(PullupStrength3)
+          r0.extend(PullupStrength3)
         else
           i11, s11 = index, []
           if (match_len = has_terminal?("(", false, index))
@@ -11801,6 +11893,8 @@ module OrigenVerilog
           if r11
             r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
             r0 = r11
+            r0.extend(PullupStrength3)
+            r0.extend(PullupStrength3)
           else
             i21, s21 = index, []
             if (match_len = has_terminal?("(", false, index))
@@ -11836,7 +11930,6 @@ module OrigenVerilog
             if s21.last
               r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
               r21.extend(PullupStrength2)
-              r21.extend(PullupStrength3)
             else
               @index = i21
               r21 = nil
@@ -11844,6 +11937,8 @@ module OrigenVerilog
             if r21
               r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
               r0 = r21
+              r0.extend(PullupStrength3)
+              r0.extend(PullupStrength3)
             else
               @index = i0
               r0 = nil
@@ -11884,10 +11979,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(CmosSwitchtype0)
+          r0.extend(CmosSwitchtype0)
         else
           if (match_len = has_terminal?("rcmos", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(CmosSwitchtype0)
             @index += match_len
           else
             terminal_parse_failure('"rcmos"')
@@ -11896,6 +11992,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(CmosSwitchtype0)
+            r0.extend(CmosSwitchtype0)
           else
             @index = i0
             r0 = nil
@@ -11935,6 +12033,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(EnableGatetype0)
+          r0.extend(EnableGatetype0)
         else
           if (match_len = has_terminal?("bufif1", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -11946,6 +12046,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(EnableGatetype0)
+            r0.extend(EnableGatetype0)
           else
             if (match_len = has_terminal?("notif0", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -11957,10 +12059,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(EnableGatetype0)
+              r0.extend(EnableGatetype0)
             else
               if (match_len = has_terminal?("notif1", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(EnableGatetype0)
                 @index += match_len
               else
                 terminal_parse_failure('"notif1"')
@@ -11969,6 +12072,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(EnableGatetype0)
+                r0.extend(EnableGatetype0)
               else
                 @index = i0
                 r0 = nil
@@ -12010,6 +12115,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(MosSwitchtype0)
+          r0.extend(MosSwitchtype0)
         else
           if (match_len = has_terminal?("pmos", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12021,6 +12128,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(MosSwitchtype0)
+            r0.extend(MosSwitchtype0)
           else
             if (match_len = has_terminal?("rnmos", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12032,10 +12141,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(MosSwitchtype0)
+              r0.extend(MosSwitchtype0)
             else
               if (match_len = has_terminal?("rpmos", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(MosSwitchtype0)
                 @index += match_len
               else
                 terminal_parse_failure('"rpmos"')
@@ -12044,6 +12154,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(MosSwitchtype0)
+                r0.extend(MosSwitchtype0)
               else
                 @index = i0
                 r0 = nil
@@ -12085,6 +12197,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(NInputGatetype0)
+          r0.extend(NInputGatetype0)
         else
           if (match_len = has_terminal?("nand", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12096,6 +12210,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(NInputGatetype0)
+            r0.extend(NInputGatetype0)
           else
             if (match_len = has_terminal?("or", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12107,6 +12223,8 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(NInputGatetype0)
+              r0.extend(NInputGatetype0)
             else
               if (match_len = has_terminal?("nor", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12118,6 +12236,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(NInputGatetype0)
+                r0.extend(NInputGatetype0)
               else
                 if (match_len = has_terminal?("xor", false, index))
                   r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12129,10 +12249,11 @@ module OrigenVerilog
                 if r5
                   r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
                   r0 = r5
+                  r0.extend(NInputGatetype0)
+                  r0.extend(NInputGatetype0)
                 else
                   if (match_len = has_terminal?("xnor", false, index))
                     r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                    r6.extend(NInputGatetype0)
                     @index += match_len
                   else
                     terminal_parse_failure('"xnor"')
@@ -12141,6 +12262,8 @@ module OrigenVerilog
                   if r6
                     r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                     r0 = r6
+                    r0.extend(NInputGatetype0)
+                    r0.extend(NInputGatetype0)
                   else
                     @index = i0
                     r0 = nil
@@ -12184,10 +12307,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(NOutputGatetype0)
+          r0.extend(NOutputGatetype0)
         else
           if (match_len = has_terminal?("not", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(NOutputGatetype0)
             @index += match_len
           else
             terminal_parse_failure('"not"')
@@ -12196,6 +12320,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(NOutputGatetype0)
+            r0.extend(NOutputGatetype0)
           else
             @index = i0
             r0 = nil
@@ -12235,6 +12361,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(PassEnSwitchtype0)
+          r0.extend(PassEnSwitchtype0)
         else
           if (match_len = has_terminal?("tranif1", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12246,6 +12374,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(PassEnSwitchtype0)
+            r0.extend(PassEnSwitchtype0)
           else
             if (match_len = has_terminal?("rtranif1", false, index))
               r3 = instantiate_node(SyntaxNode,input, index...(index + match_len))
@@ -12257,10 +12387,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(PassEnSwitchtype0)
+              r0.extend(PassEnSwitchtype0)
             else
               if (match_len = has_terminal?("rtranif0", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(PassEnSwitchtype0)
                 @index += match_len
               else
                 terminal_parse_failure('"rtranif0"')
@@ -12269,6 +12400,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(PassEnSwitchtype0)
+                r0.extend(PassEnSwitchtype0)
               else
                 @index = i0
                 r0 = nil
@@ -12310,10 +12443,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(PassSwitchtype0)
+          r0.extend(PassSwitchtype0)
         else
           if (match_len = has_terminal?("rtran", false, index))
             r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(PassSwitchtype0)
             @index += match_len
           else
             terminal_parse_failure('"rtran"')
@@ -12322,6 +12456,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(PassSwitchtype0)
+            r0.extend(PassSwitchtype0)
           else
             @index = i0
             r0 = nil
@@ -12687,6 +12823,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ListOfParameterAssignments4)
+          r0.extend(ListOfParameterAssignments4)
         else
           i9, s9 = index, []
           r10 = _nt_named_parameter_assignment
@@ -12734,7 +12872,6 @@ module OrigenVerilog
           if s9.last
             r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
             r9.extend(ListOfParameterAssignments3)
-            r9.extend(ListOfParameterAssignments4)
           else
             @index = i9
             r9 = nil
@@ -12742,6 +12879,8 @@ module OrigenVerilog
           if r9
             r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
             r0 = r9
+            r0.extend(ListOfParameterAssignments4)
+            r0.extend(ListOfParameterAssignments4)
           else
             @index = i0
             r0 = nil
@@ -13140,6 +13279,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ListOfPortConnections4)
+          r0.extend(ListOfPortConnections4)
         else
           i9, s9 = index, []
           r10 = _nt_named_port_connection
@@ -13187,7 +13328,6 @@ module OrigenVerilog
           if s9.last
             r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
             r9.extend(ListOfPortConnections3)
-            r9.extend(ListOfPortConnections4)
           else
             @index = i9
             r9 = nil
@@ -13195,6 +13335,8 @@ module OrigenVerilog
           if r9
             r9 = SyntaxNode.new(input, (index-1)...index) if r9 == true
             r0 = r9
+            r0.extend(ListOfPortConnections4)
+            r0.extend(ListOfPortConnections4)
           else
             @index = i0
             r0 = nil
@@ -14895,6 +15037,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(CaseGenerateItem3)
+          r0.extend(CaseGenerateItem3)
         else
           i13, s13 = index, []
           r14 = _nt_default
@@ -14929,7 +15073,6 @@ module OrigenVerilog
           if s13.last
             r13 = instantiate_node(SyntaxNode,input, i13...index, s13)
             r13.extend(CaseGenerateItem2)
-            r13.extend(CaseGenerateItem3)
           else
             @index = i13
             r13 = nil
@@ -14937,6 +15080,8 @@ module OrigenVerilog
           if r13
             r13 = SyntaxNode.new(input, (index-1)...index) if r13 == true
             r0 = r13
+            r0.extend(CaseGenerateItem3)
+            r0.extend(CaseGenerateItem3)
           else
             @index = i0
             r0 = nil
@@ -15001,6 +15146,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(GenerateBlock3)
+          r0.extend(GenerateBlock3)
         else
           i2, s2 = index, []
           if (match_len = has_terminal?("begin", false, index))
@@ -15090,7 +15237,6 @@ module OrigenVerilog
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(GenerateBlock2)
-            r2.extend(GenerateBlock3)
           else
             @index = i2
             r2 = nil
@@ -15098,6 +15244,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(GenerateBlock3)
+            r0.extend(GenerateBlock3)
           else
             @index = i0
             r0 = nil
@@ -15138,6 +15286,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(GenerateBlockOrNull1)
+          r0.extend(GenerateBlockOrNull1)
         else
           i2, s2 = index, []
           r3 = _nt_s
@@ -15155,7 +15305,6 @@ module OrigenVerilog
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(GenerateBlockOrNull0)
-            r2.extend(GenerateBlockOrNull1)
           else
             @index = i2
             r2 = nil
@@ -15163,6 +15312,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(GenerateBlockOrNull1)
+            r0.extend(GenerateBlockOrNull1)
           else
             @index = i0
             r0 = nil
@@ -16432,16 +16583,12 @@ module OrigenVerilog
       end
 
       module Statement0
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16461,16 +16608,12 @@ module OrigenVerilog
       end
 
       module Statement2
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16485,16 +16628,12 @@ module OrigenVerilog
       end
 
       module Statement4
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16509,16 +16648,12 @@ module OrigenVerilog
       end
 
       module Statement6
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16533,16 +16668,12 @@ module OrigenVerilog
       end
 
       module Statement8
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16557,16 +16688,12 @@ module OrigenVerilog
       end
 
       module Statement10
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16581,16 +16708,12 @@ module OrigenVerilog
       end
 
       module Statement12
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16610,16 +16733,12 @@ module OrigenVerilog
       end
 
       module Statement14
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16634,16 +16753,12 @@ module OrigenVerilog
       end
 
       module Statement16
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16663,16 +16778,12 @@ module OrigenVerilog
       end
 
       module Statement18
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16687,16 +16798,12 @@ module OrigenVerilog
       end
 
       module Statement20
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16711,16 +16818,12 @@ module OrigenVerilog
       end
 
       module Statement22
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16735,16 +16838,12 @@ module OrigenVerilog
       end
 
       module Statement24
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16759,16 +16858,12 @@ module OrigenVerilog
       end
 
       module Statement26
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
-        end
-
-        def s2
-          elements[2]
         end
       end
 
@@ -16809,10 +16904,6 @@ module OrigenVerilog
           if r4
             r5 = _nt_attribute_instance
             s3 << r5
-            if r5
-              r6 = _nt_s
-              s3 << r6
-            end
           end
           if s3.last
             r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
@@ -16830,23 +16921,23 @@ module OrigenVerilog
         r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
         s1 << r2
         if r2
-          r7 = _nt_s
-          s1 << r7
-          if r7
-            r8 = _nt_blocking_assignment
-            s1 << r8
-            if r8
-              r9 = _nt_s
-              s1 << r9
-              if r9
+          r6 = _nt_s
+          s1 << r6
+          if r6
+            r7 = _nt_blocking_assignment
+            s1 << r7
+            if r7
+              r8 = _nt_s
+              s1 << r8
+              if r8
                 if (match_len = has_terminal?(";", false, index))
-                  r10 = true
+                  r9 = true
                   @index += match_len
                 else
                   terminal_parse_failure('";"')
-                  r10 = nil
+                  r9 = nil
                 end
-                s1 << r10
+                s1 << r9
               end
             end
           end
@@ -16861,659 +16952,634 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Statement28)
+          r0.extend(Statement28)
         else
-          i11, s11 = index, []
-          s12, i12 = [], index
+          i10, s10 = index, []
+          s11, i11 = [], index
           loop do
-            i13, s13 = index, []
-            r14 = _nt_s
-            s13 << r14
-            if r14
-              r15 = _nt_attribute_instance
-              s13 << r15
-              if r15
-                r16 = _nt_s
-                s13 << r16
-              end
-            end
-            if s13.last
-              r13 = instantiate_node(SyntaxNode,input, i13...index, s13)
-              r13.extend(Statement2)
-            else
-              @index = i13
-              r13 = nil
-            end
+            i12, s12 = index, []
+            r13 = _nt_s
+            s12 << r13
             if r13
-              s12 << r13
+              r14 = _nt_attribute_instance
+              s12 << r14
+            end
+            if s12.last
+              r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
+              r12.extend(Statement2)
+            else
+              @index = i12
+              r12 = nil
+            end
+            if r12
+              s11 << r12
             else
               break
             end
           end
-          r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
-          s11 << r12
-          if r12
-            r17 = _nt_s
-            s11 << r17
-            if r17
-              r18 = _nt_case_statement
-              s11 << r18
+          r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
+          s10 << r11
+          if r11
+            r15 = _nt_s
+            s10 << r15
+            if r15
+              r16 = _nt_case_statement
+              s10 << r16
             end
           end
-          if s11.last
-            r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
-            r11.extend(Statement3)
+          if s10.last
+            r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
+            r10.extend(Statement3)
           else
-            @index = i11
-            r11 = nil
+            @index = i10
+            r10 = nil
           end
-          if r11
-            r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
-            r0 = r11
+          if r10
+            r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
+            r0 = r10
+            r0.extend(Statement28)
+            r0.extend(Statement28)
           else
-            i19, s19 = index, []
-            s20, i20 = [], index
+            i17, s17 = index, []
+            s18, i18 = [], index
             loop do
-              i21, s21 = index, []
-              r22 = _nt_s
-              s21 << r22
-              if r22
-                r23 = _nt_attribute_instance
-                s21 << r23
-                if r23
-                  r24 = _nt_s
-                  s21 << r24
-                end
+              i19, s19 = index, []
+              r20 = _nt_s
+              s19 << r20
+              if r20
+                r21 = _nt_attribute_instance
+                s19 << r21
               end
-              if s21.last
-                r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
-                r21.extend(Statement4)
+              if s19.last
+                r19 = instantiate_node(SyntaxNode,input, i19...index, s19)
+                r19.extend(Statement4)
               else
-                @index = i21
-                r21 = nil
+                @index = i19
+                r19 = nil
               end
-              if r21
-                s20 << r21
+              if r19
+                s18 << r19
               else
                 break
               end
             end
-            r20 = instantiate_node(SyntaxNode,input, i20...index, s20)
-            s19 << r20
-            if r20
-              r25 = _nt_s
-              s19 << r25
-              if r25
-                r26 = _nt_conditional_statement
-                s19 << r26
+            r18 = instantiate_node(SyntaxNode,input, i18...index, s18)
+            s17 << r18
+            if r18
+              r22 = _nt_s
+              s17 << r22
+              if r22
+                r23 = _nt_conditional_statement
+                s17 << r23
               end
             end
-            if s19.last
-              r19 = instantiate_node(SyntaxNode,input, i19...index, s19)
-              r19.extend(Statement5)
+            if s17.last
+              r17 = instantiate_node(SyntaxNode,input, i17...index, s17)
+              r17.extend(Statement5)
             else
-              @index = i19
-              r19 = nil
+              @index = i17
+              r17 = nil
             end
-            if r19
-              r19 = SyntaxNode.new(input, (index-1)...index) if r19 == true
-              r0 = r19
+            if r17
+              r17 = SyntaxNode.new(input, (index-1)...index) if r17 == true
+              r0 = r17
+              r0.extend(Statement28)
+              r0.extend(Statement28)
             else
-              i27, s27 = index, []
-              s28, i28 = [], index
+              i24, s24 = index, []
+              s25, i25 = [], index
               loop do
-                i29, s29 = index, []
-                r30 = _nt_s
-                s29 << r30
-                if r30
-                  r31 = _nt_attribute_instance
-                  s29 << r31
-                  if r31
-                    r32 = _nt_s
-                    s29 << r32
-                  end
+                i26, s26 = index, []
+                r27 = _nt_s
+                s26 << r27
+                if r27
+                  r28 = _nt_attribute_instance
+                  s26 << r28
                 end
-                if s29.last
-                  r29 = instantiate_node(SyntaxNode,input, i29...index, s29)
-                  r29.extend(Statement6)
+                if s26.last
+                  r26 = instantiate_node(SyntaxNode,input, i26...index, s26)
+                  r26.extend(Statement6)
                 else
-                  @index = i29
-                  r29 = nil
+                  @index = i26
+                  r26 = nil
                 end
-                if r29
-                  s28 << r29
+                if r26
+                  s25 << r26
                 else
                   break
                 end
               end
-              r28 = instantiate_node(SyntaxNode,input, i28...index, s28)
-              s27 << r28
-              if r28
-                r33 = _nt_s
-                s27 << r33
-                if r33
-                  r34 = _nt_disable_statement
-                  s27 << r34
+              r25 = instantiate_node(SyntaxNode,input, i25...index, s25)
+              s24 << r25
+              if r25
+                r29 = _nt_s
+                s24 << r29
+                if r29
+                  r30 = _nt_disable_statement
+                  s24 << r30
                 end
               end
-              if s27.last
-                r27 = instantiate_node(SyntaxNode,input, i27...index, s27)
-                r27.extend(Statement7)
+              if s24.last
+                r24 = instantiate_node(SyntaxNode,input, i24...index, s24)
+                r24.extend(Statement7)
               else
-                @index = i27
-                r27 = nil
+                @index = i24
+                r24 = nil
               end
-              if r27
-                r27 = SyntaxNode.new(input, (index-1)...index) if r27 == true
-                r0 = r27
+              if r24
+                r24 = SyntaxNode.new(input, (index-1)...index) if r24 == true
+                r0 = r24
+                r0.extend(Statement28)
+                r0.extend(Statement28)
               else
-                i35, s35 = index, []
-                s36, i36 = [], index
+                i31, s31 = index, []
+                s32, i32 = [], index
                 loop do
-                  i37, s37 = index, []
-                  r38 = _nt_s
-                  s37 << r38
-                  if r38
-                    r39 = _nt_attribute_instance
-                    s37 << r39
-                    if r39
-                      r40 = _nt_s
-                      s37 << r40
-                    end
+                  i33, s33 = index, []
+                  r34 = _nt_s
+                  s33 << r34
+                  if r34
+                    r35 = _nt_attribute_instance
+                    s33 << r35
                   end
-                  if s37.last
-                    r37 = instantiate_node(SyntaxNode,input, i37...index, s37)
-                    r37.extend(Statement8)
+                  if s33.last
+                    r33 = instantiate_node(SyntaxNode,input, i33...index, s33)
+                    r33.extend(Statement8)
                   else
-                    @index = i37
-                    r37 = nil
+                    @index = i33
+                    r33 = nil
                   end
-                  if r37
-                    s36 << r37
+                  if r33
+                    s32 << r33
                   else
                     break
                   end
                 end
-                r36 = instantiate_node(SyntaxNode,input, i36...index, s36)
-                s35 << r36
-                if r36
-                  r41 = _nt_s
-                  s35 << r41
-                  if r41
-                    r42 = _nt_event_trigger
-                    s35 << r42
+                r32 = instantiate_node(SyntaxNode,input, i32...index, s32)
+                s31 << r32
+                if r32
+                  r36 = _nt_s
+                  s31 << r36
+                  if r36
+                    r37 = _nt_event_trigger
+                    s31 << r37
                   end
                 end
-                if s35.last
-                  r35 = instantiate_node(SyntaxNode,input, i35...index, s35)
-                  r35.extend(Statement9)
+                if s31.last
+                  r31 = instantiate_node(SyntaxNode,input, i31...index, s31)
+                  r31.extend(Statement9)
                 else
-                  @index = i35
-                  r35 = nil
+                  @index = i31
+                  r31 = nil
                 end
-                if r35
-                  r35 = SyntaxNode.new(input, (index-1)...index) if r35 == true
-                  r0 = r35
+                if r31
+                  r31 = SyntaxNode.new(input, (index-1)...index) if r31 == true
+                  r0 = r31
+                  r0.extend(Statement28)
+                  r0.extend(Statement28)
                 else
-                  i43, s43 = index, []
-                  s44, i44 = [], index
+                  i38, s38 = index, []
+                  s39, i39 = [], index
                   loop do
+                    i40, s40 = index, []
+                    r41 = _nt_s
+                    s40 << r41
+                    if r41
+                      r42 = _nt_attribute_instance
+                      s40 << r42
+                    end
+                    if s40.last
+                      r40 = instantiate_node(SyntaxNode,input, i40...index, s40)
+                      r40.extend(Statement10)
+                    else
+                      @index = i40
+                      r40 = nil
+                    end
+                    if r40
+                      s39 << r40
+                    else
+                      break
+                    end
+                  end
+                  r39 = instantiate_node(SyntaxNode,input, i39...index, s39)
+                  s38 << r39
+                  if r39
+                    r43 = _nt_s
+                    s38 << r43
+                    if r43
+                      r44 = _nt_loop_statement
+                      s38 << r44
+                    end
+                  end
+                  if s38.last
+                    r38 = instantiate_node(SyntaxNode,input, i38...index, s38)
+                    r38.extend(Statement11)
+                  else
+                    @index = i38
+                    r38 = nil
+                  end
+                  if r38
+                    r38 = SyntaxNode.new(input, (index-1)...index) if r38 == true
+                    r0 = r38
+                    r0.extend(Statement28)
+                    r0.extend(Statement28)
+                  else
                     i45, s45 = index, []
-                    r46 = _nt_s
+                    s46, i46 = [], index
+                    loop do
+                      i47, s47 = index, []
+                      r48 = _nt_s
+                      s47 << r48
+                      if r48
+                        r49 = _nt_attribute_instance
+                        s47 << r49
+                      end
+                      if s47.last
+                        r47 = instantiate_node(SyntaxNode,input, i47...index, s47)
+                        r47.extend(Statement12)
+                      else
+                        @index = i47
+                        r47 = nil
+                      end
+                      if r47
+                        s46 << r47
+                      else
+                        break
+                      end
+                    end
+                    r46 = instantiate_node(SyntaxNode,input, i46...index, s46)
                     s45 << r46
                     if r46
-                      r47 = _nt_attribute_instance
-                      s45 << r47
-                      if r47
-                        r48 = _nt_s
-                        s45 << r48
+                      r50 = _nt_s
+                      s45 << r50
+                      if r50
+                        r51 = _nt_nonblocking_assignment
+                        s45 << r51
+                        if r51
+                          r52 = _nt_s
+                          s45 << r52
+                          if r52
+                            if (match_len = has_terminal?(";", false, index))
+                              r53 = true
+                              @index += match_len
+                            else
+                              terminal_parse_failure('";"')
+                              r53 = nil
+                            end
+                            s45 << r53
+                          end
+                        end
                       end
                     end
                     if s45.last
                       r45 = instantiate_node(SyntaxNode,input, i45...index, s45)
-                      r45.extend(Statement10)
+                      r45.extend(Statement13)
                     else
                       @index = i45
                       r45 = nil
                     end
                     if r45
-                      s44 << r45
+                      r45 = SyntaxNode.new(input, (index-1)...index) if r45 == true
+                      r0 = r45
+                      r0.extend(Statement28)
+                      r0.extend(Statement28)
                     else
-                      break
-                    end
-                  end
-                  r44 = instantiate_node(SyntaxNode,input, i44...index, s44)
-                  s43 << r44
-                  if r44
-                    r49 = _nt_s
-                    s43 << r49
-                    if r49
-                      r50 = _nt_loop_statement
-                      s43 << r50
-                    end
-                  end
-                  if s43.last
-                    r43 = instantiate_node(SyntaxNode,input, i43...index, s43)
-                    r43.extend(Statement11)
-                  else
-                    @index = i43
-                    r43 = nil
-                  end
-                  if r43
-                    r43 = SyntaxNode.new(input, (index-1)...index) if r43 == true
-                    r0 = r43
-                  else
-                    i51, s51 = index, []
-                    s52, i52 = [], index
-                    loop do
-                      i53, s53 = index, []
-                      r54 = _nt_s
-                      s53 << r54
-                      if r54
-                        r55 = _nt_attribute_instance
-                        s53 << r55
-                        if r55
-                          r56 = _nt_s
-                          s53 << r56
-                        end
-                      end
-                      if s53.last
-                        r53 = instantiate_node(SyntaxNode,input, i53...index, s53)
-                        r53.extend(Statement12)
-                      else
-                        @index = i53
-                        r53 = nil
-                      end
-                      if r53
-                        s52 << r53
-                      else
-                        break
-                      end
-                    end
-                    r52 = instantiate_node(SyntaxNode,input, i52...index, s52)
-                    s51 << r52
-                    if r52
-                      r57 = _nt_s
-                      s51 << r57
-                      if r57
-                        r58 = _nt_nonblocking_assignment
-                        s51 << r58
-                        if r58
-                          r59 = _nt_s
-                          s51 << r59
-                          if r59
-                            if (match_len = has_terminal?(";", false, index))
-                              r60 = true
-                              @index += match_len
-                            else
-                              terminal_parse_failure('";"')
-                              r60 = nil
-                            end
-                            s51 << r60
-                          end
-                        end
-                      end
-                    end
-                    if s51.last
-                      r51 = instantiate_node(SyntaxNode,input, i51...index, s51)
-                      r51.extend(Statement13)
-                    else
-                      @index = i51
-                      r51 = nil
-                    end
-                    if r51
-                      r51 = SyntaxNode.new(input, (index-1)...index) if r51 == true
-                      r0 = r51
-                    else
-                      i61, s61 = index, []
-                      s62, i62 = [], index
+                      i54, s54 = index, []
+                      s55, i55 = [], index
                       loop do
-                        i63, s63 = index, []
-                        r64 = _nt_s
-                        s63 << r64
-                        if r64
-                          r65 = _nt_attribute_instance
-                          s63 << r65
-                          if r65
-                            r66 = _nt_s
-                            s63 << r66
-                          end
+                        i56, s56 = index, []
+                        r57 = _nt_s
+                        s56 << r57
+                        if r57
+                          r58 = _nt_attribute_instance
+                          s56 << r58
                         end
-                        if s63.last
-                          r63 = instantiate_node(SyntaxNode,input, i63...index, s63)
-                          r63.extend(Statement14)
+                        if s56.last
+                          r56 = instantiate_node(SyntaxNode,input, i56...index, s56)
+                          r56.extend(Statement14)
                         else
-                          @index = i63
-                          r63 = nil
+                          @index = i56
+                          r56 = nil
                         end
-                        if r63
-                          s62 << r63
+                        if r56
+                          s55 << r56
                         else
                           break
                         end
                       end
-                      r62 = instantiate_node(SyntaxNode,input, i62...index, s62)
-                      s61 << r62
-                      if r62
-                        r67 = _nt_s
-                        s61 << r67
-                        if r67
-                          r68 = _nt_par_block
-                          s61 << r68
+                      r55 = instantiate_node(SyntaxNode,input, i55...index, s55)
+                      s54 << r55
+                      if r55
+                        r59 = _nt_s
+                        s54 << r59
+                        if r59
+                          r60 = _nt_par_block
+                          s54 << r60
                         end
                       end
-                      if s61.last
-                        r61 = instantiate_node(SyntaxNode,input, i61...index, s61)
-                        r61.extend(Statement15)
+                      if s54.last
+                        r54 = instantiate_node(SyntaxNode,input, i54...index, s54)
+                        r54.extend(Statement15)
                       else
-                        @index = i61
-                        r61 = nil
+                        @index = i54
+                        r54 = nil
                       end
-                      if r61
-                        r61 = SyntaxNode.new(input, (index-1)...index) if r61 == true
-                        r0 = r61
+                      if r54
+                        r54 = SyntaxNode.new(input, (index-1)...index) if r54 == true
+                        r0 = r54
+                        r0.extend(Statement28)
+                        r0.extend(Statement28)
                       else
-                        i69, s69 = index, []
-                        s70, i70 = [], index
+                        i61, s61 = index, []
+                        s62, i62 = [], index
                         loop do
-                          i71, s71 = index, []
-                          r72 = _nt_s
-                          s71 << r72
-                          if r72
-                            r73 = _nt_attribute_instance
-                            s71 << r73
-                            if r73
-                              r74 = _nt_s
-                              s71 << r74
-                            end
+                          i63, s63 = index, []
+                          r64 = _nt_s
+                          s63 << r64
+                          if r64
+                            r65 = _nt_attribute_instance
+                            s63 << r65
                           end
-                          if s71.last
-                            r71 = instantiate_node(SyntaxNode,input, i71...index, s71)
-                            r71.extend(Statement16)
+                          if s63.last
+                            r63 = instantiate_node(SyntaxNode,input, i63...index, s63)
+                            r63.extend(Statement16)
                           else
-                            @index = i71
-                            r71 = nil
+                            @index = i63
+                            r63 = nil
                           end
-                          if r71
-                            s70 << r71
+                          if r63
+                            s62 << r63
                           else
                             break
                           end
                         end
-                        r70 = instantiate_node(SyntaxNode,input, i70...index, s70)
-                        s69 << r70
-                        if r70
-                          r75 = _nt_s
-                          s69 << r75
-                          if r75
-                            r76 = _nt_procedural_continuous_assignments
-                            s69 << r76
-                            if r76
-                              r77 = _nt_s
-                              s69 << r77
-                              if r77
+                        r62 = instantiate_node(SyntaxNode,input, i62...index, s62)
+                        s61 << r62
+                        if r62
+                          r66 = _nt_s
+                          s61 << r66
+                          if r66
+                            r67 = _nt_procedural_continuous_assignments
+                            s61 << r67
+                            if r67
+                              r68 = _nt_s
+                              s61 << r68
+                              if r68
                                 if (match_len = has_terminal?(";", false, index))
-                                  r78 = true
+                                  r69 = true
                                   @index += match_len
                                 else
                                   terminal_parse_failure('";"')
-                                  r78 = nil
+                                  r69 = nil
                                 end
-                                s69 << r78
+                                s61 << r69
                               end
                             end
                           end
                         end
-                        if s69.last
-                          r69 = instantiate_node(SyntaxNode,input, i69...index, s69)
-                          r69.extend(Statement17)
+                        if s61.last
+                          r61 = instantiate_node(SyntaxNode,input, i61...index, s61)
+                          r61.extend(Statement17)
                         else
-                          @index = i69
-                          r69 = nil
+                          @index = i61
+                          r61 = nil
                         end
-                        if r69
-                          r69 = SyntaxNode.new(input, (index-1)...index) if r69 == true
-                          r0 = r69
+                        if r61
+                          r61 = SyntaxNode.new(input, (index-1)...index) if r61 == true
+                          r0 = r61
+                          r0.extend(Statement28)
+                          r0.extend(Statement28)
                         else
-                          i79, s79 = index, []
-                          s80, i80 = [], index
+                          i70, s70 = index, []
+                          s71, i71 = [], index
                           loop do
-                            i81, s81 = index, []
-                            r82 = _nt_s
-                            s81 << r82
-                            if r82
-                              r83 = _nt_attribute_instance
-                              s81 << r83
-                              if r83
-                                r84 = _nt_s
-                                s81 << r84
-                              end
+                            i72, s72 = index, []
+                            r73 = _nt_s
+                            s72 << r73
+                            if r73
+                              r74 = _nt_attribute_instance
+                              s72 << r74
                             end
-                            if s81.last
-                              r81 = instantiate_node(SyntaxNode,input, i81...index, s81)
-                              r81.extend(Statement18)
+                            if s72.last
+                              r72 = instantiate_node(SyntaxNode,input, i72...index, s72)
+                              r72.extend(Statement18)
                             else
-                              @index = i81
-                              r81 = nil
+                              @index = i72
+                              r72 = nil
                             end
-                            if r81
-                              s80 << r81
+                            if r72
+                              s71 << r72
                             else
                               break
                             end
                           end
-                          r80 = instantiate_node(SyntaxNode,input, i80...index, s80)
-                          s79 << r80
-                          if r80
-                            r85 = _nt_s
-                            s79 << r85
-                            if r85
-                              r86 = _nt_procedural_timing_control_statement
-                              s79 << r86
+                          r71 = instantiate_node(SyntaxNode,input, i71...index, s71)
+                          s70 << r71
+                          if r71
+                            r75 = _nt_s
+                            s70 << r75
+                            if r75
+                              r76 = _nt_procedural_timing_control_statement
+                              s70 << r76
                             end
                           end
-                          if s79.last
-                            r79 = instantiate_node(SyntaxNode,input, i79...index, s79)
-                            r79.extend(Statement19)
+                          if s70.last
+                            r70 = instantiate_node(SyntaxNode,input, i70...index, s70)
+                            r70.extend(Statement19)
                           else
-                            @index = i79
-                            r79 = nil
+                            @index = i70
+                            r70 = nil
                           end
-                          if r79
-                            r79 = SyntaxNode.new(input, (index-1)...index) if r79 == true
-                            r0 = r79
+                          if r70
+                            r70 = SyntaxNode.new(input, (index-1)...index) if r70 == true
+                            r0 = r70
+                            r0.extend(Statement28)
+                            r0.extend(Statement28)
                           else
-                            i87, s87 = index, []
-                            s88, i88 = [], index
+                            i77, s77 = index, []
+                            s78, i78 = [], index
                             loop do
-                              i89, s89 = index, []
-                              r90 = _nt_s
-                              s89 << r90
-                              if r90
-                                r91 = _nt_attribute_instance
-                                s89 << r91
-                                if r91
-                                  r92 = _nt_s
-                                  s89 << r92
-                                end
+                              i79, s79 = index, []
+                              r80 = _nt_s
+                              s79 << r80
+                              if r80
+                                r81 = _nt_attribute_instance
+                                s79 << r81
                               end
-                              if s89.last
-                                r89 = instantiate_node(SyntaxNode,input, i89...index, s89)
-                                r89.extend(Statement20)
+                              if s79.last
+                                r79 = instantiate_node(SyntaxNode,input, i79...index, s79)
+                                r79.extend(Statement20)
                               else
-                                @index = i89
-                                r89 = nil
+                                @index = i79
+                                r79 = nil
                               end
-                              if r89
-                                s88 << r89
+                              if r79
+                                s78 << r79
                               else
                                 break
                               end
                             end
-                            r88 = instantiate_node(SyntaxNode,input, i88...index, s88)
-                            s87 << r88
-                            if r88
-                              r93 = _nt_s
-                              s87 << r93
-                              if r93
-                                r94 = _nt_seq_block
-                                s87 << r94
+                            r78 = instantiate_node(SyntaxNode,input, i78...index, s78)
+                            s77 << r78
+                            if r78
+                              r82 = _nt_s
+                              s77 << r82
+                              if r82
+                                r83 = _nt_seq_block
+                                s77 << r83
                               end
                             end
-                            if s87.last
-                              r87 = instantiate_node(SyntaxNode,input, i87...index, s87)
-                              r87.extend(Statement21)
+                            if s77.last
+                              r77 = instantiate_node(SyntaxNode,input, i77...index, s77)
+                              r77.extend(Statement21)
                             else
-                              @index = i87
-                              r87 = nil
+                              @index = i77
+                              r77 = nil
                             end
-                            if r87
-                              r87 = SyntaxNode.new(input, (index-1)...index) if r87 == true
-                              r0 = r87
+                            if r77
+                              r77 = SyntaxNode.new(input, (index-1)...index) if r77 == true
+                              r0 = r77
+                              r0.extend(Statement28)
+                              r0.extend(Statement28)
                             else
-                              i95, s95 = index, []
-                              s96, i96 = [], index
+                              i84, s84 = index, []
+                              s85, i85 = [], index
                               loop do
-                                i97, s97 = index, []
-                                r98 = _nt_s
-                                s97 << r98
-                                if r98
-                                  r99 = _nt_attribute_instance
-                                  s97 << r99
-                                  if r99
-                                    r100 = _nt_s
-                                    s97 << r100
-                                  end
+                                i86, s86 = index, []
+                                r87 = _nt_s
+                                s86 << r87
+                                if r87
+                                  r88 = _nt_attribute_instance
+                                  s86 << r88
                                 end
-                                if s97.last
-                                  r97 = instantiate_node(SyntaxNode,input, i97...index, s97)
-                                  r97.extend(Statement22)
+                                if s86.last
+                                  r86 = instantiate_node(SyntaxNode,input, i86...index, s86)
+                                  r86.extend(Statement22)
                                 else
-                                  @index = i97
-                                  r97 = nil
+                                  @index = i86
+                                  r86 = nil
                                 end
-                                if r97
-                                  s96 << r97
+                                if r86
+                                  s85 << r86
                                 else
                                   break
                                 end
                               end
-                              r96 = instantiate_node(SyntaxNode,input, i96...index, s96)
-                              s95 << r96
-                              if r96
-                                r101 = _nt_s
-                                s95 << r101
-                                if r101
-                                  r102 = _nt_system_task_enable
-                                  s95 << r102
+                              r85 = instantiate_node(SyntaxNode,input, i85...index, s85)
+                              s84 << r85
+                              if r85
+                                r89 = _nt_s
+                                s84 << r89
+                                if r89
+                                  r90 = _nt_system_task_enable
+                                  s84 << r90
                                 end
                               end
-                              if s95.last
-                                r95 = instantiate_node(SyntaxNode,input, i95...index, s95)
-                                r95.extend(Statement23)
+                              if s84.last
+                                r84 = instantiate_node(SyntaxNode,input, i84...index, s84)
+                                r84.extend(Statement23)
                               else
-                                @index = i95
-                                r95 = nil
+                                @index = i84
+                                r84 = nil
                               end
-                              if r95
-                                r95 = SyntaxNode.new(input, (index-1)...index) if r95 == true
-                                r0 = r95
+                              if r84
+                                r84 = SyntaxNode.new(input, (index-1)...index) if r84 == true
+                                r0 = r84
+                                r0.extend(Statement28)
+                                r0.extend(Statement28)
                               else
-                                i103, s103 = index, []
-                                s104, i104 = [], index
+                                i91, s91 = index, []
+                                s92, i92 = [], index
                                 loop do
-                                  i105, s105 = index, []
-                                  r106 = _nt_s
-                                  s105 << r106
-                                  if r106
-                                    r107 = _nt_attribute_instance
-                                    s105 << r107
-                                    if r107
-                                      r108 = _nt_s
-                                      s105 << r108
-                                    end
+                                  i93, s93 = index, []
+                                  r94 = _nt_s
+                                  s93 << r94
+                                  if r94
+                                    r95 = _nt_attribute_instance
+                                    s93 << r95
                                   end
-                                  if s105.last
-                                    r105 = instantiate_node(SyntaxNode,input, i105...index, s105)
-                                    r105.extend(Statement24)
+                                  if s93.last
+                                    r93 = instantiate_node(SyntaxNode,input, i93...index, s93)
+                                    r93.extend(Statement24)
                                   else
-                                    @index = i105
-                                    r105 = nil
+                                    @index = i93
+                                    r93 = nil
                                   end
-                                  if r105
-                                    s104 << r105
+                                  if r93
+                                    s92 << r93
                                   else
                                     break
                                   end
                                 end
-                                r104 = instantiate_node(SyntaxNode,input, i104...index, s104)
-                                s103 << r104
-                                if r104
-                                  r109 = _nt_s
-                                  s103 << r109
-                                  if r109
-                                    r110 = _nt_task_enable
-                                    s103 << r110
+                                r92 = instantiate_node(SyntaxNode,input, i92...index, s92)
+                                s91 << r92
+                                if r92
+                                  r96 = _nt_s
+                                  s91 << r96
+                                  if r96
+                                    r97 = _nt_task_enable
+                                    s91 << r97
                                   end
                                 end
-                                if s103.last
-                                  r103 = instantiate_node(SyntaxNode,input, i103...index, s103)
-                                  r103.extend(Statement25)
+                                if s91.last
+                                  r91 = instantiate_node(SyntaxNode,input, i91...index, s91)
+                                  r91.extend(Statement25)
                                 else
-                                  @index = i103
-                                  r103 = nil
+                                  @index = i91
+                                  r91 = nil
                                 end
-                                if r103
-                                  r103 = SyntaxNode.new(input, (index-1)...index) if r103 == true
-                                  r0 = r103
+                                if r91
+                                  r91 = SyntaxNode.new(input, (index-1)...index) if r91 == true
+                                  r0 = r91
+                                  r0.extend(Statement28)
+                                  r0.extend(Statement28)
                                 else
-                                  i111, s111 = index, []
-                                  s112, i112 = [], index
+                                  i98, s98 = index, []
+                                  s99, i99 = [], index
                                   loop do
-                                    i113, s113 = index, []
-                                    r114 = _nt_s
-                                    s113 << r114
-                                    if r114
-                                      r115 = _nt_attribute_instance
-                                      s113 << r115
-                                      if r115
-                                        r116 = _nt_s
-                                        s113 << r116
-                                      end
+                                    i100, s100 = index, []
+                                    r101 = _nt_s
+                                    s100 << r101
+                                    if r101
+                                      r102 = _nt_attribute_instance
+                                      s100 << r102
                                     end
-                                    if s113.last
-                                      r113 = instantiate_node(SyntaxNode,input, i113...index, s113)
-                                      r113.extend(Statement26)
+                                    if s100.last
+                                      r100 = instantiate_node(SyntaxNode,input, i100...index, s100)
+                                      r100.extend(Statement26)
                                     else
-                                      @index = i113
-                                      r113 = nil
+                                      @index = i100
+                                      r100 = nil
                                     end
-                                    if r113
-                                      s112 << r113
+                                    if r100
+                                      s99 << r100
                                     else
                                       break
                                     end
                                   end
-                                  r112 = instantiate_node(SyntaxNode,input, i112...index, s112)
-                                  s111 << r112
-                                  if r112
-                                    r117 = _nt_s
-                                    s111 << r117
-                                    if r117
-                                      r118 = _nt_wait_statement
-                                      s111 << r118
+                                  r99 = instantiate_node(SyntaxNode,input, i99...index, s99)
+                                  s98 << r99
+                                  if r99
+                                    r103 = _nt_s
+                                    s98 << r103
+                                    if r103
+                                      r104 = _nt_wait_statement
+                                      s98 << r104
                                     end
                                   end
-                                  if s111.last
-                                    r111 = instantiate_node(SyntaxNode,input, i111...index, s111)
-                                    r111.extend(Statement27)
-                                    r111.extend(Statement28)
+                                  if s98.last
+                                    r98 = instantiate_node(SyntaxNode,input, i98...index, s98)
+                                    r98.extend(Statement27)
                                   else
-                                    @index = i111
-                                    r111 = nil
+                                    @index = i98
+                                    r98 = nil
                                   end
-                                  if r111
-                                    r111 = SyntaxNode.new(input, (index-1)...index) if r111 == true
-                                    r0 = r111
+                                  if r98
+                                    r98 = SyntaxNode.new(input, (index-1)...index) if r98 == true
+                                    r0 = r98
+                                    r0.extend(Statement28)
+                                    r0.extend(Statement28)
                                   else
                                     @index = i0
                                     r0 = nil
@@ -17538,20 +17604,20 @@ module OrigenVerilog
       end
 
       module StatementOrNull0
-        def s1
+        def s
           elements[0]
         end
 
         def attribute_instance
           elements[1]
         end
-
-        def s2
-          elements[2]
-        end
       end
 
       module StatementOrNull1
+        def s
+          elements[1]
+        end
+
       end
 
       module StatementOrNull2
@@ -17576,6 +17642,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(StatementOrNull2)
+          r0.extend(StatementOrNull2)
         else
           i2, s2 = index, []
           s3, i3 = [], index
@@ -17586,10 +17654,6 @@ module OrigenVerilog
             if r5
               r6 = _nt_attribute_instance
               s4 << r6
-              if r6
-                r7 = _nt_s
-                s4 << r7
-              end
             end
             if s4.last
               r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
@@ -17607,19 +17671,22 @@ module OrigenVerilog
           r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
           s2 << r3
           if r3
-            if (match_len = has_terminal?(";", false, index))
-              r8 = true
-              @index += match_len
-            else
-              terminal_parse_failure('";"')
-              r8 = nil
+            r7 = _nt_s
+            s2 << r7
+            if r7
+              if (match_len = has_terminal?(";", false, index))
+                r8 = true
+                @index += match_len
+              else
+                terminal_parse_failure('";"')
+                r8 = nil
+              end
+              s2 << r8
             end
-            s2 << r8
           end
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(StatementOrNull1)
-            r2.extend(StatementOrNull2)
           else
             @index = i2
             r2 = nil
@@ -17627,6 +17694,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(StatementOrNull2)
+            r0.extend(StatementOrNull2)
           else
             @index = i0
             r0 = nil
@@ -19364,12 +19433,6 @@ module OrigenVerilog
 
       end
 
-      module ConstantExpression3
-        def to_ast
-          n :constant_expression, *elements_to_ast
-        end
-      end
-
       def _nt_constant_expression
         start_index = index
         if node_cache[:constant_expression].has_key?(index)
@@ -19404,8 +19467,6 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
-          r0.extend(ConstantExpression3)
-          r0.extend(ConstantExpression3)
         else
           i5, s5 = index, []
           r6 = _nt_unary_operator
@@ -19463,8 +19524,6 @@ module OrigenVerilog
           if r5
             r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
             r0 = r5
-            r0.extend(ConstantExpression3)
-            r0.extend(ConstantExpression3)
           else
             @index = i0
             r0 = nil
@@ -19744,12 +19803,6 @@ module OrigenVerilog
         end
       end
 
-      module ConstantMintypmaxExpression1
-        def to_ast
-          n :constant_mintypmax_expression, *elements_to_ast
-        end
-      end
-
       def _nt_constant_mintypmax_expression
         start_index = index
         if node_cache[:constant_mintypmax_expression].has_key?(index)
@@ -19766,8 +19819,6 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
-          r0.extend(ConstantMintypmaxExpression1)
-          r0.extend(ConstantMintypmaxExpression1)
         else
           i2, s2 = index, []
           r3 = _nt_constant_expression
@@ -19826,8 +19877,6 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
-            r0.extend(ConstantMintypmaxExpression1)
-            r0.extend(ConstantMintypmaxExpression1)
           else
             @index = i0
             r0 = nil
@@ -20394,6 +20443,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(MintypmaxExpression1)
+          r0.extend(MintypmaxExpression1)
         else
           i2, s2 = index, []
           r3 = _nt_expression
@@ -20445,7 +20496,6 @@ module OrigenVerilog
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(MintypmaxExpression0)
-            r2.extend(MintypmaxExpression1)
           else
             @index = i2
             r2 = nil
@@ -20453,6 +20503,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(MintypmaxExpression1)
+            r0.extend(MintypmaxExpression1)
           else
             @index = i0
             r0 = nil
@@ -20686,6 +20738,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ModulePathExpression4)
+          r0.extend(ModulePathExpression4)
         else
           i2, s2 = index, []
           r3 = _nt_unary_module_path_operator
@@ -20734,6 +20788,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(ModulePathExpression4)
+            r0.extend(ModulePathExpression4)
           else
             i10, s10 = index, []
             r11 = _nt_module_path_expression
@@ -20790,11 +20846,15 @@ module OrigenVerilog
             if r10
               r10 = SyntaxNode.new(input, (index-1)...index) if r10 == true
               r0 = r10
+              r0.extend(ModulePathExpression4)
+              r0.extend(ModulePathExpression4)
             else
               r20 = _nt_module_path_conditional_expression
               if r20
                 r20 = SyntaxNode.new(input, (index-1)...index) if r20 == true
                 r0 = r20
+                r0.extend(ModulePathExpression4)
+                r0.extend(ModulePathExpression4)
               else
                 @index = i0
                 r0 = nil
@@ -20860,6 +20920,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ModulePathMintypmaxExpression1)
+          r0.extend(ModulePathMintypmaxExpression1)
         else
           i2, s2 = index, []
           r3 = _nt_module_path_expression
@@ -20911,7 +20973,6 @@ module OrigenVerilog
           if s2.last
             r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
             r2.extend(ModulePathMintypmaxExpression0)
-            r2.extend(ModulePathMintypmaxExpression1)
           else
             @index = i2
             r2 = nil
@@ -20919,6 +20980,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(ModulePathMintypmaxExpression1)
+            r0.extend(ModulePathMintypmaxExpression1)
           else
             @index = i0
             r0 = nil
@@ -21024,6 +21087,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(RangeExpression3)
+          r0.extend(RangeExpression3)
         else
           i2, s2 = index, []
           r3 = _nt_msb_constant_expression
@@ -21060,6 +21125,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(RangeExpression3)
+            r0.extend(RangeExpression3)
           else
             i8, s8 = index, []
             r9 = _nt_base_expression
@@ -21096,6 +21163,8 @@ module OrigenVerilog
             if r8
               r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
               r0 = r8
+              r0.extend(RangeExpression3)
+              r0.extend(RangeExpression3)
             else
               i14, s14 = index, []
               r15 = _nt_base_expression
@@ -21125,7 +21194,6 @@ module OrigenVerilog
               if s14.last
                 r14 = instantiate_node(SyntaxNode,input, i14...index, s14)
                 r14.extend(RangeExpression2)
-                r14.extend(RangeExpression3)
               else
                 @index = i14
                 r14 = nil
@@ -21133,6 +21201,8 @@ module OrigenVerilog
               if r14
                 r14 = SyntaxNode.new(input, (index-1)...index) if r14 == true
                 r0 = r14
+                r0.extend(RangeExpression3)
+                r0.extend(RangeExpression3)
               else
                 @index = i0
                 r0 = nil
@@ -21521,31 +21591,43 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ModulePathPrimary1)
+          r0.extend(ModulePathPrimary1)
         else
           r2 = _nt_identifier
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(ModulePathPrimary1)
+            r0.extend(ModulePathPrimary1)
           else
             r3 = _nt_module_path_concatenation
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(ModulePathPrimary1)
+              r0.extend(ModulePathPrimary1)
             else
               r4 = _nt_module_path_multiple_concatenation
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(ModulePathPrimary1)
+                r0.extend(ModulePathPrimary1)
               else
                 r5 = _nt_function_call
                 if r5
                   r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
                   r0 = r5
+                  r0.extend(ModulePathPrimary1)
+                  r0.extend(ModulePathPrimary1)
                 else
                   r6 = _nt_system_function_call
                   if r6
                     r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
                     r0 = r6
+                    r0.extend(ModulePathPrimary1)
+                    r0.extend(ModulePathPrimary1)
                   else
                     i7, s7 = index, []
                     if (match_len = has_terminal?("(", false, index))
@@ -21581,7 +21663,6 @@ module OrigenVerilog
                     if s7.last
                       r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
                       r7.extend(ModulePathPrimary0)
-                      r7.extend(ModulePathPrimary1)
                     else
                       @index = i7
                       r7 = nil
@@ -21589,6 +21670,8 @@ module OrigenVerilog
                     if r7
                       r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
                       r0 = r7
+                      r0.extend(ModulePathPrimary1)
+                      r0.extend(ModulePathPrimary1)
                     else
                       @index = i0
                       r0 = nil
@@ -21687,6 +21770,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Primary4)
+          r0.extend(Primary4)
         else
           i2, s2 = index, []
           r3 = _nt_hierarchical_identifier
@@ -21805,26 +21890,36 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(Primary4)
+            r0.extend(Primary4)
           else
             r20 = _nt_concatenation
             if r20
               r20 = SyntaxNode.new(input, (index-1)...index) if r20 == true
               r0 = r20
+              r0.extend(Primary4)
+              r0.extend(Primary4)
             else
               r21 = _nt_multiple_concatenation
               if r21
                 r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
                 r0 = r21
+                r0.extend(Primary4)
+                r0.extend(Primary4)
               else
                 r22 = _nt_function_call
                 if r22
                   r22 = SyntaxNode.new(input, (index-1)...index) if r22 == true
                   r0 = r22
+                  r0.extend(Primary4)
+                  r0.extend(Primary4)
                 else
                   r23 = _nt_system_function_call
                   if r23
                     r23 = SyntaxNode.new(input, (index-1)...index) if r23 == true
                     r0 = r23
+                    r0.extend(Primary4)
+                    r0.extend(Primary4)
                   else
                     i24, s24 = index, []
                     if (match_len = has_terminal?("(", false, index))
@@ -21867,13 +21962,15 @@ module OrigenVerilog
                     if r24
                       r24 = SyntaxNode.new(input, (index-1)...index) if r24 == true
                       r0 = r24
+                      r0.extend(Primary4)
+                      r0.extend(Primary4)
                     else
                       r30 = _nt_string
-                      r30.extend(Primary4)
-                      r30.extend(Primary4)
                       if r30
                         r30 = SyntaxNode.new(input, (index-1)...index) if r30 == true
                         r0 = r30
+                        r0.extend(Primary4)
+                        r0.extend(Primary4)
                       else
                         @index = i0
                         r0 = nil
@@ -22751,6 +22848,13 @@ module OrigenVerilog
         r0
       end
 
+      module Number0
+        # 1..1 is used to stop Treetop from merging nodes below this level
+                def to_ast
+                  n :number, *elements_to_ast
+                end
+      end
+
       def _nt_number
         start_index = index
         if node_cache[:number].has_key?(index)
@@ -22762,38 +22866,60 @@ module OrigenVerilog
           return cached
         end
 
-        i0 = index
-        r1 = _nt_octal_number
-        if r1
-          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
-          r0 = r1
-        else
-          r2 = _nt_binary_number
+        s0, i0 = [], index
+        loop do
+          i1 = index
+          r2 = _nt_octal_number
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
-            r0 = r2
+            r1 = r2
           else
-            r3 = _nt_hex_number
+            r3 = _nt_binary_number
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
-              r0 = r3
+              r1 = r3
             else
-              r4 = _nt_real_number
+              r4 = _nt_hex_number
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
-                r0 = r4
+                r1 = r4
               else
-                r5 = _nt_decimal_number
+                r5 = _nt_real_number
                 if r5
                   r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
-                  r0 = r5
+                  r1 = r5
                 else
-                  @index = i0
-                  r0 = nil
+                  r6 = _nt_decimal_number
+                  if r6
+                    r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
+                    r1 = r6
+                  else
+                    @index = i1
+                    r1 = nil
+                  end
                 end
               end
             end
           end
+          if r1
+            s0 << r1
+          else
+            break
+          end
+          if s0.size == 1
+            break
+          end
+        end
+        if s0.size < 1
+          @index = i0
+          r0 = nil
+        else
+          if s0.size < 1
+            @terminal_failures.pop
+          end
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(Number0)
+          r0.extend(Number0)
         end
 
         node_cache[:number][start_index] = r0
@@ -22876,6 +23002,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(RealNumber3)
+          r0.extend(RealNumber3)
         else
           i5, s5 = index, []
           r6 = _nt_unsigned_number
@@ -22928,7 +23056,6 @@ module OrigenVerilog
           if s5.last
             r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
             r5.extend(RealNumber2)
-            r5.extend(RealNumber3)
           else
             @index = i5
             r5 = nil
@@ -22936,6 +23063,8 @@ module OrigenVerilog
           if r5
             r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
             r0 = r5
+            r0.extend(RealNumber3)
+            r0.extend(RealNumber3)
           else
             @index = i0
             r0 = nil
@@ -22975,10 +23104,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(Exp0)
+          r0.extend(Exp0)
         else
           if (match_len = has_terminal?("E", false, index))
-            r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(Exp0)
+            r2 = true
             @index += match_len
           else
             terminal_parse_failure('"E"')
@@ -22987,6 +23117,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(Exp0)
+            r0.extend(Exp0)
           else
             @index = i0
             r0 = nil
@@ -23003,8 +23135,12 @@ module OrigenVerilog
           elements[1]
         end
 
-        def unsigned_number
+        def s
           elements[2]
+        end
+
+        def unsigned_number
+          elements[3]
         end
       end
 
@@ -23013,8 +23149,12 @@ module OrigenVerilog
           elements[1]
         end
 
-        def x_digit
+        def s
           elements[2]
+        end
+
+        def x_digit
+          elements[3]
         end
 
       end
@@ -23024,8 +23164,12 @@ module OrigenVerilog
           elements[1]
         end
 
-        def z_digit
+        def s
           elements[2]
+        end
+
+        def z_digit
+          elements[3]
         end
 
       end
@@ -23047,14 +23191,9 @@ module OrigenVerilog
           return cached
         end
 
-        i0 = index
-        r1 = _nt_unsigned_number
-        if r1
-          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
-          r0 = r1
-          r0.extend(DecimalNumber3)
-          r0.extend(DecimalNumber3)
-        else
+        s0, i0 = [], index
+        loop do
+          i1 = index
           i2, s2 = index, []
           r4 = _nt_size
           if r4
@@ -23067,8 +23206,12 @@ module OrigenVerilog
             r5 = _nt_decimal_base
             s2 << r5
             if r5
-              r6 = _nt_unsigned_number
+              r6 = _nt_s
               s2 << r6
+              if r6
+                r7 = _nt_unsigned_number
+                s2 << r7
+              end
             end
           end
           if s2.last
@@ -23080,99 +23223,126 @@ module OrigenVerilog
           end
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
-            r0 = r2
-            r0.extend(DecimalNumber3)
-            r0.extend(DecimalNumber3)
+            r1 = r2
           else
-            i7, s7 = index, []
-            r9 = _nt_size
+            i8, s8 = index, []
+            r10 = _nt_size
+            if r10
+              r9 = r10
+            else
+              r9 = instantiate_node(SyntaxNode,input, index...index)
+            end
+            s8 << r9
             if r9
-              r8 = r9
-            else
-              r8 = instantiate_node(SyntaxNode,input, index...index)
-            end
-            s7 << r8
-            if r8
-              r10 = _nt_decimal_base
-              s7 << r10
-              if r10
-                r11 = _nt_x_digit
-                s7 << r11
-                if r11
-                  s12, i12 = [], index
-                  loop do
-                    r13 = _nt__
-                    if r13
-                      s12 << r13
-                    else
-                      break
-                    end
-                  end
-                  r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
-                  s7 << r12
-                end
-              end
-            end
-            if s7.last
-              r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
-              r7.extend(DecimalNumber1)
-            else
-              @index = i7
-              r7 = nil
-            end
-            if r7
-              r7 = SyntaxNode.new(input, (index-1)...index) if r7 == true
-              r0 = r7
-              r0.extend(DecimalNumber3)
-              r0.extend(DecimalNumber3)
-            else
-              i14, s14 = index, []
-              r16 = _nt_size
-              if r16
-                r15 = r16
-              else
-                r15 = instantiate_node(SyntaxNode,input, index...index)
-              end
-              s14 << r15
-              if r15
-                r17 = _nt_decimal_base
-                s14 << r17
-                if r17
-                  r18 = _nt_z_digit
-                  s14 << r18
-                  if r18
-                    s19, i19 = [], index
+              r11 = _nt_decimal_base
+              s8 << r11
+              if r11
+                r12 = _nt_s
+                s8 << r12
+                if r12
+                  r13 = _nt_x_digit
+                  s8 << r13
+                  if r13
+                    s14, i14 = [], index
                     loop do
-                      r20 = _nt__
-                      if r20
-                        s19 << r20
+                      r15 = _nt__
+                      if r15
+                        s14 << r15
                       else
                         break
                       end
                     end
-                    r19 = instantiate_node(SyntaxNode,input, i19...index, s19)
-                    s14 << r19
+                    r14 = instantiate_node(SyntaxNode,input, i14...index, s14)
+                    s8 << r14
                   end
                 end
               end
-              if s14.last
-                r14 = instantiate_node(SyntaxNode,input, i14...index, s14)
-                r14.extend(DecimalNumber2)
+            end
+            if s8.last
+              r8 = instantiate_node(SyntaxNode,input, i8...index, s8)
+              r8.extend(DecimalNumber1)
+            else
+              @index = i8
+              r8 = nil
+            end
+            if r8
+              r8 = SyntaxNode.new(input, (index-1)...index) if r8 == true
+              r1 = r8
+            else
+              i16, s16 = index, []
+              r18 = _nt_size
+              if r18
+                r17 = r18
               else
-                @index = i14
-                r14 = nil
+                r17 = instantiate_node(SyntaxNode,input, index...index)
               end
-              if r14
-                r14 = SyntaxNode.new(input, (index-1)...index) if r14 == true
-                r0 = r14
-                r0.extend(DecimalNumber3)
-                r0.extend(DecimalNumber3)
+              s16 << r17
+              if r17
+                r19 = _nt_decimal_base
+                s16 << r19
+                if r19
+                  r20 = _nt_s
+                  s16 << r20
+                  if r20
+                    r21 = _nt_z_digit
+                    s16 << r21
+                    if r21
+                      s22, i22 = [], index
+                      loop do
+                        r23 = _nt__
+                        if r23
+                          s22 << r23
+                        else
+                          break
+                        end
+                      end
+                      r22 = instantiate_node(SyntaxNode,input, i22...index, s22)
+                      s16 << r22
+                    end
+                  end
+                end
+              end
+              if s16.last
+                r16 = instantiate_node(SyntaxNode,input, i16...index, s16)
+                r16.extend(DecimalNumber2)
               else
-                @index = i0
-                r0 = nil
+                @index = i16
+                r16 = nil
+              end
+              if r16
+                r16 = SyntaxNode.new(input, (index-1)...index) if r16 == true
+                r1 = r16
+              else
+                r24 = _nt_unsigned_number
+                if r24
+                  r24 = SyntaxNode.new(input, (index-1)...index) if r24 == true
+                  r1 = r24
+                else
+                  @index = i1
+                  r1 = nil
+                end
               end
             end
           end
+          if r1
+            s0 << r1
+          else
+            break
+          end
+          if s0.size == 1
+            break
+          end
+        end
+        if s0.size < 1
+          @index = i0
+          r0 = nil
+        else
+          if s0.size < 1
+            @terminal_failures.pop
+          end
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(DecimalNumber3)
+          r0.extend(DecimalNumber3)
         end
 
         node_cache[:decimal_number][start_index] = r0
@@ -23431,7 +23601,7 @@ module OrigenVerilog
 
       module Size0
         def to_ast
-          n :size, *elements_to_ast
+          n :size, elements_to_ast.join.to_i
         end
       end
 
@@ -23464,7 +23634,7 @@ module OrigenVerilog
 
       module NonZeroUnsignedNumber1
         def to_ast
-          n :non_zero_unsigned_number, *elements_to_ast
+          elements_to_ast.join.to_i
         end
       end
 
@@ -23538,7 +23708,7 @@ module OrigenVerilog
 
       module UnsignedNumber1
         def to_ast
-          n :unsigned_number, *elements_to_ast
+          elements_to_ast.join.to_i
         end
       end
 
@@ -23612,7 +23782,7 @@ module OrigenVerilog
 
       module BinaryValue1
         def to_ast
-          n :binary_value, *elements_to_ast
+          elements_to_ast.join
         end
       end
 
@@ -23686,7 +23856,7 @@ module OrigenVerilog
 
       module OctalValue1
         def to_ast
-          n :octal_value, *elements_to_ast
+          elements_to_ast.join
         end
       end
 
@@ -23760,7 +23930,7 @@ module OrigenVerilog
 
       module HexValue1
         def to_ast
-          n :hex_value, *elements_to_ast
+          elements_to_ast.join
         end
       end
 
@@ -24543,11 +24713,15 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(BinaryDigit0)
+          r0.extend(BinaryDigit0)
         else
           r2 = _nt_z_digit
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(BinaryDigit0)
+            r0.extend(BinaryDigit0)
           else
             if (match_len = has_terminal?("0", false, index))
               r3 = true
@@ -24559,10 +24733,11 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(BinaryDigit0)
+              r0.extend(BinaryDigit0)
             else
               if (match_len = has_terminal?("1", false, index))
-                r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                r4.extend(BinaryDigit0)
+                r4 = true
                 @index += match_len
               else
                 terminal_parse_failure('"1"')
@@ -24571,6 +24746,8 @@ module OrigenVerilog
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
                 r0 = r4
+                r0.extend(BinaryDigit0)
+                r0.extend(BinaryDigit0)
               else
                 @index = i0
                 r0 = nil
@@ -24606,16 +24783,18 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(OctalDigit0)
+          r0.extend(OctalDigit0)
         else
           r2 = _nt_z_digit
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(OctalDigit0)
+            r0.extend(OctalDigit0)
           else
             if has_terminal?(@regexps[gr = '\A[0-7]'] ||= Regexp.new(gr), :regexp, index)
-              r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              r3.extend(OctalDigit0)
-              r3.extend(OctalDigit0)
+              r3 = true
               @index += 1
             else
               terminal_parse_failure('[0-7]')
@@ -24624,6 +24803,8 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(OctalDigit0)
+              r0.extend(OctalDigit0)
             else
               @index = i0
               r0 = nil
@@ -24658,16 +24839,18 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(HexDigit0)
+          r0.extend(HexDigit0)
         else
           r2 = _nt_z_digit
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(HexDigit0)
+            r0.extend(HexDigit0)
           else
             if has_terminal?(@regexps[gr = '\A[0-9a-fA-F]'] ||= Regexp.new(gr), :regexp, index)
-              r3 = instantiate_node(SyntaxNode,input, index...(index + 1))
-              r3.extend(HexDigit0)
-              r3.extend(HexDigit0)
+              r3 = true
               @index += 1
             else
               terminal_parse_failure('[0-9a-fA-F]')
@@ -24676,6 +24859,8 @@ module OrigenVerilog
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
               r0 = r3
+              r0.extend(HexDigit0)
+              r0.extend(HexDigit0)
             else
               @index = i0
               r0 = nil
@@ -24716,10 +24901,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(XDigit0)
+          r0.extend(XDigit0)
         else
           if (match_len = has_terminal?("X", false, index))
-            r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(XDigit0)
+            r2 = true
             @index += match_len
           else
             terminal_parse_failure('"X"')
@@ -24728,6 +24914,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(XDigit0)
+            r0.extend(XDigit0)
           else
             @index = i0
             r0 = nil
@@ -24767,10 +24955,11 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ZDigit0)
+          r0.extend(ZDigit0)
         else
           if (match_len = has_terminal?("Z", false, index))
-            r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            r2.extend(ZDigit0)
+            r2 = true
             @index += match_len
           else
             terminal_parse_failure('"Z"')
@@ -24779,6 +24968,8 @@ module OrigenVerilog
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
             r0 = r2
+            r0.extend(ZDigit0)
+            r0.extend(ZDigit0)
           else
             @index = i0
             r0 = nil
@@ -25728,6 +25919,12 @@ module OrigenVerilog
         r0
       end
 
+      module ParameterIdentifier0
+        def to_ast
+          n :parameter_identifier, text_value
+        end
+      end
+
       def _nt_parameter_identifier
         start_index = index
         if node_cache[:parameter_identifier].has_key?(index)
@@ -25740,6 +25937,8 @@ module OrigenVerilog
         end
 
         r0 = _nt_identifier
+        r0.extend(ParameterIdentifier0)
+        r0.extend(ParameterIdentifier0)
 
         node_cache[:parameter_identifier][start_index] = r0
 

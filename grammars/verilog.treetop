@@ -43,10 +43,10 @@ module OrigenVerilog
       #     [ list_of_port_declarations ] ; { non_port_module_item }
       #     endmodule
       rule module_declaration
-        ((s attribute_instance)* s module_keyword S module_identifier s module_parameter_port_list? s
+        (((s attribute_instance)* s module_keyword S module_identifier s module_parameter_port_list? s
           list_of_ports s ";" (s module_item)* s "endmodule") /
         ((s attribute_instance)* s module_keyword S module_identifier s module_parameter_port_list? s
-          list_of_port_declarations? s ";" (s non_port_module_item)* s "endmodule") {
+          list_of_port_declarations? s ";" (s non_port_module_item)* s "endmodule")) {
           def to_ast
             n :module_declaration, *elements_to_ast
           end
@@ -61,10 +61,10 @@ module OrigenVerilog
       # Compiler directives
       #################################################################
       rule compiler_directive
-        directive:(conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive
+        (conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive
         ) {
           def to_ast
-            n :compiler_directive, directive.to_ast
+            n :compiler_directive, *elements_to_ast
           end
         }
       end
@@ -178,11 +178,7 @@ module OrigenVerilog
       #   ( port_declaration { , port_declaration } )
       #   | ( )
       rule list_of_port_declarations
-        "(" s port_declaration? (s ',' s port_declaration)* s ")" {
-          def to_ast
-            n :list_of_port_declarations, *elements_to_ast
-          end
-        }
+        "(" s port_declaration? (s ',' s port_declaration)* s ")"
       end
       # port ::=
       #   [ port_expression ]
@@ -198,8 +194,8 @@ module OrigenVerilog
       #   port_reference
       #   | { port_reference { , port_reference } }
       rule port_expression
-        port_reference / 
-        (port_reference (s ',' s port_reference s)*) {
+        (port_reference / 
+        (port_reference (s ',' s port_reference s)*)) {
           def to_ast
             n :port_expression, *elements_to_ast
           end
@@ -221,11 +217,7 @@ module OrigenVerilog
       rule port_declaration
         (((s attribute_instance)* s inout_declaration) /
         ((s attribute_instance)* s input_declaration) / 
-        ((s attribute_instance)* s output_declaration)) {
-          def to_ast
-            n :port_declaration, *elements_to_ast
-          end
-        }
+        ((s attribute_instance)* s output_declaration))
       end
 
       # A.1.4 Module items
@@ -246,17 +238,17 @@ module OrigenVerilog
       #   | { attribute_instance } loop_generate_construct
       #   | { attribute_instance } conditional_generate_construct
       rule module_or_generate_item
-        ((s attribute_instance s)* s module_or_generate_item_declaration / 
-        (s attribute_instance s)* s local_parameter_declaration s ";" /
-        (s attribute_instance s)* s parameter_override /
-        (s attribute_instance s)* s continuous_assign /
-        (s attribute_instance s)* s gate_instantiation /
-        (s attribute_instance s)* s udp_instantiation /
-        (s attribute_instance s)* s module_instantiation /
-        (s attribute_instance s)* s initial_construct /
-        (s attribute_instance s)* s always_construct /
-        (s attribute_instance s)* s loop_generate_construct /
-        (s attribute_instance s)* s conditional_generate_construct) {
+        (((s attribute_instance s)* s module_or_generate_item_declaration) / 
+         ((s attribute_instance s)* s local_parameter_declaration s ";") /
+         ((s attribute_instance s)* s parameter_override) /
+         ((s attribute_instance s)* s continuous_assign) /
+         ((s attribute_instance s)* s gate_instantiation) /
+         ((s attribute_instance s)* s udp_instantiation) /
+         ((s attribute_instance s)* s module_instantiation) /
+         ((s attribute_instance s)* s initial_construct) /
+         ((s attribute_instance s)* s always_construct) /
+         ((s attribute_instance s)* s loop_generate_construct) /
+         ((s attribute_instance s)* s conditional_generate_construct)) {
           def to_ast
             n :module_or_generate_item, *elements_to_ast
           end
@@ -300,11 +292,7 @@ module OrigenVerilog
          generate_region /
          specify_block /
          ((s attribute_instance)* s parameter_declaration s ";") /
-         ((s attribute_instance)* s specparam_declaration)) {
-          def to_ast
-            n :non_port_module_item, *elements_to_ast
-          end
-        }
+         ((s attribute_instance)* s specparam_declaration))
       end
       # parameter_override ::= defparam list_of_defparam_assignments ;
       rule parameter_override
@@ -357,8 +345,8 @@ module OrigenVerilog
       #   parameter [ signed ] [ range ] list_of_param_assignments
       #   | parameter parameter_type list_of_param_assignments
       rule parameter_declaration
-        (("parameter" s signed? s range? s list_of_param_assignments) /
-        ("parameter" s parameter_type s list_of_param_assignments)) {
+        (("parameter" s parameter_type s list_of_param_assignments) /
+         ("parameter" s signed? s range? s list_of_param_assignments)) {
           def to_ast
             n :parameter_declaration, *elements_to_ast
           end
@@ -375,9 +363,9 @@ module OrigenVerilog
       # parameter_type ::=
       #   integer | real | realtime | time
       rule parameter_type
-        "integer" / "real" / "realtime" / "time" {
+        ("integer" / "real" / "realtime" / "time") {
           def to_ast
-            text_value
+            n :parameter_type, text_value
           end
         }
       end
@@ -464,14 +452,14 @@ module OrigenVerilog
       #   | trireg [ drive_strength ] [ vectored | scalared ] [ signed ]
       #     range [ delay3 ] list_of_net_decl_assignments ;
       rule net_declaration
-        net_type s signed? s delay3? s list_of_net_identifiers s ";" /
-        net_type s drive_strength? s signed? delay3? s list_of_net_decl_assignments s ";" /
-        net_type s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";" /
-        net_type s drive_strength? s (vectored / scalared)? s signed? s range s delay3? list_of_net_decl_assignments s ";" /
-        trireg s charge_strength? s signed? s delay3? list_of_net_identifiers s ";" /
-        trireg s drive_strength? s signed? s delay3? list_of_net_decl_assignments s ";" /
-        trireg s charge_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";" /
-        trireg s drive_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_decl_assignments s ";"
+        ((net_type s signed? s delay3? s list_of_net_identifiers s ";") /
+         (net_type s drive_strength? s signed? delay3? s list_of_net_decl_assignments s ";") /
+         (net_type s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";") /
+         (net_type s drive_strength? s (vectored / scalared)? s signed? s range s delay3? list_of_net_decl_assignments s ";") /
+         (trireg s charge_strength? s signed? s delay3? list_of_net_identifiers s ";") /
+         (trireg s drive_strength? s signed? s delay3? list_of_net_decl_assignments s ";") /
+         (trireg s charge_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";") /
+         (trireg s drive_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_decl_assignments s ";"))
         {
           def to_ast
             n :net_declaration, *elements_to_ast
@@ -521,8 +509,8 @@ module OrigenVerilog
       #   | tri | triand | trior | tri0 | tri1
       #   | uwire | wire | wand | wor
       rule net_type
-        "supply0" / "supply1" / "tri" / "triand" / "trior" / "tri0" / "tri1" /
-        "uwire" / "wire" / "wand" / "wor" {
+        ("supply0" / "supply1" / "tri" / "triand" / "trior" / "tri0" / "tri1" /
+        "uwire" / "wire" / "wand" / "wor") {
           def to_ast
             text_value
           end
@@ -554,12 +542,12 @@ module OrigenVerilog
       #   | ( highz0 , strength1 )
       #   | ( highz1 , strength0 )
       rule drive_strength
-        ("(" s strength0 s "," s strength1 s ")") /
+        (("(" s strength0 s "," s strength1 s ")") /
         ("(" s strength1 s "," s strength0 s ")") /
         ("(" s strength0 s "," s highz1 s ")") /
         ("(" s strength1 s "," s highz0 s ")") /
         ("(" s highz0 s "," s strength1 s ")") /
-        ("(" s highz1 s "," s strength0 s ")") {
+        ("(" s highz1 s "," s strength0 s ")")) {
           def to_ast
             n :drive_strength, *elements_to_ast
           end
@@ -567,7 +555,7 @@ module OrigenVerilog
       end
       # strength0 ::= supply0 | strong0 | pull0 | weak0
       rule strength0
-        "supply0" / "strong0" / "pull0" / "weak0" {
+       ("supply0" / "strong0" / "pull0" / "weak0") {
           def to_ast
             text_value
           end
@@ -575,7 +563,7 @@ module OrigenVerilog
       end
       # strength1 ::= supply1 | strong1 | pull1 | weak1
       rule strength1
-        "supply1" / "strong1" / "pull1" / "weak1" {
+        ("supply1" / "strong1" / "pull1" / "weak1") {
           def to_ast
             text_value
           end
@@ -596,8 +584,8 @@ module OrigenVerilog
       #   # delay_value
       #   | # ( mintypmax_expression [ , mintypmax_expression [ , mintypmax_expression ] ] )
       rule delay3
-        ("#" s delay_value) /
-        ("#" s "(" s mintypmax_expression (s "," s mintypmax_expression)? (s "," s mintypmax_expression)? s ")") {
+        (("#" s delay_value) /
+        ("#" s "(" s mintypmax_expression (s "," s mintypmax_expression)? (s "," s mintypmax_expression)? s ")")) {
           def to_ast
             n :delay, *elements_to_ast
           end
@@ -607,8 +595,8 @@ module OrigenVerilog
       #   # delay_value
       #   | # ( mintypmax_expression [ , mintypmax_expression ] )
       rule delay2
-        ("#" s delay_value) /
-        ("#" s "(" s mintypmax_expression (s "," s mintypmax_expression)? s ")") {
+        (("#" s delay_value) /
+        ("#" s "(" s mintypmax_expression (s "," s mintypmax_expression)? s ")")) {
           def to_ast
             n :delay, *elements_to_ast
           end
@@ -625,80 +613,47 @@ module OrigenVerilog
       # A.2.3 Declaration lists
 
       # list_of_defparam_assignments ::= defparam_assignment { , defparam_assignment }
+      rule list_of_defparam_assignments
+        defparam_assignment (s "," s defparam_assignment)*
+      end
       # list_of_event_identifiers ::= event_identifier { dimension }
       #   { , event_identifier { dimension } }
       rule list_of_event_identifiers
-        event_identifier s dimension? s (',' s event_identifier s dimension?)* {
-          def to_ast
-            n :list_of_event_identifiers, *elements_to_ast
-          end
-        }
+        event_identifier s dimension? s (',' s event_identifier s dimension?)*
       end
       # list_of_net_decl_assignments ::= net_decl_assignment { , net_decl_assignment }
       rule list_of_net_decl_assignments
-        net_decl_assignment (s "," s net_decl_assignment)* {
-          def to_ast
-            n :list_of_net_decl_assignments, *elements_to_ast
-          end
-        }
+        net_decl_assignment (s "," s net_decl_assignment)*
       end
       # list_of_net_identifiers ::= net_identifier { dimension }
       #   { , net_identifier { dimension } }
       rule list_of_net_identifiers
-        net_identifier (s dimension)* (s "," net_identifier (s dimension)*)* {
-          def to_ast
-            n :list_of_net_identifiers, *elements_to_ast
-          end
-        }
+        net_identifier (s dimension)* (s "," net_identifier (s dimension)*)*
       end
       # list_of_param_assignments ::= param_assignment { , param_assignment }
       rule list_of_param_assignments
-        param_assignment (s "," s param_assignment)* {
-          def to_ast
-            n :list_of_param_assignments, *elements_to_ast
-          end
-        }
+        param_assignment (s "," s param_assignment)*
       end
       # list_of_port_identifiers ::= port_identifier { , port_identifier }
       rule list_of_port_identifiers
-        port_identifier (s "," s port_identifier)* {
-          def to_ast
-            n :list_of_port_identifiers, *elements_to_ast
-          end
-        }
+        port_identifier (s "," s port_identifier)*
       end
       # list_of_real_identifiers ::= real_type { , real_type }
       rule list_of_real_identifiers
-        real_type (s "," s real_type)* {
-          def to_ast
-            n :list_of_real_identifiers, *elements_to_ast
-          end
-        }
+        real_type (s "," s real_type)*
       end
       # list_of_specparam_assignments ::= specparam_assignment { , specparam_assignment }
       rule list_of_specparam_assignments
-        specparam_assignment (s "," s specparam_assignment)* {
-          def to_ast
-            n :list_of_specparam_assignments, *elements_to_ast
-          end
-        }
+        specparam_assignment (s "," s specparam_assignment)*
       end
       # list_of_variable_identifiers ::= variable_type { , variable_type }
       rule list_of_variable_identifiers
-        variable_type (s "," s variable_type)* {
-          def to_ast
-            n :list_of_variable_identifiers, *elements_to_ast
-          end
-        }
+        variable_type (s "," s variable_type)*
       end
       # list_of_variable_port_identifiers ::= port_identifier [ = constant_expression ]
       #   { , port_identifier [ = constant_expression ] }
       rule list_of_variable_port_identifiers
-        port_identifier (s "=" s constant_expression)? (s "," s port_identifier (s "=" s constant_expression)?)* {
-          def to_ast
-            n :list_of_variable_port_identifiers, *elements_to_ast
-          end
-        }
+        port_identifier (s "=" s constant_expression)? (s "," s port_identifier (s "=" s constant_expression)?)*
       end
 
       # A.2.4 Declaration assignments
@@ -795,14 +750,14 @@ module OrigenVerilog
       #   function_statement
       #   endfunction
       rule function_declaration
-        ("function" s automatic? s function_range_or_type? s function_identifier s ";" s
+        (("function" s automatic? s function_range_or_type? s function_identifier s ";" s
         function_item_declaration s function_item_declaration* s
         function_statement s
         "endfunction") /
         ("function" s automatic? s function_range_or_type? s function_identifier s "(" s function_port_list s ")" s ";" s
         block_item_declaration* s
         function_statement s
-        "endfunction") {
+        "endfunction")) {
           def to_ast
             n :function_declaration, *elements_to_ast
           end
@@ -833,14 +788,14 @@ module OrigenVerilog
       #   statement_or_null
       #   endtask
       rule task_declaration
-        ("task" s automatic? s task_identifier s ";" s
+        (("task" s automatic? s task_identifier s ";" s
         task_item_declaration* s
         statement_or_null s
         "endtask") /
         ("task" s automatic? s task_identifier s "(" s task_port_list? s ")" s ";" s
         block_item_declaration* s
         statement_or_null s
-        "endtask") {
+        "endtask")) {
           def to_ast
             n :task_declaration, *elements_to_ast
           end
@@ -906,7 +861,7 @@ module OrigenVerilog
       #   | pullup [pullup_strength]
       #     pull_gate_instance { , pull_gate_instance } ;
       rule gate_instantiation
-        (cmos_switchtype s delay3? s
+        ((cmos_switchtype s delay3? s
          cmos_switch_instance (s "," s cmos_switch_instance)* s ";") /
         (enable_gatetype s drive_strength? s delay3? s
          enable_gate_instance (s "," s enable_gate_instance)* s ";") /
@@ -923,7 +878,7 @@ module OrigenVerilog
         ("pulldown" s pulldown_strength? s
          pull_gate_instance (s "," s pull_gate_instance)* s ";") /
         ("pullup" s pullup_strength? s
-         pull_gate_instance (s "," s pull_gate_instance)* s ";") {
+         pull_gate_instance (s "," s pull_gate_instance)* s ";")) {
           def to_ast
             n :gate_instantiation, *elements_to_ast
           end
@@ -950,9 +905,9 @@ module OrigenVerilog
       #   | ( strength1 , strength0 )
       #   | ( strength0 )
       rule pulldown_strength
-        ("(" s strength0 s "," s strength1 s ")") /
+        (("(" s strength0 s "," s strength1 s ")") /
         ("(" s strength1 s "," s strength0 s ")") /
-        ("(" s strength0 s ")") {
+        ("(" s strength0 s ")")) {
           def to_ast
             n :pulldown_strength, *elements_to_ast
           end
@@ -963,9 +918,9 @@ module OrigenVerilog
       #   | ( strength1 , strength0 )
       #   | ( strength1 )
       rule pullup_strength
-        ("(" s strength0 s "," s strength1 s ")") /
+        (("(" s strength0 s "," s strength1 s ")") /
         ("(" s strength1 s "," s strength0 s ")") /
-        ("(" s strength1 s ")") {
+        ("(" s strength1 s ")")) {
           def to_ast
             n :pullup_strength, *elements_to_ast
           end
@@ -985,7 +940,7 @@ module OrigenVerilog
 
       # cmos_switchtype ::= cmos | rcmos
       rule cmos_switchtype
-        "cmos" / "rcmos" {
+        ("cmos" / "rcmos") {
           def to_ast
             text_value
           end
@@ -993,7 +948,7 @@ module OrigenVerilog
       end
       # enable_gatetype ::= bufif0 | bufif1 | notif0 | notif1
       rule enable_gatetype
-        "bufif0" / "bufif1" / "notif0" / "notif1" {
+        ("bufif0" / "bufif1" / "notif0" / "notif1") {
           def to_ast
             text_value
           end
@@ -1001,7 +956,7 @@ module OrigenVerilog
       end
       # mos_switchtype ::= nmos | pmos | rnmos | rpmos
       rule mos_switchtype
-        "nmos" / "pmos" / "rnmos" / "rpmos" {
+        ("nmos" / "pmos" / "rnmos" / "rpmos") {
           def to_ast
             text_value
           end
@@ -1009,7 +964,7 @@ module OrigenVerilog
       end
       # n_input_gatetype ::= and | nand | or | nor | xor | xnor
       rule n_input_gatetype
-        "and" / "nand" / "or" / "nor" / "xor" / "xnor" {
+        ("and" / "nand" / "or" / "nor" / "xor" / "xnor") {
           def to_ast
             text_value
           end
@@ -1017,7 +972,7 @@ module OrigenVerilog
       end
       # n_output_gatetype ::= buf | not
       rule n_output_gatetype
-        "buf" / "not" {
+        ("buf" / "not") {
           def to_ast
             text_value
           end
@@ -1025,7 +980,7 @@ module OrigenVerilog
       end
       # pass_en_switchtype ::= tranif0 | tranif1 | rtranif1 | rtranif0
       rule pass_en_switchtype
-        "tranif0" / "tranif1" / "rtranif1" / "rtranif0" {
+        ("tranif0" / "tranif1" / "rtranif1" / "rtranif0") {
           def to_ast
             text_value
           end
@@ -1033,7 +988,7 @@ module OrigenVerilog
       end
       # pass_switchtype ::= tran | rtran
       rule pass_switchtype
-        "tran" / "rtran" {
+        ("tran" / "rtran") {
           def to_ast
             text_value
           end
@@ -1067,8 +1022,8 @@ module OrigenVerilog
       #   ordered_parameter_assignment { , ordered_parameter_assignment } |
       #   named_parameter_assignment { , named_parameter_assignment }
       rule list_of_parameter_assignments
-        (ordered_parameter_assignment (s "," s ordered_parameter_assignment)*) /
-        (named_parameter_assignment (s "," s named_parameter_assignment)*) {
+        ((ordered_parameter_assignment (s "," s ordered_parameter_assignment)*) /
+        (named_parameter_assignment (s "," s named_parameter_assignment)*)) {
           def to_ast
             n :list_of_parameter_assignments, *elements_to_ast
           end
@@ -1106,8 +1061,8 @@ module OrigenVerilog
       #   ordered_port_connection { , ordered_port_connection }
       #   | named_port_connection { , named_port_connection }
       rule list_of_port_connections
-        (ordered_port_connection (s "," s ordered_port_connection)*) /
-        (named_port_connection (s "," s named_port_connection)*) {
+        ((ordered_port_connection (s "," s ordered_port_connection)*) /
+        (named_port_connection (s "," s named_port_connection)*)) {
           def to_ast
             n :list_of_port_connections, *elements_to_ast
           end
@@ -1241,8 +1196,8 @@ module OrigenVerilog
       #   constant_expression { , constant_expression } : generate_block_or_null
       #   | default [ : ] generate_block_or_null
       rule case_generate_item
-        (constant_expression (s "," s constant_expression)* s ":" s generate_block_or_null) /
-        (default s ":"? s generate_block_or_null) {
+        ((constant_expression (s "," s constant_expression)* s ":" s generate_block_or_null) /
+        (default s ":"? s generate_block_or_null)) {
           def to_ast
             n :case_generate_item, *elements_to_ast
           end
@@ -1252,8 +1207,8 @@ module OrigenVerilog
       #   module_or_generate_item
       #   | begin [ : generate_block_identifier ] { module_or_generate_item } end
       rule generate_block
-        module_or_generate_item / 
-        ("begin" s (":" s generate_block_identifier)? (s module_or_generate_item)* s "end") {
+        (module_or_generate_item / 
+        ("begin" s (":" s generate_block_identifier)? (s module_or_generate_item)* s "end")) {
           def to_ast
             n :generate_block, *elements_to_ast
           end
@@ -1263,7 +1218,7 @@ module OrigenVerilog
       #   generate_block
       #   | ;
       rule generate_block_or_null
-        generate_block / (s ";") {
+        (generate_block / (s ";")) {
           def to_ast
             elements_to_ast.first
           end
@@ -1459,20 +1414,20 @@ module OrigenVerilog
       #   | { attribute_instance } task_enable
       #   | { attribute_instance } wait_statement
       rule statement
-        (s attribute_instance s)* s blocking_assignment s ";" /
-        (s attribute_instance s)* s case_statement /
-        (s attribute_instance s)* s conditional_statement /
-        (s attribute_instance s)* s disable_statement /
-        (s attribute_instance s)* s event_trigger /
-        (s attribute_instance s)* s loop_statement /
-        (s attribute_instance s)* s nonblocking_assignment s ";" /
-        (s attribute_instance s)* s par_block /
-        (s attribute_instance s)* s procedural_continuous_assignments s ";" /
-        (s attribute_instance s)* s procedural_timing_control_statement /
-        (s attribute_instance s)* s seq_block /
-        (s attribute_instance s)* s system_task_enable /
-        (s attribute_instance s)* s task_enable /
-        (s attribute_instance s)* s wait_statement {
+        (((s attribute_instance)* s blocking_assignment s ";") /
+         ((s attribute_instance)* s case_statement) /
+         ((s attribute_instance)* s conditional_statement) /
+         ((s attribute_instance)* s disable_statement) /
+         ((s attribute_instance)* s event_trigger) /
+         ((s attribute_instance)* s loop_statement) /
+         ((s attribute_instance)* s nonblocking_assignment s ";") /
+         ((s attribute_instance)* s par_block) /
+         ((s attribute_instance)* s procedural_continuous_assignments s ";") /
+         ((s attribute_instance)* s procedural_timing_control_statement) /
+         ((s attribute_instance)* s seq_block) /
+         ((s attribute_instance)* s system_task_enable) /
+         ((s attribute_instance)* s task_enable) /
+         ((s attribute_instance)* s wait_statement)) {
           def to_ast
             n :statement, *elements_to_ast
           end
@@ -1482,7 +1437,7 @@ module OrigenVerilog
       #   statement
       #   | { attribute_instance } ;
       rule statement_or_null
-        statement / (s attribute_instance s)* ";" {
+        (statement / ((s attribute_instance)* s ";")) {
           def to_ast
             elements_to_ast.first
           end
@@ -1896,11 +1851,7 @@ module OrigenVerilog
       # See - https://stackoverflow.com/questions/4994036/left-recursion-elimination
       rule constant_expression
         ((constant_primary constant_expression_tail?) /
-        (unary_operator (s attribute_instance)* s constant_primary constant_expression_tail?)) {
-          def to_ast
-            n :constant_expression, *elements_to_ast
-          end
-        }
+        (unary_operator (s attribute_instance)* s constant_primary constant_expression_tail?))
       end
       rule constant_expression_tail
         ((s binary_operator (s attribute_instance)* s constant_expression constant_expression_tail?) /
@@ -1911,11 +1862,7 @@ module OrigenVerilog
       #   | constant_expression : constant_expression : constant_expression
       rule constant_mintypmax_expression
         (constant_expression /
-        (constant_expression s ":" s constant_expression s ":" s constant_expression)) {
-          def to_ast
-            n :constant_mintypmax_expression, *elements_to_ast
-          end
-        }
+        (constant_expression s ":" s constant_expression s ":" s constant_expression))
       end
       # constant_range_expression ::=
       #   constant_expression
@@ -1971,8 +1918,8 @@ module OrigenVerilog
       #   expression
       #   | expression : expression : expression
       rule mintypmax_expression
-        expression /
-        (expression s ":" s expression s ":" s expression) {
+        (expression /
+        (expression s ":" s expression s ":" s expression)) {
           def to_ast
             n :mintypmax_expression, *elements_to_ast
           end
@@ -1995,10 +1942,10 @@ module OrigenVerilog
       #     module_path_expression
       #   | module_path_conditional_expression
       rule module_path_expression
-        module_path_primary /
+        (module_path_primary /
         (unary_module_path_operator (s attribute_instance)* s module_path_primary) /
         (module_path_expression s binary_module_path_operator (s attribute_instance)* s module_path_expression) /
-        (module_path_conditional_expression) {
+        (module_path_conditional_expression)) {
           def to_ast
             n :module_path_expression, *elements_to_ast
           end
@@ -2008,8 +1955,8 @@ module OrigenVerilog
       #   module_path_expression
       #   | module_path_expression : module_path_expression : module_path_expression
       rule module_path_mintypmax_expression
-        module_path_expression /
-        (module_path_expression s ":" s module_path_expression s ":" s module_path_expression) {
+        (module_path_expression /
+        (module_path_expression s ":" s module_path_expression s ":" s module_path_expression)) {
           def to_ast
             n :module_path_mintypmax_expression, *elements_to_ast
           end
@@ -2025,10 +1972,10 @@ module OrigenVerilog
       #   | base_expression +: width_constant_expression
       #   | base_expression -: width_constant_expression
       rule range_expression
-        expression /
+        (expression /
         (msb_constant_expression s ":" s lsb_constant_expression) /
         (base_expression s "+:" s width_constant_expression) /
-        (base_expression s "-:" s width_constant_expression) {
+        (base_expression s "-:" s width_constant_expression)) {
           def to_ast
             n :range_expression, *elements_to_ast
           end
@@ -2055,12 +2002,12 @@ module OrigenVerilog
         (number /
         (parameter_identifier (s "[" s constant_range_expression s "]")?) /
         (specparam_identifier (s "[" s constant_range_expression s "]")?) /
-        (constant_concatenation) /
-        (constant_multiple_concatenation) /
-        (constant_function_call) /
-        (constant_system_function_call) /
+        constant_concatenation /
+        constant_multiple_concatenation /
+        constant_function_call /
+        constant_system_function_call /
         ("(" s constant_mintypmax_expression s ")") /
-        (string)) {
+        string) {
           def to_ast
             n :constant_primary, *elements_to_ast
           end
@@ -2075,17 +2022,17 @@ module OrigenVerilog
       #   | system_function_call
       #   | ( module_path_mintypmax_expression )
       rule module_path_primary
-        number /
-        identifier /
-        module_path_concatenation /
-        module_path_multiple_concatenation /
-        function_call /
-        system_function_call /
-        ("(" s module_path_mintypmax_expression s ")") {
-          def to_ast
-            n :module_path_primary, *elements_to_ast
-          end
-        }
+        (number /
+         identifier /
+         module_path_concatenation /
+         module_path_multiple_concatenation /
+         function_call /
+         system_function_call /
+         ("(" s module_path_mintypmax_expression s ")")) {
+           def to_ast
+             n :module_path_primary, *elements_to_ast
+           end
+         }
       end
       # primary ::=
       #   number
@@ -2097,14 +2044,14 @@ module OrigenVerilog
       #   | ( mintypmax_expression )
       #   | string
       rule primary
-        number /
+        (number /
         (hierarchical_identifier (s (s "[" s expression s "]")* "[" s range_expression s "]")?) /
         concatenation /
         multiple_concatenation /
         function_call /
         system_function_call /
         ("(" s mintypmax_expression s ")") /
-        string {
+        string) {
           def to_ast
             n :primary, *elements_to_ast
           end
@@ -2170,18 +2117,22 @@ module OrigenVerilog
       #   | hex_number
       #   | real_number
       rule number
-        octal_number /
+        (octal_number /
         binary_number /
         hex_number /
         real_number /
-        decimal_number
+        decimal_number) 1..1 {  # 1..1 is used to stop Treetop from merging nodes below this level
+          def to_ast
+            n :number, *elements_to_ast
+          end
+        }
       end
       # real_number ::=
       #   unsigned_number . unsigned_number
       #   | unsigned_number [ . unsigned_number ] exp [ sign ] unsigned_number
       rule real_number
-        (unsigned_number "." unsigned_number) /
-        (unsigned_number ("." unsigned_number)? exp sign? unsigned_number) {
+        ((unsigned_number "." unsigned_number) /
+        (unsigned_number ("." unsigned_number)? exp sign? unsigned_number)) {
           def to_ast
             n :real_number, *elements_to_ast
           end
@@ -2189,7 +2140,7 @@ module OrigenVerilog
       end
       # exp ::= e | E
       rule exp
-        "e" / "E" {
+        ("e" / "E") {
           def to_ast
             "exp"
           end
@@ -2201,10 +2152,10 @@ module OrigenVerilog
       #   | [ size ] decimal_base x_digit { _ }
       #   | [ size ] decimal_base z_digit { _ }
       rule decimal_number
-        (unsigned_number /
-        (size? decimal_base unsigned_number) /
-        (size? decimal_base x_digit _*) /
-        (size? decimal_base z_digit _*)) {
+        ((size? decimal_base s unsigned_number) /
+         (size? decimal_base s x_digit _*) /
+         (size? decimal_base s z_digit _*) /
+         unsigned_number) 1..1 {
           def to_ast
             n :decimal_number, *elements_to_ast
           end
@@ -2246,7 +2197,7 @@ module OrigenVerilog
       rule size
         non_zero_unsigned_number {
           def to_ast
-            n :size, *elements_to_ast
+            n :size, elements_to_ast.join.to_i
           end
         }
       end
@@ -2254,7 +2205,7 @@ module OrigenVerilog
       rule non_zero_unsigned_number
         non_zero_decimal_digit ("_" / decimal_digit)* {
           def to_ast
-            n :non_zero_unsigned_number, *elements_to_ast
+            elements_to_ast.join.to_i
           end
         }
       end
@@ -2262,7 +2213,7 @@ module OrigenVerilog
       rule unsigned_number
         decimal_digit ("_" / decimal_digit)* {
           def to_ast
-            n :unsigned_number, *elements_to_ast
+            elements_to_ast.join.to_i
           end
         }
       end
@@ -2270,7 +2221,7 @@ module OrigenVerilog
       rule binary_value
         binary_digit ("_" / binary_digit)* {
           def to_ast
-            n :binary_value, *elements_to_ast
+            elements_to_ast.join
           end
         }
       end
@@ -2278,7 +2229,7 @@ module OrigenVerilog
       rule octal_value
         octal_digit ("_" / octal_digit)* {
           def to_ast
-            n :octal_value, *elements_to_ast
+            elements_to_ast.join
           end
         }
       end
@@ -2286,7 +2237,7 @@ module OrigenVerilog
       rule hex_value
         hex_digit ("_" / hex_digit)* {
           def to_ast
-            n :hex_value, *elements_to_ast
+            elements_to_ast.join
           end
         }
       end
@@ -2324,7 +2275,7 @@ module OrigenVerilog
       end
       # binary_digit ::= x_digit | z_digit | 0 | 1
       rule binary_digit
-        x_digit / z_digit / "0" / "1" {
+        (x_digit / z_digit / "0" / "1") {
           def to_ast
             text_value
           end
@@ -2332,7 +2283,7 @@ module OrigenVerilog
       end
       # octal_digit ::= x_digit | z_digit | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
       rule octal_digit
-        x_digit / z_digit / [0-7] {
+        (x_digit / z_digit / [0-7]) {
           def to_ast
             text_value
           end
@@ -2342,7 +2293,7 @@ module OrigenVerilog
       #   x_digit | z_digit | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
       #   | a | b | c | d | e | f | A | B | C | D | E | F
       rule hex_digit
-        x_digit / z_digit / [0-9a-fA-F] {
+        (x_digit / z_digit / [0-9a-fA-F]) {
           def to_ast
             text_value.upcase
           end
@@ -2350,7 +2301,7 @@ module OrigenVerilog
       end
       # x_digit ::= x | X
       rule x_digit
-        "x" / "X" {
+        ("x" / "X") {
           def to_ast
             "X"
           end
@@ -2358,7 +2309,7 @@ module OrigenVerilog
       end
       # z_digit ::= z | Z | ?
       rule z_digit
-        "z" / "Z" {
+        ("z" / "Z") {
           def to_ast
             "Z"
           end
@@ -2518,7 +2469,11 @@ module OrigenVerilog
       end
       # parameter_identifier ::= identifier
       rule parameter_identifier
-        identifier
+        identifier {
+          def to_ast
+            n :parameter_identifier, text_value
+          end
+        }
       end
       # port_identifier ::= identifier
       rule port_identifier

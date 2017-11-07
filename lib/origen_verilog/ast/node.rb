@@ -73,7 +73,7 @@ module Treetop
         elmnts.map do |e|
           if e.respond_to?(:to_ast)
             e.to_ast
-          elsif e.respond_to?(:elements) && e.elements && !e.elements.empty?
+          elsif e.nonterminal? && !e.elements.empty?
             elements_to_ast(e.elements)
           end
         end.compact.flatten
