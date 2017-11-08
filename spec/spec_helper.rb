@@ -35,6 +35,10 @@ def verilog_parser
   @verilog_parser ||= OrigenVerilog::Verilog::Parser
 end
 
+def s(type, *children)
+  OrigenVerilog::AST::Node.new(type, children)
+end
+
 RSpec.configure do |config|
   config.formatter = OrigenFormatter
   # rspec-expectations config goes here. You can use an alternate

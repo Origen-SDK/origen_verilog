@@ -61,7 +61,8 @@ module OrigenVerilog
       # Compiler directives
       #################################################################
       rule compiler_directive
-        (conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive
+        (conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive /
+         timescale_compiler_directive
         ) {
           def to_ast
             n :compiler_directive, *elements_to_ast
@@ -119,16 +120,27 @@ module OrigenVerilog
       # text_macro_definition ::=
       #   `define text_macro_name [ (list_of_formal_arguments) ]
       rule text_macro_definition
-        "`define" S text_macro_name (s (list_of_formal_arguments))? {
+        "`define" S text_macro_name s macro_text? {
           def to_ast
             n :text_macro_definition, *elements_to_ast
           end
         }
       end
+      rule macro_text
+        ("\\" space* N / !N !one_line_comment .)* {
+          def to_ast
+            n :macro_text, text_value.strip unless text_value.empty?
+          end
+        } 
+      end
       # text_macro_name ::=
       #   text_macro_identifier
       rule text_macro_name
-        text_macro_identifier
+        text_macro_identifier s ("(" s list_of_formal_arguments s ")")? {
+          def to_ast
+            n :text_macro_name, *elements_to_ast
+          end
+        }
       end
       # list_of_formal_arguments ::=
       #   formal_argument_identifier { , formal_argument_identifier }
@@ -155,6 +167,24 @@ module OrigenVerilog
         }
       end
 
+      # timescale_compiler_directive ::=
+      # `timescale time_unit / time_precision
+      rule timescale_compiler_directive
+        "`timescale" S time_number s "/" s time_number {
+          def to_ast
+            n :timescale_compiler_directive, *elements_to_ast
+          end
+        } 
+
+      end
+
+      rule time_number
+        (value:("1" / "10" / "100") s unit:("s" / "ms" / "us" / "ns" / "ps" / "fs")) {
+          def to_ast
+            n :time_number, value.text_value.to_i, unit.text_value
+          end
+        }
+      end
 
       # A.1.3 Module parameters and ports
       # 
@@ -406,9 +436,9 @@ module OrigenVerilog
       #   | output output_variable_type
       #     list_of_variable_port_identifiers
       rule output_declaration
-        (("output" s net_type? s signed? s range? s list_of_port_identifiers) /
-         ("output reg" s signed? s range? s list_of_variable_port_identifiers) /
-         ("output" s  output_variable_type s list_of_variable_port_identifiers))
+        (("output reg" s signed? s range? s list_of_variable_port_identifiers) /
+         ("output" s net_type? s signed? s range? s list_of_port_identifiers) /
+         ("output" s output_variable_type s list_of_variable_port_identifiers))
         {
           def to_ast
             n :output_declaration, *elements_to_ast
@@ -454,12 +484,12 @@ module OrigenVerilog
       rule net_declaration
         ((net_type s signed? s delay3? s list_of_net_identifiers s ";") /
          (net_type s drive_strength? s signed? delay3? s list_of_net_decl_assignments s ";") /
-         (net_type s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";") /
-         (net_type s drive_strength? s (vectored / scalared)? s signed? s range s delay3? list_of_net_decl_assignments s ";") /
+         (net_type s ("vectored" / "scalared")? s signed? s range s delay3? s list_of_net_identifiers s ";") /
+         (net_type s drive_strength? s ("vectored" / "scalared")? s signed? s range s delay3? list_of_net_decl_assignments s ";") /
          (trireg s charge_strength? s signed? s delay3? list_of_net_identifiers s ";") /
          (trireg s drive_strength? s signed? s delay3? list_of_net_decl_assignments s ";") /
-         (trireg s charge_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_identifiers s ";") /
-         (trireg s drive_strength? s (vectored / scalared)? s signed? s range s delay3? s list_of_net_decl_assignments s ";"))
+         (trireg s charge_strength? s ("vectored" / "scalared")? s signed? s range s delay3? s list_of_net_identifiers s ";") /
+         (trireg s drive_strength? s ("vectored" / "scalared")? s signed? s range s delay3? s list_of_net_decl_assignments s ";"))
         {
           def to_ast
             n :net_declaration, *elements_to_ast
@@ -563,10 +593,10 @@ module OrigenVerilog
       rule drive_strength
         (("(" s strength0 s "," s strength1 s ")") /
         ("(" s strength1 s "," s strength0 s ")") /
-        ("(" s strength0 s "," s highz1 s ")") /
-        ("(" s strength1 s "," s highz0 s ")") /
-        ("(" s highz0 s "," s strength1 s ")") /
-        ("(" s highz1 s "," s strength0 s ")")) {
+        ("(" s strength0 s "," s "highz1" s ")") /
+        ("(" s strength1 s "," s "highz0" s ")") /
+        ("(" s "highz0" s "," s strength1 s ")") /
+        ("(" s "highz1" s "," s strength0 s ")")) {
           def to_ast
             n :drive_strength, *elements_to_ast
           end
@@ -949,11 +979,53 @@ module OrigenVerilog
       # A.3.3 Primitive terminals
 
       # enable_terminal ::= expression
+      rule enable_terminal
+        expression {
+          def to_ast
+            n :enable_terminal, *elements_to_ast
+          end
+        }
+      end
       # inout_terminal ::= net_lvalue
+      rule inout_terminal
+        net_lvalue {
+          def to_ast
+            n :inout_terminal, *elements_to_ast
+          end
+        }
+      end
       # input_terminal ::= expression
+      rule input_terminal
+        expression {
+          def to_ast
+            n :input_terminal, *elements_to_ast
+          end
+        }
+      end
       # ncontrol_terminal ::= expression
+      rule ncontrol_terminal
+        expression {
+          def to_ast
+            n :ncontrol_terminal, *elements_to_ast
+          end
+        }
+      end
       # output_terminal ::= net_lvalue
+      rule output_terminal
+        net_lvalue {
+          def to_ast
+            n :output_terminal, *elements_to_ast
+          end
+        }
+      end
       # pcontrol_terminal ::= expression
+      rule pcontrol_terminal
+        expression {
+          def to_ast
+            n :pcontrol_terminal, *elements_to_ast
+          end
+        }
+      end
 
       # A.3.4 Primitive gate and switch types
 
@@ -1080,8 +1152,8 @@ module OrigenVerilog
       #   ordered_port_connection { , ordered_port_connection }
       #   | named_port_connection { , named_port_connection }
       rule list_of_port_connections
-        ((ordered_port_connection (s "," s ordered_port_connection)*) /
-        (named_port_connection (s "," s named_port_connection)*)) {
+        ((named_port_connection (s "," s named_port_connection)*) /
+        (ordered_port_connection (s "," s ordered_port_connection)*)) {
           def to_ast
             n :list_of_port_connections, *elements_to_ast
           end
@@ -1335,7 +1407,7 @@ module OrigenVerilog
       end
       # list_of_net_assignments ::= net_assignment { , net_assignment }
       rule list_of_net_assignments
-        net_assignment (s "," s net_assignment s)* {
+        net_assignment (s "," s net_assignment)* {
           def to_ast
             n :list_of_net_assignments, *elements_to_ast
           end
@@ -1547,9 +1619,9 @@ module OrigenVerilog
       #   | event_expression or event_expression
       #   | event_expression , event_expression
       rule event_expression
-        ((expression event_expression_tail?) /
-         ("posedge" s expression event_expression_tail?) /
-         ("negedge" s expression event_expression_tail?)) {
+        (("posedge" s expression event_expression_tail?) /
+         ("negedge" s expression event_expression_tail?) /
+         (expression event_expression_tail?)) {
           def to_ast
             n :event_expression, *elements_to_ast
           end
@@ -1993,13 +2065,14 @@ module OrigenVerilog
         expression
       end
       # conditional_expression ::= expression1 ? { attribute_instance } expression2 : expression3
-      rule conditional_expression
-        expression1 S "?" (s attribute_instance)* S expression2 s ":" s expression3 {
-          def to_ast
-            n :conditional_expression, *elements_to_ast
-          end
-        }
-      end
+      # This has been implemented in-lined with the expression rule to help manage left recursion
+      #rule conditional_expression
+      #  expression1 S "?" (s attribute_instance)* s expression2 s ":" s expression3 {
+      #    def to_ast
+      #      n :conditional_expression, *elements_to_ast
+      #    end
+      #  }
+      #end
       # constant_base_expression ::= constant_expression
       rule constant_base_expression
         constant_expression
@@ -2051,26 +2124,49 @@ module OrigenVerilog
       #   | expression binary_operator { attribute_instance } expression
       #   | conditional_expression
       rule expression
-        (primary /
-        (unary_operator (s attribute_instance)* s primary) /
-        (expression s binary_operator (s attribute_instance)* s expression) /
-        (conditional_expression)) {
+        ((main:(unary_operator (s attribute_instance)* s) tail:primary expression_tail?) /
+         (main:primary tail:expression_tail?)) {
+          # Some logic needed here to make things pretty after dealing with the left recursion workaround
           def to_ast
-            n :expression, *elements_to_ast
+            if !respond_to?(:tail) || tail.empty?
+              n :expression, *elements_to_ast
+            else
+              if tail.respond_to?(:expr2)
+                n :conditional_expression, n(:expression1, n(:expression, main.to_ast)), tail.expr2.to_ast, tail.expr3.to_ast
+              else
+                n :expression, *elements_to_ast
+              end
+            end
           end
         }
       end
+      rule expression_tail
+        (s binary_operator (s attribute_instance)* s expression expression_tail?) /
+        (S "?" (s attribute_instance)* s expr2:expression2 s ":" s expr3:expression3 expression_tail?)
+      end
       # expression1 ::= expression
       rule expression1
-        expression
+        expression 1..1 {
+          def to_ast
+            n :expression1, *elements_to_ast
+          end
+        }
       end
       # expression2 ::= expression
       rule expression2
-        expression
+        expression 1..1 {
+          def to_ast
+            n :expression2, *elements_to_ast
+          end
+        }
       end
       # expression3 ::= expression
-      rule expression2
-        expression
+      rule expression3
+        expression 1..1 {
+          def to_ast
+            n :expression3, *elements_to_ast
+          end
+        }
       end
       # lsb_constant_expression ::= constant_expression
       rule lsb_constant_expression
@@ -2134,10 +2230,10 @@ module OrigenVerilog
       #   | base_expression +: width_constant_expression
       #   | base_expression -: width_constant_expression
       rule range_expression
-        (expression /
-        (msb_constant_expression s ":" s lsb_constant_expression) /
-        (base_expression s "+:" s width_constant_expression) /
-        (base_expression s "-:" s width_constant_expression)) {
+        ((msb_constant_expression s ":" s lsb_constant_expression) /
+         (base_expression s "+:" s width_constant_expression) /
+         (base_expression s "-:" s width_constant_expression) /
+         (expression)) {
           def to_ast
             n :range_expression, *elements_to_ast
           end
@@ -2207,7 +2303,7 @@ module OrigenVerilog
       #   | string
       rule primary
         (number /
-        (hierarchical_identifier (s (s "[" s expression s "]")* "[" s range_expression s "]")?) /
+        (hierarchical_identifier (s (s "[" s expression s "]" &(s "["))* "[" s range_expression s "]")?) /
         concatenation /
         multiple_concatenation /
         function_call /
@@ -2226,29 +2322,23 @@ module OrigenVerilog
       #   hierarchical_net_identifier [ { [ constant_expression ] } [ constant_range_expression ] ]
       #   | { net_lvalue { , net_lvalue } }
       rule net_lvalue
-        ((hierarchical_net_identifier (s (s !net_lvalue_final_value "[" s constant_expression s "]")* net_lvalue_final_value)?) /
+        ((hierarchical_net_identifier (s (s "[" s constant_expression s "]" &(s "["))* "[" s constant_range_expression s "]")?) /
          ("{" s net_lvalue (s "," s net_lvalue)* s "}")) {
           def to_ast
             n :net_lvalue, *elements_to_ast
           end
         }
       end
-      rule net_lvalue_final_value
-        "[" s constant_range_expression s "]"
-      end
       # variable_lvalue ::=
       #   hierarchical_variable_identifier [ { [ expression ] } [ range_expression ] ]
       #   | { variable_lvalue { , variable_lvalue } }
       rule variable_lvalue
-        ((hierarchical_variable_identifier (s (s !variable_lvalue_final_item "[" s expression s "]")* variable_lvalue_final_item)?) /
+        ((hierarchical_variable_identifier (s (s "[" s expression s "]" &(s "["))* "[" s range_expression s "]")?) /
          ("{" s variable_lvalue (s "," s variable_lvalue)* s "}")) {
           def to_ast
             n :variable_lvalue, *elements_to_ast
           end
         }
-      end
-      rule variable_lvalue_final_item
-        "[" s range_expression s "]"
       end
 
       # A.8.6 Operators
@@ -2256,7 +2346,11 @@ module OrigenVerilog
       # unary_operator ::=
       #   + | - | ! | ~ | & | ~& | | | ~| | ^ | ~^ | ^~
       rule unary_operator
-        ("+" / "-" / "!" / "~" / "&" / "~&" / "|" / "~|" / "^" / "~^" / "^~") {
+        (
+          "+" / "-" / "!" / "&" / "|" /
+          "~|" / "~&" / "~^" / "~" /
+          "^~" / "^"
+        ) {
           def to_ast
             n :unary_operator, text_value
           end
@@ -2266,17 +2360,30 @@ module OrigenVerilog
       #   + | - | * | / | % | == | != | === | !== | && | || | **
       #   | < | <= | > | >= | & | | | ^ | ^~ | ~^ | >> | << | >>> | <<<
       rule binary_operator
-        ("+" / "-" / "*" / "/" / "%" / "==" / "!=" / "===" / "!==" / "&&" / "||" / "**" /
-         "<" / "<=" / ">" / ">=" / "&" / "|" / "^" / "^~" / "~^" / ">>" / "<<" / ">>>" / "<<<") {
+        (
+          "+" / "-" / "/" / "%" / "~^" /
+          "**" / "*" /
+          "===" / "==" /
+          "!==" /"!=" / 
+          "||" / "|" /
+          "&&" / "&" /
+          ">=" / ">>>" / ">>" / ">" /
+          "<=" / "<<<" / "<<" /"<" /
+          "^~" / "^"
+        ) {
           def to_ast
             n :binary_operator, text_value
           end
-         }
+        }
       end
       # unary_module_path_operator ::=
       #   ! | ~ | & | ~& | | | ~| | ^ | ~^ | ^~
       rule unary_module_path_operator
-        ("!" / "~" / "&" / "~&" / "|" / "~|" / "^" / "~^" / "^~") {
+        (
+          "!" / "&" / "|" /
+          "~&" / "~^" / "~|" / "~" /
+          "^~" / "^"
+        ) {
           def to_ast
             n :unary_module_path_operator, text_value
           end
@@ -2285,7 +2392,12 @@ module OrigenVerilog
       # binary_module_path_operator ::=
       #   == | != | && | || | & | | | ^ | ^~ | ~^
       rule binary_module_path_operator
-        ("==" / "!=" / "&&" / "||" / "&" / "|" / "^" / "^~" / " ~^") {
+        (
+          "==" / "!=" / " ~^" /
+          "||" / "|" /
+          "&&" / "&" /
+          "^~" / "^"
+        ) {
           def to_ast
             n :binary_module_path_operator, text_value
           end
@@ -2752,14 +2864,18 @@ module OrigenVerilog
       # 
       # white_space ::= space | tab | newline | eof
 
+      rule space
+        " " / "\t"
+      end
+
       # Optional space, including new lines and comments
       rule s
-        (" " / "\t" / N / one_line_comment / block_comment)*
+        (space / N / one_line_comment / block_comment)*
       end
 
       # Required space, including new lines and comments
       rule S
-        (" " / "\t" / N / one_line_comment / block_comment)+ {
+        (space / N / one_line_comment / block_comment)+ {
           #def to_ast
           #  elements_to_ast
           #end
