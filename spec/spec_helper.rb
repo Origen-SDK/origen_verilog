@@ -35,6 +35,10 @@ def verilog_parser
   @verilog_parser ||= OrigenVerilog::Verilog::Parser
 end
 
+def pre_parser
+  @pre_parser ||= OrigenVerilog::Preprocessor::Parser
+end
+
 def s(type, *children)
   OrigenVerilog::AST::Node.new(type, children)
 end

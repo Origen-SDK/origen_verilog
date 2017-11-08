@@ -1,0 +1,159 @@
+module OrigenVerilog
+  # The preprocessor implements the below compiler directives, fully substituting
+  # and including/excluding the text as appropriate before handing over the pre-processed
+  # text to be parsed as Verilog.
+  # 
+  # Any compiler directives not listed below will be parsed during the main Verilog parsing
+  # stage and will be included in the Verilog AST.
+  #
+  # * define
+  # * undef
+  # * ifdef
+  # * ifndef
+  # * include
+  module Preprocessor
+    grammar Grammar
+
+      rule source
+        source_items+ {
+          def to_ast
+            n :source, *elements_to_ast
+          end
+        }
+      end
+
+      rule source_items
+        #text_block / text_macro_definition
+        one_line_comment / block_comment / text_macro_definition / text_block
+      end
+
+      rule comment
+        one_line_comment / block_comment
+      end
+
+      rule text_block
+        (!comment !text_macro_definition .)+ {
+          def to_ast
+            n :text_block, text_value
+          end
+        }
+      end
+
+      # text_macro_definition ::=
+      #   `define text_macro_name [ (list_of_formal_arguments) ]
+      rule text_macro_definition
+        "`define" S text_macro_name s macro_text? {
+          def to_ast
+            n :text_macro_definition, *elements_to_ast
+          end
+        }
+      end
+      rule macro_text
+        ("\\" space* N / !N !one_line_comment .)* {
+          def to_ast
+            n :macro_text, text_value.strip.gsub(/\\\s*\n/, "\n") unless text_value.empty?
+          end
+        } 
+      end
+      # text_macro_name ::=
+      #   text_macro_identifier
+      rule text_macro_name
+        text_macro_identifier s ("(" s list_of_formal_arguments s ")")? {
+          def to_ast
+            n :text_macro_name, *elements_to_ast
+          end
+        }
+      end
+      # list_of_formal_arguments ::=
+      #   formal_argument_identifier { , formal_argument_identifier }
+      rule list_of_formal_arguments
+        formal_argument_identifier (s ',' s formal_argument_identifier)* {
+          def to_ast
+            n :list_of_formal_arguments, *elements_to_ast
+          end
+        }
+      end
+      # formal_argument_identifier ::=
+      #   simple_identifier
+      rule formal_argument_identifier
+        simple_identifier
+      end
+
+      # undefine_compiler_directive ::=
+      #   `undef text_macro_identifier
+      rule undefine_compiler_directive
+        "`undef" S text_macro_identifier {
+          def to_ast
+            n :undefine_compiler_directive, *elements_to_ast
+          end
+        }
+      end
+
+      rule text_macro_identifier
+        identifier
+      end
+
+      rule identifier
+        simple_identifier
+      end
+
+      # simple_identifier ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_$ ] }
+      rule simple_identifier
+        [a-zA-Z] ([a-zA-Z0-9_])* {
+          def to_ast
+            text_value
+          end
+        }
+      end
+
+      rule block_comment
+        "/*" (!end_of_comment .)* end_of_comment {
+          def to_ast
+            n :comment, text_value
+          end
+        }
+      end
+
+      rule end_of_comment
+        "*/"
+      end
+
+      rule one_line_comment
+        "//" (!N .)* {
+          def to_ast
+            n :comment, text_value
+          end
+        }
+      end
+
+      rule space
+        " " / "\t"
+      end
+
+      rule space_or_comment
+        (space / N / one_line_comment / block_comment)*
+      end
+
+      # Optional space, including new lines
+      rule s
+        (space / N)*
+      end
+
+      # Required space, including new lines
+      rule S
+        (space / N)+
+      end
+
+      # Optional end of line
+      rule n
+        "\r"? "\n"?
+      end
+
+      # Required end of line
+      rule N
+        "\r"? "\n"
+      end
+
+    end
+  end
+end

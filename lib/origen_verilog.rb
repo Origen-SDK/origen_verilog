@@ -7,13 +7,10 @@ module OrigenVerilog
 
   # Example of how to explicitly require a file
   # require "origen_verilog/my_file"
-  require 'origen_verilog/ast/node'
-
-  # Load all files in the lib/origen_verilog directory.
-  # Note that there is no problem from requiring a file twice (Ruby will ignore
-  # the second require), so if you have a file that must be required first, then
-  # explicitly require it up above and then let this take care of the rest.
-  Dir.glob("#{File.dirname(__FILE__)}/origen_verilog/**/*.rb").sort.each do |file|
-    require file
-  end
+  require 'origen_verilog/parser'
+  require 'origen_verilog/node'
+  require 'origen_verilog/verilog/parser'
+  require 'origen_verilog/verilog/node'
+  require 'origen_verilog/preprocessor/parser'
+  require 'origen_verilog/preprocessor/node'
 end

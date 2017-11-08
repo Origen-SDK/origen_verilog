@@ -572,48 +572,60 @@ module OrigenVerilog
           return cached
         end
 
-        i0 = index
-        r1 = _nt_conditional_compilation_directive
-        if r1
-          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
-          r0 = r1
-          r0.extend(CompilerDirective0)
-          r0.extend(CompilerDirective0)
-        else
-          r2 = _nt_error
+        s0, i0 = [], index
+        loop do
+          i1 = index
+          r2 = _nt_conditional_compilation_directive
           if r2
             r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
-            r0 = r2
-            r0.extend(CompilerDirective0)
-            r0.extend(CompilerDirective0)
+            r1 = r2
           else
-            r3 = _nt_text_macro_definition
+            r3 = _nt_error
             if r3
               r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
-              r0 = r3
-              r0.extend(CompilerDirective0)
-              r0.extend(CompilerDirective0)
+              r1 = r3
             else
-              r4 = _nt_undefine_compiler_directive
+              r4 = _nt_text_macro_definition
               if r4
                 r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
-                r0 = r4
-                r0.extend(CompilerDirective0)
-                r0.extend(CompilerDirective0)
+                r1 = r4
               else
-                r5 = _nt_timescale_compiler_directive
+                r5 = _nt_undefine_compiler_directive
                 if r5
                   r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
-                  r0 = r5
-                  r0.extend(CompilerDirective0)
-                  r0.extend(CompilerDirective0)
+                  r1 = r5
                 else
-                  @index = i0
-                  r0 = nil
+                  r6 = _nt_timescale_compiler_directive
+                  if r6
+                    r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
+                    r1 = r6
+                  else
+                    @index = i1
+                    r1 = nil
+                  end
                 end
               end
             end
           end
+          if r1
+            s0 << r1
+          else
+            break
+          end
+          if s0.size == 1
+            break
+          end
+        end
+        if s0.size < 1
+          @index = i0
+          r0 = nil
+        else
+          if s0.size < 1
+            @terminal_failures.pop
+          end
+          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
+          r0.extend(CompilerDirective0)
+          r0.extend(CompilerDirective0)
         end
 
         node_cache[:compiler_directive][start_index] = r0
@@ -716,20 +728,41 @@ module OrigenVerilog
           elements[1]
         end
 
+        def else_contents
+          elements[2]
+        end
+      end
+
+      module IfdefDirective1
+        def S
+          elements[1]
+        end
+
         def label
           elements[2]
         end
 
-        def contents
+        def s1
           elements[3]
+        end
+
+        def contents
+          elements[4]
+        end
+
+        def s2
+          elements[5]
         end
 
       end
 
-      module IfdefDirective1
+      module IfdefDirective2
         def to_ast
-          n :if_def, label.text_value,
-            n(:ifdef_group, *elements_to_ast(contents.elements))
+          node = n :if_def, label.text_value, n(:ifdef_group, *elements_to_ast(contents.elements))
+          #if respond_to?(:else_contents)
+          #  node = node.updated(nil, node.children + [n(:else_group_of_lines, *elements_to_ast(else_contents.elements))])
+          #end
+          node
         end
       end
 
@@ -760,39 +793,93 @@ module OrigenVerilog
             r3 = _nt_text_macro_identifier
             s0 << r3
             if r3
-              s4, i4 = [], index
-              loop do
-                r5 = _nt_verilog_source_items
-                if r5
-                  s4 << r5
-                else
-                  break
-                end
-              end
-              if s4.empty?
-                @index = i4
-                r4 = nil
-              else
-                r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
-              end
+              r4 = _nt_s
               s0 << r4
               if r4
-                if (match_len = has_terminal?("`endif", false, index))
-                  r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                  @index += match_len
-                else
-                  terminal_parse_failure('"`endif"')
-                  r6 = nil
+                s5, i5 = [], index
+                loop do
+                  r6 = _nt_verilog_source_items
+                  if r6
+                    s5 << r6
+                  else
+                    break
+                  end
                 end
-                s0 << r6
+                if s5.empty?
+                  @index = i5
+                  r5 = nil
+                else
+                  r5 = instantiate_node(SyntaxNode,input, i5...index, s5)
+                end
+                s0 << r5
+                if r5
+                  r7 = _nt_s
+                  s0 << r7
+                  if r7
+                    i9, s9 = index, []
+                    if (match_len = has_terminal?("`else", false, index))
+                      r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                      @index += match_len
+                    else
+                      terminal_parse_failure('"`else"')
+                      r10 = nil
+                    end
+                    s9 << r10
+                    if r10
+                      r11 = _nt_S
+                      s9 << r11
+                      if r11
+                        s12, i12 = [], index
+                        loop do
+                          r13 = _nt_verilog_source_items
+                          if r13
+                            s12 << r13
+                          else
+                            break
+                          end
+                        end
+                        if s12.empty?
+                          @index = i12
+                          r12 = nil
+                        else
+                          r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
+                        end
+                        s9 << r12
+                      end
+                    end
+                    if s9.last
+                      r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+                      r9.extend(IfdefDirective0)
+                    else
+                      @index = i9
+                      r9 = nil
+                    end
+                    if r9
+                      r8 = r9
+                    else
+                      r8 = instantiate_node(SyntaxNode,input, index...index)
+                    end
+                    s0 << r8
+                    if r8
+                      if (match_len = has_terminal?("`endif", false, index))
+                        r14 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+                        @index += match_len
+                      else
+                        terminal_parse_failure('"`endif"')
+                        r14 = nil
+                      end
+                      s0 << r14
+                    end
+                  end
+                end
               end
             end
           end
         end
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(IfdefDirective0)
           r0.extend(IfdefDirective1)
+          r0.extend(IfdefDirective2)
         else
           @index = i0
           r0 = nil
@@ -982,7 +1069,7 @@ module OrigenVerilog
 
       module MacroText2
         def to_ast
-          n :macro_text, text_value.strip unless text_value.empty?
+          n :macro_text, text_value.strip.gsub(/\\\s*\n/, "\n") unless text_value.empty?
         end
       end
 

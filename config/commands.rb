@@ -30,6 +30,7 @@ when "tags"
 when "build"
   Dir.chdir Origen.root do
     system 'lbin/tt --force grammars/verilog.treetop'
+    system 'lbin/tt --force grammars/preprocessor.treetop'
   end
   exit 0
 

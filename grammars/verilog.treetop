@@ -63,7 +63,7 @@ module OrigenVerilog
       rule compiler_directive
         (conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive /
          timescale_compiler_directive
-        ) {
+        ) 1..1 {
           def to_ast
             n :compiler_directive, *elements_to_ast
           end
@@ -93,10 +93,16 @@ module OrigenVerilog
       #   `endif
       rule ifdef_directive
         # TODO: Implement elsif and else branches
-        "`ifdef" S label:text_macro_identifier contents:verilog_source_items+ "`endif" {
+        "`ifdef" S label:text_macro_identifier s contents:verilog_source_items+ s
+        ("`else" S else_contents:verilog_source_items+)? 
+        "`endif"
+        {
           def to_ast
-            n :if_def, label.text_value,
-              n(:ifdef_group, *elements_to_ast(contents.elements))
+            node = n :if_def, label.text_value, n(:ifdef_group, *elements_to_ast(contents.elements))
+            #if respond_to?(:else_contents)
+            #  node = node.updated(nil, node.children + [n(:else_group_of_lines, *elements_to_ast(else_contents.elements))])
+            #end
+            node
           end
         }
       end
@@ -113,56 +119,6 @@ module OrigenVerilog
           def to_ast
             n :if_ndef, label.text_value,
               n(:ifndef_group, *elements_to_ast(contents.elements))
-          end
-        }
-      end
-
-      # text_macro_definition ::=
-      #   `define text_macro_name [ (list_of_formal_arguments) ]
-      rule text_macro_definition
-        "`define" S text_macro_name s macro_text? {
-          def to_ast
-            n :text_macro_definition, *elements_to_ast
-          end
-        }
-      end
-      rule macro_text
-        ("\\" space* N / !N !one_line_comment .)* {
-          def to_ast
-            n :macro_text, text_value.strip unless text_value.empty?
-          end
-        } 
-      end
-      # text_macro_name ::=
-      #   text_macro_identifier
-      rule text_macro_name
-        text_macro_identifier s ("(" s list_of_formal_arguments s ")")? {
-          def to_ast
-            n :text_macro_name, *elements_to_ast
-          end
-        }
-      end
-      # list_of_formal_arguments ::=
-      #   formal_argument_identifier { , formal_argument_identifier }
-      rule list_of_formal_arguments
-        formal_argument_identifier (s ',' s formal_argument_identifier)* {
-          def to_ast
-            n :list_of_formal_arguments, *elements_to_ast
-          end
-        }
-      end
-      # formal_argument_identifier ::=
-      #   simple_identifier
-      rule formal_argument_identifier
-        simple_identifier
-      end
-
-      # undefine_compiler_directive ::=
-      #   `undef text_macro_identifier
-      rule undefine_compiler_directive
-        "`undef" S text_macro_identifier {
-          def to_ast
-            n :undefine_compiler_directive, *elements_to_ast
           end
         }
       end

@@ -1,15 +1,15 @@
 require 'treetop'
 module OrigenVerilog
-  module Verilog
+  module Preprocessor
     # Responsible for parsing a Verilog file to an AST
     class Parser < OrigenVerilog::Parser
       def self.node
-        OrigenVerilog::Verilog::Node
+        OrigenVerilog::Preprocessor::Node
       end
 
       def self.parser
         @parser ||= begin
-          require "#{Origen.root!}/grammars/verilog"
+          require "#{Origen.root!}/grammars/preprocessor"
           GrammarParser.new
         end
       end
