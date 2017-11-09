@@ -9,6 +9,7 @@ module OrigenVerilog
 
       def self.parser
         @parser ||= begin
+          require "#{Origen.root!}/grammars/verilog"
           require "#{Origen.root!}/grammars/preprocessor"
           GrammarParser.new
         end

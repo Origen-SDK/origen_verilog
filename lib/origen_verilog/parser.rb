@@ -1,4 +1,5 @@
 require 'treetop'
+require 'origen_verilog/node'
 module OrigenVerilog
   class Parser
     def self.parse_file(path, options = {})

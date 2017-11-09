@@ -30292,6 +30292,38 @@ module OrigenVerilog
         r0
       end
 
+      def _nt_comment
+        start_index = index
+        if node_cache[:comment].has_key?(index)
+          cached = node_cache[:comment][index]
+          if cached
+            node_cache[:comment][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0 = index
+        r1 = _nt_one_line_comment
+        if r1
+          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+          r0 = r1
+        else
+          r2 = _nt_block_comment
+          if r2
+            r2 = SyntaxNode.new(input, (index-1)...index) if r2 == true
+            r0 = r2
+          else
+            @index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:comment][start_index] = r0
+
+        r0
+      end
+
       module BlockComment0
       end
 

@@ -11,8 +11,10 @@ module OrigenVerilog
   # * ifdef
   # * ifndef
   # * include
+  # * error
   module Preprocessor
     grammar Grammar
+      include Verilog::Grammar
 
       rule source
         source_items+ {
@@ -36,7 +38,7 @@ module OrigenVerilog
 
       rule compiler_directive
         text_macro_definition / undefine_compiler_directive / ifdef_directive / ifndef_directive /
-        include_compiler_directive
+        include_compiler_directive / error_compiler_directive
       end
 
       rule compiler_directive_terminator
@@ -48,11 +50,51 @@ module OrigenVerilog
       ###########################################################################################
 
       rule macro_reference
-        "`" name:(!illegal_macro_reference text_macro_identifier) {
+        "`" name:(!illegal_macro_reference text_macro_identifier) space* s2:("(" space* args:list_of_actual_arguments space* ")")? {
           def to_ast
-            n :macro_reference, name.text_value
+            if s2.respond_to?(:args)
+              n :macro_reference, name.text_value, s2.args.to_ast
+            else
+              n :macro_reference, name.text_value
+            end
           end
         }
+      end
+
+      rule list_of_actual_arguments
+        actual_argument (space* ',' space* actual_argument)* {
+          def to_ast
+            n :arguments, *elements_to_ast
+          end
+        }
+      end
+
+      # The Verilog (2005) spec says that this should just be an expression rule, but that does not seem to be true
+      # since in one of our examples it contains a task reference.
+      # Making an alternative rule that matches everything until a comma or closing bracket, but allows commas
+      # to exist within an argument as long as they are contained within some kind of bracket pair.
+      rule actual_argument
+        actual_argument_section+ {
+          def to_ast
+            text_value
+          end
+        }
+      end
+
+      rule actual_argument_section
+        [^,(){}\[\]] / balanced_bracket_string / balanced_square_bracket_string / balanced_curly_bracket_string
+      end
+
+      rule balanced_bracket_string
+        "(" ( [^\(\)]  / balanced_bracket_string )* ")"
+      end
+
+      rule balanced_square_bracket_string
+        "[" ( [^\[\]]  / balanced_square_bracket_string )* "]"
+      end
+
+      rule balanced_curly_bracket_string
+        "{" ( [^\{\}]  / balanced_curly_bracket_string )* "}"
       end
 
       rule illegal_macro_reference
@@ -74,7 +116,20 @@ module OrigenVerilog
         "resetall" /
         "timescale" /
         "unconnected_drive" /
-        "undef"
+        "undef" /
+        "error"
+      end
+
+      ###########################################################################################
+      ## ERROR
+      ###########################################################################################
+
+      rule error_compiler_directive
+        "`error" space+ '"' space* filename space* '"' {
+          def to_ast
+            n :error, *elements_to_ast
+          end
+        }
       end
 
       ###########################################################################################
@@ -84,9 +139,9 @@ module OrigenVerilog
       # include_compiler_directive ::=
       # `include "filename"
       rule include_compiler_directive
-        "`include" S '"' s filename s '"' {
+        "`include" space+ '"' space* filename space* '"' {
           def to_ast
-            n :include_compiler_directive, *elements_to_ast
+            n :include, *elements_to_ast
           end
         }
       end
@@ -106,34 +161,34 @@ module OrigenVerilog
       # text_macro_definition ::=
       #   `define text_macro_name [ (list_of_formal_arguments) ]
       rule text_macro_definition
-        "`define" S text_macro_name s macro_text? {
+        "`define" space+ text_macro_name space* macro_text? {
           def to_ast
-            n :text_macro_definition, *elements_to_ast
+            n :define, *elements_to_ast
           end
         }
       end
       rule macro_text
-        ("\\" s N / !(N / one_line_comment) .)* {
+        ("\\" space* N / !(N / one_line_comment) .)+ {
           def to_ast
-            n :macro_text, text_value.strip.gsub(/\\\s*\n/, "\n") unless text_value.empty?
+            n :text, text_value.strip.gsub(/\\\s*\n/, "\n") unless text_value.empty?
           end
         } 
       end
       # text_macro_name ::=
       #   text_macro_identifier
       rule text_macro_name
-        text_macro_identifier s ("(" s list_of_formal_arguments s ")")? {
+        text_macro_identifier space* ("(" space* list_of_formal_arguments space* ")")? {
           def to_ast
-            n :text_macro_name, *elements_to_ast
+            n :name, *elements_to_ast
           end
         }
       end
       # list_of_formal_arguments ::=
       #   formal_argument_identifier { , formal_argument_identifier }
       rule list_of_formal_arguments
-        formal_argument_identifier (s ',' s formal_argument_identifier)* {
+        formal_argument_identifier (space* ',' space* formal_argument_identifier)* {
           def to_ast
-            n :list_of_formal_arguments, *elements_to_ast
+            n :arguments, *elements_to_ast
           end
         }
       end
@@ -150,9 +205,9 @@ module OrigenVerilog
       # undefine_compiler_directive ::=
       #   `undef text_macro_identifier
       rule undefine_compiler_directive
-        "`undef" S text_macro_identifier {
+        "`undef" space+ text_macro_identifier {
           def to_ast
-            n :undefine_compiler_directive, *elements_to_ast
+            n :undef, *elements_to_ast
           end
         }
       end
@@ -169,9 +224,9 @@ module OrigenVerilog
       #   [ `else else_group_of_lines ]
       #   `endif
       rule ifdef_directive
-        "`ifdef" S label:text_macro_identifier s contents:source_items* s
-        elsif_nodes:("`elsif" S label:text_macro_identifier s contents:source_items*)* s 
-        else_node:("`else" s contents:source_items*)? s 
+        "`ifdef" space+ label:text_macro_identifier space* contents:source_items* s
+        elsif_nodes:("`elsif" space+ label:text_macro_identifier space* contents:source_items*)* space* 
+        else_node:("`else" space* contents:source_items*)? space* 
         "`endif"
         {
           def to_ast
@@ -201,9 +256,9 @@ module OrigenVerilog
       #   [ `else else_group_of_lines ]
       #   `endif
       rule ifndef_directive
-        "`ifndef" S label:text_macro_identifier s contents:source_items* s
-        elsif_nodes:("`elsif" S label:text_macro_identifier s contents:source_items*)* s 
-        else_node:("`else" s contents:source_items*)? s 
+        "`ifndef" space+ label:text_macro_identifier space* contents:source_items* s
+        elsif_nodes:("`elsif" space+ label:text_macro_identifier space* contents:source_items*)* space* 
+        else_node:("`else" space* contents:source_items*)? space* 
         "`endif"
         {
           def to_ast
@@ -226,29 +281,8 @@ module OrigenVerilog
       ## HELPERS
       ###########################################################################################
 
-      # conditional_compilation_directive ::=
-      #   ifdef_directive
-      #   | ifndef_directive
-      rule conditional_compilation_directive
-        ifdef_directive / ifndef_directive
-      end
-
-      rule text_macro_identifier
-        identifier
-      end
-
-      rule identifier
-        simple_identifier
-      end
-
-      # simple_identifier ::= [ a-zA-Z_ ] { [ a-zA-Z0-9_$ ] }
-      rule simple_identifier
-        [a-zA-Z] ([a-zA-Z0-9_])* {
-          def to_ast
-            text_value
-          end
-        }
-      end
+      # Override these comment rules to give them a to_ast method since we want to preserve
+      # comments during preprocessing
 
       rule block_comment
         "/*" (!end_of_comment .)* end_of_comment {
@@ -258,10 +292,6 @@ module OrigenVerilog
         }
       end
 
-      rule end_of_comment
-        "*/"
-      end
-
       rule one_line_comment
         "//" (!N .)* {
           def to_ast
@@ -269,44 +299,6 @@ module OrigenVerilog
           end
         }
       end
-
-      rule comment
-        one_line_comment / block_comment
-      end
-
-
-      rule space
-        " " / "\t"
-      end
-
-      rule space_or_newline
-        space / N
-      end
-
-      rule space_or_comment
-        (space / N / one_line_comment / block_comment)*
-      end
-
-      # Optional spaces
-      rule s
-        space*
-      end
-
-      # Required spaces
-      rule S
-        space+
-      end
-
-      # Optional end of line
-      rule n
-        "\r"? "\n"?
-      end
-
-      # Required end of line
-      rule N
-        "\r"? "\n"
-      end
-
     end
   end
 end

@@ -8,98 +8,128 @@ describe "The Preprocessor" do
   #end
 
   it "it can parse the examples" do
-    %w(picorv32 picosoc simpleuart spimemio).each do |file|
-      pre_parser.parse_file("#{Origen.root}/examples/picosoc/#{file}.v").should be
+    output_dir = "#{Origen.root}/output/preprocessor"
+    approved_dir = "#{Origen.root}/approved/preprocessor"
+    FileUtils.mkdir_p output_dir
+    passed = true
+    {
+      picorv32: {},
+      picosoc: {},
+      simpleuart: {},
+      spimemio: {}
+    }.each do |file, env|
+      pre_parser.parse_file("#{Origen.root}/examples/picosoc/#{file}.v").
+        process("#{output_dir}/#{file}.v", env)
+
+        new = File.read("#{output_dir}/#{file}.v")
+        old = File.read("#{approved_dir}/#{file}.v")
+
+        if new != old
+          puts "**** DIFF Detected ****"
+          puts "tkdiff #{approved_dir}/#{file}.v #{output_dir}/#{file}.v &"
+          puts "cp  #{output_dir}/#{file}.v #{approved_dir}/#{file}.v"
+          passed = fail
+        end
     end
+    passed.should == true
+  end
+
+  it "can read comments" do
+    pre_parser.parse("// Hello\n// Yo\n").should ==
+      s(:source,
+        s(:comment, "// Hello"),
+        s(:text_block, "\n"),
+        s(:comment, "// Yo"),
+        s(:text_block, "\n"))
   end
 
   it "can read defines" do
     pre_parser.parse("`define BLAH").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH")))
+        s(:define,
+          s(:name, "BLAH")))
 
     pre_parser.parse("`define BLAH(arg1, arg2)").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH",
-            s(:list_of_formal_arguments, "arg1", "arg2"))))
+        s(:define,
+          s(:name, "BLAH",
+            s(:arguments, "arg1", "arg2"))))
 
     pre_parser.parse("`define BLAH some text").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH"),
-          s(:macro_text, "some text")))
+        s(:define,
+          s(:name, "BLAH"),
+          s(:text, "some text")))
 
     pre_parser.parse("`define BLAH(arg1, arg2) some text").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH",
-            s(:list_of_formal_arguments, "arg1", "arg2")),
-          s(:macro_text, "some text")))
+        s(:define,
+          s(:name, "BLAH",
+            s(:arguments, "arg1", "arg2")),
+          s(:text, "some text")))
 
     pre_parser.parse("`define BLAH(arg1, arg2) some text\n multi line").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH",
-            s(:list_of_formal_arguments, "arg1", "arg2")),
-          s(:macro_text, "some text")),
+        s(:define,
+          s(:name, "BLAH",
+            s(:arguments, "arg1", "arg2")),
+          s(:text, "some text")),
         s(:text_block, "\n multi line"))
 
     pre_parser.parse("`define BLAH(arg1, arg2) some text \\ \n multi line").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH",
-            s(:list_of_formal_arguments, "arg1", "arg2")),
-          s(:macro_text, "some text \n multi line")))
+        s(:define,
+          s(:name, "BLAH",
+            s(:arguments, "arg1", "arg2")),
+          s(:text, "some text \n multi line")))
 
     pre_parser.parse("`define BLAH some text // should not see me!").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH"),
-          s(:macro_text, "some text")),
+        s(:define,
+          s(:name, "BLAH"),
+          s(:text, "some text")),
         s(:comment, "// should not see me!"))
 
     pre_parser.parse("`define BLAH(arg1)\nnext line").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH",
-            s(:list_of_formal_arguments, "arg1"))),
+        s(:define,
+          s(:name, "BLAH",
+            s(:arguments, "arg1"))),
         s(:text_block, "\nnext line"))
 
     pre_parser.parse("`define BLAH\nyo").should ==
       s(:source,
-        s(:text_macro_definition,
-          s(:text_macro_name, "BLAH")),
+        s(:define,
+          s(:name, "BLAH")),
         s(:text_block, "\nyo"))
   end
 
   it "can read undefs" do
     pre_parser.parse("`undef BLAH").should ==
       s(:source,
-        s(:undefine_compiler_directive, "BLAH"))
+        s(:undef, "BLAH"))
   end
 
   it "can read includes" do
     pre_parser.parse('`include "parts/count.v"').should ==
       s(:source,
-        s(:include_compiler_directive, "parts/count.v"))
+        s(:include, "parts/count.v"))
 
     pre_parser.parse('`include "/parts/count.v"').should ==
       s(:source,
-        s(:include_compiler_directive, "/parts/count.v"))
+        s(:include, "/parts/count.v"))
 
     pre_parser.parse('`include "C:/parts/count.v"').should ==
       s(:source,
-        s(:include_compiler_directive, "C:/parts/count.v"))
+        s(:include, "C:/parts/count.v"))
 
     pre_parser.parse('`include "fileB"').should ==
       s(:source,
-        s(:include_compiler_directive, "fileB"))
+        s(:include, "fileB"))
 
     pre_parser.parse('`include "fileB" // including fileB').should ==
       s(:source,
-        s(:include_compiler_directive, "fileB"),
+        s(:include, "fileB"),
         s(:text_block, " "),
         s(:comment, "// including fileB"))
   end
@@ -112,6 +142,21 @@ describe "The Preprocessor" do
     pre_parser.parse('// `BLAH').should ==
       s(:source,
         s(:comment, "// `BLAH"))
+
+     pre_parser.parse('`assert(!mem_do_prefetch && !mem_do_rinst)').should ==
+      s(:source,
+        s(:macro_reference, "assert",
+          s(:arguments, "!mem_do_prefetch && !mem_do_rinst")))
+
+     pre_parser.parse('`blah(arg1, arg2)').should ==
+      s(:source,
+        s(:macro_reference, "blah",
+          s(:arguments, "arg1", "arg2")))
+
+     pre_parser.parse('`debug($display("ST_RD:  %2d 0x%08x, BRANCH 0x%08x", latched_rd, reg_pc + (latched_compr ? 2 : 4), current_pc);)').should ==
+      s(:source,
+        s(:macro_reference, "debug",
+          s(:arguments, '$display("ST_RD:  %2d 0x%08x, BRANCH 0x%08x", latched_rd, reg_pc + (latched_compr ? 2 : 4), current_pc);')))
   end
 
   it "can read ifdefs" do

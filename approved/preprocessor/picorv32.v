@@ -24,32 +24,25 @@
 // `define DEBUGASM
 // `define DEBUG
 
-`undef JUST_A_TEST
 
-`ifdef DEBUG
-  `define debug(debug_command) debug_command
-`else
-  `define debug(debug_command)
-`endif
 
-`ifdef FORMAL
-  `define FORMAL_KEEP (* keep *)
-  `define assert(assert_expr) assert(assert_expr)
-`else
-  `ifdef DEBUGNETS
-    `define FORMAL_KEEP (* keep *)
-  `else
-    `define FORMAL_KEEP
-  `endif
-  `define assert(assert_expr) empty_statement
-`endif
+
+  
+
+
+
+  
+    
+  
+  
+
 
 // uncomment this for register file in extra module
 // `define PICORV32_REGS picorv32_regs
 
 // this macro can be used to check if the verilog files in your
 // design are read in the correct order.
-`define PICORV32_V
+
 
 
 /***************************************************************
@@ -117,27 +110,7 @@ module picorv32 #(
 	input      [31:0] irq,
 	output reg [31:0] eoi,
 
-`ifdef RISCV_FORMAL
-	output reg        rvfi_valid,
-	output reg [63:0] rvfi_order,
-	output reg [31:0] rvfi_insn,
-	output reg        rvfi_trap,
-	output reg        rvfi_halt,
-	output reg        rvfi_intr,
-	output reg [ 4:0] rvfi_rs1_addr,
-	output reg [ 4:0] rvfi_rs2_addr,
-	output reg [31:0] rvfi_rs1_rdata,
-	output reg [31:0] rvfi_rs2_rdata,
-	output reg [ 4:0] rvfi_rd_addr,
-	output reg [31:0] rvfi_rd_wdata,
-	output reg [31:0] rvfi_pc_rdata,
-	output reg [31:0] rvfi_pc_wdata,
-	output reg [31:0] rvfi_mem_addr,
-	output reg [ 3:0] rvfi_mem_rmask,
-	output reg [ 3:0] rvfi_mem_wmask,
-	output reg [31:0] rvfi_mem_rdata,
-	output reg [31:0] rvfi_mem_wdata,
-`endif
+
 
 	// Trace Interface
 	output reg        trace_valid,
@@ -184,7 +157,7 @@ module picorv32 #(
 	reg [31:0] irq_pending;
 	reg [31:0] timer;
 
-`ifndef PICORV32_REGS
+
 	reg [31:0] cpuregs [0:regfile_size-1];
 
 	integer i;
@@ -194,7 +167,7 @@ module picorv32 #(
 				cpuregs[i] = 0;
 		end
 	end
-`endif
+
 
 	task empty_statement;
 		// This task is used by the `assert directive in non-formal mode to
@@ -202,40 +175,7 @@ module picorv32 #(
 		begin end
 	endtask
 
-`ifdef DEBUGREGS
-	wire [31:0] dbg_reg_x0  = 0;
-	wire [31:0] dbg_reg_x1  = cpuregs[1];
-	wire [31:0] dbg_reg_x2  = cpuregs[2];
-	wire [31:0] dbg_reg_x3  = cpuregs[3];
-	wire [31:0] dbg_reg_x4  = cpuregs[4];
-	wire [31:0] dbg_reg_x5  = cpuregs[5];
-	wire [31:0] dbg_reg_x6  = cpuregs[6];
-	wire [31:0] dbg_reg_x7  = cpuregs[7];
-	wire [31:0] dbg_reg_x8  = cpuregs[8];
-	wire [31:0] dbg_reg_x9  = cpuregs[9];
-	wire [31:0] dbg_reg_x10 = cpuregs[10];
-	wire [31:0] dbg_reg_x11 = cpuregs[11];
-	wire [31:0] dbg_reg_x12 = cpuregs[12];
-	wire [31:0] dbg_reg_x13 = cpuregs[13];
-	wire [31:0] dbg_reg_x14 = cpuregs[14];
-	wire [31:0] dbg_reg_x15 = cpuregs[15];
-	wire [31:0] dbg_reg_x16 = cpuregs[16];
-	wire [31:0] dbg_reg_x17 = cpuregs[17];
-	wire [31:0] dbg_reg_x18 = cpuregs[18];
-	wire [31:0] dbg_reg_x19 = cpuregs[19];
-	wire [31:0] dbg_reg_x20 = cpuregs[20];
-	wire [31:0] dbg_reg_x21 = cpuregs[21];
-	wire [31:0] dbg_reg_x22 = cpuregs[22];
-	wire [31:0] dbg_reg_x23 = cpuregs[23];
-	wire [31:0] dbg_reg_x24 = cpuregs[24];
-	wire [31:0] dbg_reg_x25 = cpuregs[25];
-	wire [31:0] dbg_reg_x26 = cpuregs[26];
-	wire [31:0] dbg_reg_x27 = cpuregs[27];
-	wire [31:0] dbg_reg_x28 = cpuregs[28];
-	wire [31:0] dbg_reg_x29 = cpuregs[29];
-	wire [31:0] dbg_reg_x30 = cpuregs[30];
-	wire [31:0] dbg_reg_x31 = cpuregs[31];
-`endif
+
 
 	// Internal PCPI Cores
 
@@ -531,19 +471,19 @@ module picorv32 #(
 	always @(posedge clk) begin
 		if (resetn && !trap) begin
 			if (mem_do_prefetch || mem_do_rinst || mem_do_rdata)
-				`assert(!mem_do_wdata);
+				empty_statement;
 
 			if (mem_do_prefetch || mem_do_rinst)
-				`assert(!mem_do_rdata);
+				empty_statement;
 
 			if (mem_do_rdata)
-				`assert(!mem_do_prefetch && !mem_do_rinst);
+				empty_statement;
 
 			if (mem_do_wdata)
-				`assert(!(mem_do_prefetch || mem_do_rinst || mem_do_rdata));
+				empty_statement;
 
 			if (mem_state == 2 || mem_state == 3)
-				`assert(mem_valid || mem_do_prefetch);
+				empty_statement;
 		end
 	end
 
@@ -578,10 +518,10 @@ module picorv32 #(
 					end
 				end
 				1: begin
-					`assert(mem_wstrb == 0);
-					`assert(mem_do_prefetch || mem_do_rinst || mem_do_rdata);
-					`assert(mem_valid == !mem_la_use_prefetched_high_word);
-					`assert(mem_instr == (mem_do_prefetch || mem_do_rinst));
+					empty_statement;
+					empty_statement;
+					empty_statement;
+					empty_statement;
 					if (mem_xfer) begin
 						if (COMPRESSED_ISA && mem_la_read) begin
 							mem_valid <= 1;
@@ -604,16 +544,16 @@ module picorv32 #(
 					end
 				end
 				2: begin
-					`assert(mem_wstrb != 0);
-					`assert(mem_do_wdata);
+					empty_statement;
+					empty_statement;
 					if (mem_xfer) begin
 						mem_valid <= 0;
 						mem_state <= 0;
 					end
 				end
 				3: begin
-					`assert(mem_wstrb == 0);
-					`assert(mem_do_prefetch);
+					empty_statement;
+					empty_statement;
 					if (mem_do_rinst) begin
 						mem_state <= 0;
 					end
@@ -672,15 +612,15 @@ module picorv32 #(
 	assign is_rdcycle_rdcycleh_rdinstr_rdinstrh = |{instr_rdcycle, instr_rdcycleh, instr_rdinstr, instr_rdinstrh};
 
 	reg [63:0] new_ascii_instr;
-	`FORMAL_KEEP reg [63:0] dbg_ascii_instr;
-	`FORMAL_KEEP reg [31:0] dbg_insn_imm;
-	`FORMAL_KEEP reg [4:0] dbg_insn_rs1;
-	`FORMAL_KEEP reg [4:0] dbg_insn_rs2;
-	`FORMAL_KEEP reg [4:0] dbg_insn_rd;
-	`FORMAL_KEEP reg [31:0] dbg_rs1val;
-	`FORMAL_KEEP reg [31:0] dbg_rs2val;
-	`FORMAL_KEEP reg dbg_rs1val_valid;
-	`FORMAL_KEEP reg dbg_rs2val_valid;
+	reg [63:0] dbg_ascii_instr;
+	reg [31:0] dbg_insn_imm;
+	reg [4:0] dbg_insn_rs1;
+	reg [4:0] dbg_insn_rs2;
+	reg [4:0] dbg_insn_rd;
+	reg [31:0] dbg_rs1val;
+	reg [31:0] dbg_rs2val;
+	reg dbg_rs1val_valid;
+	reg dbg_rs2val_valid;
 
 	always @* begin
 		new_ascii_instr = "";
@@ -819,24 +759,9 @@ module picorv32 #(
 		end
 	end
 
-`ifdef DEBUGASM
-	always @(posedge clk) begin
-		if (dbg_next) begin
-			$display("debugasm %x %x %s", dbg_insn_addr, dbg_insn_opcode, dbg_ascii_instr ? dbg_ascii_instr : "*");
-		end
-	end
-`endif
 
-`ifdef DEBUG
-	always @(posedge clk) begin
-		if (dbg_next) begin
-			if (&dbg_insn_opcode[1:0])
-				$display("DECODE: 0x%08x 0x%08x %-0s", dbg_insn_addr, dbg_insn_opcode, dbg_ascii_instr ? dbg_ascii_instr : "UNKNOWN");
-			else
-				$display("DECODE: 0x%08x     0x%04x %-0s", dbg_insn_addr, dbg_insn_opcode[15:0], dbg_ascii_instr ? dbg_ascii_instr : "UNKNOWN");
-		end
-	end
-`endif
+
+
 
 	always @(posedge clk) begin
 		is_lui_auipc_jal <= |{instr_lui, instr_auipc, instr_jal};
@@ -1161,7 +1086,7 @@ module picorv32 #(
 	reg [7:0] cpu_state;
 	reg [1:0] irq_state;
 
-	`FORMAL_KEEP reg [127:0] dbg_ascii_state;
+	reg [127:0] dbg_ascii_state;
 
 	always @* begin
 		dbg_ascii_state = "";
@@ -1263,10 +1188,7 @@ module picorv32 #(
 				alu_out = alu_shr;
 		endcase
 
-`ifdef RISCV_FORMAL_BLACKBOX_ALU
-		alu_out_0 = $anyseq;
-		alu_out = $anyseq;
-`endif
+
 	end
 
 	reg clear_prefetched_high_word_q;
@@ -1313,7 +1235,7 @@ module picorv32 #(
 		end
 	end
 
-`ifndef PICORV32_REGS
+
 	always @(posedge clk) begin
 		if (resetn && cpuregs_write && latched_rd)
 			cpuregs[latched_rd] <= cpuregs_wrdata;
@@ -1322,54 +1244,19 @@ module picorv32 #(
 	always @* begin
 		decoded_rs = 'bx;
 		if (ENABLE_REGS_DUALPORT) begin
-`ifndef RISCV_FORMAL_BLACKBOX_REGS
+
 			cpuregs_rs1 = decoded_rs1 ? cpuregs[decoded_rs1] : 0;
 			cpuregs_rs2 = decoded_rs2 ? cpuregs[decoded_rs2] : 0;
-`else
-			cpuregs_rs1 = decoded_rs1 ? $anyseq : 0;
-			cpuregs_rs2 = decoded_rs2 ? $anyseq : 0;
-`endif
+
 		end else begin
 			decoded_rs = (cpu_state == cpu_state_ld_rs2) ? decoded_rs2 : decoded_rs1;
-`ifndef RISCV_FORMAL_BLACKBOX_REGS
+
 			cpuregs_rs1 = decoded_rs ? cpuregs[decoded_rs] : 0;
-`else
-			cpuregs_rs1 = decoded_rs ? $anyseq : 0;
-`endif
+
 			cpuregs_rs2 = cpuregs_rs1;
 		end
 	end
-`else
-	wire[31:0] cpuregs_rdata1;
-	wire[31:0] cpuregs_rdata2;
 
-	wire [5:0] cpuregs_waddr = latched_rd;
-	wire [5:0] cpuregs_raddr1 = ENABLE_REGS_DUALPORT ? decoded_rs1 : decoded_rs;
-	wire [5:0] cpuregs_raddr2 = ENABLE_REGS_DUALPORT ? decoded_rs2 : 0;
-
-	`PICORV32_REGS cpuregs (
-		.clk(clk),
-		.wen(resetn && cpuregs_write && latched_rd),
-		.waddr(cpuregs_waddr),
-		.raddr1(cpuregs_raddr1),
-		.raddr2(cpuregs_raddr2),
-		.wdata(cpuregs_wrdata),
-		.rdata1(cpuregs_rdata1),
-		.rdata2(cpuregs_rdata2)
-	);
-
-	always @* begin
-		decoded_rs = 'bx;
-		if (ENABLE_REGS_DUALPORT) begin
-			cpuregs_rs1 = decoded_rs1 ? cpuregs_rdata1 : 0;
-			cpuregs_rs2 = decoded_rs2 ? cpuregs_rdata2 : 0;
-		end else begin
-			decoded_rs = (cpu_state == cpu_state_ld_rs2) ? decoded_rs2 : decoded_rs1;
-			cpuregs_rs1 = decoded_rs ? cpuregs_rdata1 : 0;
-			cpuregs_rs2 = cpuregs_rs1;
-		end
-	end
-`endif
 
 	assign launch_next_insn = cpu_state == cpu_state_fetch && decoder_trigger && (!ENABLE_IRQ || irq_delay || irq_active || !(irq_pending & ~irq_mask));
 
@@ -1478,10 +1365,10 @@ module picorv32 #(
 				case (1'b1)
 					latched_branch: begin
 						current_pc = latched_store ? (latched_stalu ? alu_out_q : reg_out) & ~1 : reg_next_pc;
-						`debug($display("ST_RD:  %2d 0x%08x, BRANCH 0x%08x", latched_rd, reg_pc + (latched_compr ? 2 : 4), current_pc);)
+						
 					end
 					latched_store && !latched_branch: begin
-						`debug($display("ST_RD:  %2d 0x%08x", latched_rd, latched_stalu ? alu_out_q : reg_out);)
+						
 					end
 					ENABLE_IRQ && irq_state[0]: begin
 						current_pc = PROGADDR_IRQ;
@@ -1535,7 +1422,7 @@ module picorv32 #(
 						do_waitirq <= 1;
 				end else
 				if (decoder_trigger) begin
-					`debug($display("-- %-0t", $time);)
+					
 					irq_delay <= irq_active;
 					reg_next_pc <= current_pc + (compressed_instr ? 2 : 4);
 					if (ENABLE_TRACE)
@@ -1564,13 +1451,13 @@ module picorv32 #(
 				case (1'b1)
 					(CATCH_ILLINSN || WITH_PCPI) && instr_trap: begin
 						if (WITH_PCPI) begin
-							`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+							
 							reg_op1 <= cpuregs_rs1;
 							dbg_rs1val <= cpuregs_rs1;
 							dbg_rs1val_valid <= 1;
 							if (ENABLE_REGS_DUALPORT) begin
 								pcpi_valid <= 1;
-								`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+								
 								reg_sh <= cpuregs_rs2;
 								reg_op2 <= cpuregs_rs2;
 								dbg_rs2val <= cpuregs_rs2;
@@ -1584,7 +1471,7 @@ module picorv32 #(
 								end else
 								if (CATCH_ILLINSN && (pcpi_timeout || instr_ecall_ebreak)) begin
 									pcpi_valid <= 0;
-									`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+									
 									if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 										next_irq_pending[irq_ebreak] = 1;
 										cpu_state <= cpu_state_fetch;
@@ -1595,7 +1482,7 @@ module picorv32 #(
 								cpu_state <= cpu_state_ld_rs2;
 							end
 						end else begin
-							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+							
 							if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 								next_irq_pending[irq_ebreak] = 1;
 								cpu_state <= cpu_state_fetch;
@@ -1628,7 +1515,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_exec;
 					end
 					ENABLE_IRQ && ENABLE_IRQ_QREGS && instr_getq: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_out <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1636,7 +1523,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_fetch;
 					end
 					ENABLE_IRQ && ENABLE_IRQ_QREGS && instr_setq: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_out <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1649,7 +1536,7 @@ module picorv32 #(
 						irq_active <= 0;
 						latched_branch <= 1;
 						latched_store <= 1;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_out <= CATCH_MISALIGN ? (cpuregs_rs1 & 32'h fffffffe) : cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1658,7 +1545,7 @@ module picorv32 #(
 					ENABLE_IRQ && instr_maskirq: begin
 						latched_store <= 1;
 						reg_out <= irq_mask;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						irq_mask <= cpuregs_rs1 | MASKED_IRQ;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1667,14 +1554,14 @@ module picorv32 #(
 					ENABLE_IRQ && ENABLE_IRQ_TIMER && instr_timer: begin
 						latched_store <= 1;
 						reg_out <= timer;
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						timer <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
 						cpu_state <= cpu_state_fetch;
 					end
 					is_lb_lh_lw_lbu_lhu && !instr_trap: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1682,7 +1569,7 @@ module picorv32 #(
 						mem_do_rinst <= 1;
 					end
 					is_slli_srli_srai && !BARREL_SHIFTER: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1690,7 +1577,7 @@ module picorv32 #(
 						cpu_state <= cpu_state_shift;
 					end
 					is_jalr_addi_slti_sltiu_xori_ori_andi, is_slli_srli_srai && BARREL_SHIFTER: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
@@ -1702,12 +1589,12 @@ module picorv32 #(
 						cpu_state <= cpu_state_exec;
 					end
 					default: begin
-						`debug($display("LD_RS1: %2d 0x%08x", decoded_rs1, cpuregs_rs1);)
+						
 						reg_op1 <= cpuregs_rs1;
 						dbg_rs1val <= cpuregs_rs1;
 						dbg_rs1val_valid <= 1;
 						if (ENABLE_REGS_DUALPORT) begin
-							`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+							
 							reg_sh <= cpuregs_rs2;
 							reg_op2 <= cpuregs_rs2;
 							dbg_rs2val <= cpuregs_rs2;
@@ -1737,7 +1624,7 @@ module picorv32 #(
 			end
 
 			cpu_state_ld_rs2: begin
-				`debug($display("LD_RS2: %2d 0x%08x", decoded_rs2, cpuregs_rs2);)
+				
 				reg_sh <= cpuregs_rs2;
 				reg_op2 <= cpuregs_rs2;
 				dbg_rs2val <= cpuregs_rs2;
@@ -1756,7 +1643,7 @@ module picorv32 #(
 						end else
 						if (CATCH_ILLINSN && (pcpi_timeout || instr_ecall_ebreak)) begin
 							pcpi_valid <= 0;
-							`debug($display("EBREAK OR UNSUPPORTED INSN AT 0x%08x", reg_pc);)
+							
 							if (ENABLE_IRQ && !irq_mask[irq_ebreak] && !irq_active) begin
 								next_irq_pending[irq_ebreak] = 1;
 								cpu_state <= cpu_state_fetch;
@@ -1894,14 +1781,14 @@ module picorv32 #(
 
 		if (CATCH_MISALIGN && resetn && (mem_do_rdata || mem_do_wdata)) begin
 			if (mem_wordsize == 0 && reg_op1[1:0] != 0) begin
-				`debug($display("MISALIGNED WORD: 0x%08x", reg_op1);)
+				
 				if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 					next_irq_pending[irq_buserror] = 1;
 				end else
 					cpu_state <= cpu_state_trap;
 			end
 			if (mem_wordsize == 1 && reg_op1[0] != 0) begin
-				`debug($display("MISALIGNED HALFWORD: 0x%08x", reg_op1);)
+				
 				if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 					next_irq_pending[irq_buserror] = 1;
 				end else
@@ -1909,7 +1796,7 @@ module picorv32 #(
 			end
 		end
 		if (CATCH_MISALIGN && resetn && mem_do_rinst && (COMPRESSED_ISA ? reg_pc[0] : |reg_pc[1:0])) begin
-			`debug($display("MISALIGNED INSTRUCTION: 0x%08x", reg_pc);)
+			
 			if (ENABLE_IRQ && !irq_mask[irq_buserror] && !irq_active) begin
 				next_irq_pending[irq_buserror] = 1;
 			end else
@@ -1947,153 +1834,10 @@ module picorv32 #(
 		current_pc = 'bx;
 	end
 
-`ifdef RISCV_FORMAL
-	reg dbg_irq_call;
-	reg dbg_irq_enter;
-	reg [31:0] dbg_irq_ret;
-	always @(posedge clk) begin
-		rvfi_valid <= resetn && (launch_next_insn || trap) && dbg_valid_insn;
-		rvfi_order <= resetn ? rvfi_order + rvfi_valid : 0;
 
-		rvfi_insn <= dbg_insn_opcode;
-		rvfi_rs1_addr <= dbg_rs1val_valid ? dbg_insn_rs1 : 0;
-		rvfi_rs2_addr <= dbg_rs2val_valid ? dbg_insn_rs2 : 0;
-		rvfi_pc_rdata <= dbg_insn_addr;
-		rvfi_rs1_rdata <= dbg_rs1val_valid ? dbg_rs1val : 0;
-		rvfi_rs2_rdata <= dbg_rs2val_valid ? dbg_rs2val : 0;
-		rvfi_trap <= trap;
-		rvfi_halt <= trap;
-		rvfi_intr <= dbg_irq_enter;
-
-		if (!resetn) begin
-			dbg_irq_call <= 0;
-			dbg_irq_enter <= 0;
-		end else
-		if (rvfi_valid) begin
-			dbg_irq_call <= 0;
-			dbg_irq_enter <= dbg_irq_call;
-		end else
-		if (irq_state == 1) begin
-			dbg_irq_call <= 1;
-			dbg_irq_ret <= next_pc;
-		end
-
-		if (!resetn) begin
-			rvfi_rd_addr <= 0;
-			rvfi_rd_wdata <= 0;
-		end else
-		if (cpuregs_write && !irq_state) begin
-			rvfi_rd_addr <= latched_rd;
-			rvfi_rd_wdata <= latched_rd ? cpuregs_wrdata : 0;
-		end else
-		if (rvfi_valid) begin
-			rvfi_rd_addr <= 0;
-			rvfi_rd_wdata <= 0;
-		end
-
-		casez (dbg_insn_opcode)
-			32'b 0000000_?????_000??_???_?????_0001011: begin // getq
-				rvfi_rs1_addr <= 0;
-				rvfi_rs1_rdata <= 0;
-			end
-			32'b 0000001_?????_?????_???_000??_0001011: begin // setq
-				rvfi_rd_addr <= 0;
-				rvfi_rd_wdata <= 0;
-			end
-			32'b 0000010_?????_00000_???_00000_0001011: begin // retirq
-				rvfi_rs1_addr <= 0;
-				rvfi_rs1_rdata <= 0;
-			end
-		endcase
-
-		if (!dbg_irq_call) begin
-			if (dbg_mem_instr) begin
-				rvfi_mem_addr <= 0;
-				rvfi_mem_rmask <= 0;
-				rvfi_mem_wmask <= 0;
-				rvfi_mem_rdata <= 0;
-				rvfi_mem_wdata <= 0;
-			end else
-			if (dbg_mem_valid && dbg_mem_ready) begin
-				rvfi_mem_addr <= dbg_mem_addr;
-				rvfi_mem_rmask <= dbg_mem_wstrb ? 0 : ~0;
-				rvfi_mem_wmask <= dbg_mem_wstrb;
-				rvfi_mem_rdata <= dbg_mem_rdata;
-				rvfi_mem_wdata <= dbg_mem_wdata;
-			end
-		end
-	end
-
-	always @* begin
-		rvfi_pc_wdata = dbg_irq_call ? dbg_irq_ret : dbg_insn_addr;
-	end
-`endif
 
 	// Formal Verification
-`ifdef FORMAL
-	reg [3:0] last_mem_nowait;
-	always @(posedge clk)
-		last_mem_nowait <= {last_mem_nowait, mem_ready || !mem_valid};
 
-	// stall the memory interface for max 4 cycles
-	restrict property (|last_mem_nowait || mem_ready || !mem_valid);
-
-	// resetn low in first cycle, after that resetn high
-	restrict property (resetn != $initstate);
-
-	// this just makes it much easier to read traces. uncomment as needed.
-	// assume property (mem_valid || !mem_ready);
-
-	reg ok;
-	always @* begin
-		if (resetn) begin
-			// instruction fetches are read-only
-			if (mem_valid && mem_instr)
-				assert (mem_wstrb == 0);
-
-			// cpu_state must be valid
-			ok = 0;
-			if (cpu_state == cpu_state_trap)   ok = 1;
-			if (cpu_state == cpu_state_fetch)  ok = 1;
-			if (cpu_state == cpu_state_ld_rs1) ok = 1;
-			if (cpu_state == cpu_state_ld_rs2) ok = !ENABLE_REGS_DUALPORT;
-			if (cpu_state == cpu_state_exec)   ok = 1;
-			if (cpu_state == cpu_state_shift)  ok = 1;
-			if (cpu_state == cpu_state_stmem)  ok = 1;
-			if (cpu_state == cpu_state_ldmem)  ok = 1;
-			assert (ok);
-		end
-	end
-
-	reg last_mem_la_read = 0;
-	reg last_mem_la_write = 0;
-	reg [31:0] last_mem_la_addr;
-	reg [31:0] last_mem_la_wdata;
-	reg [3:0] last_mem_la_wstrb = 0;
-
-	always @(posedge clk) begin
-		last_mem_la_read <= mem_la_read;
-		last_mem_la_write <= mem_la_write;
-		last_mem_la_addr <= mem_la_addr;
-		last_mem_la_wdata <= mem_la_wdata;
-		last_mem_la_wstrb <= mem_la_wstrb;
-
-		if (last_mem_la_read) begin
-			assert(mem_valid);
-			assert(mem_addr == last_mem_la_addr);
-			assert(mem_wstrb == 0);
-		end
-		if (last_mem_la_write) begin
-			assert(mem_valid);
-			assert(mem_addr == last_mem_la_addr);
-			assert(mem_wdata == last_mem_la_wdata);
-			assert(mem_wstrb == last_mem_la_wstrb);
-		end
-		if (mem_la_read || mem_la_write) begin
-			assert(!mem_valid || mem_ready);
-		end
-	end
-`endif
 endmodule
 
 // This is a simple example implementation of PICORV32_REGS.
@@ -2331,15 +2075,9 @@ module picorv32_pcpi_fast_mul #(
 	assign pcpi_wr = active[EXTRA_MUL_FFS ? 3 : 1];
 	assign pcpi_wait = 0;
 	assign pcpi_ready = active[EXTRA_MUL_FFS ? 3 : 1];
-`ifdef RISCV_FORMAL_ALTOPS
-	assign pcpi_rd =
-			instr_mul    ? (pcpi_rs1 + pcpi_rs2) ^ 32'h5876063e :
-			instr_mulh   ? (pcpi_rs1 + pcpi_rs2) ^ 32'hf6583fb7 :
-			instr_mulhsu ? (pcpi_rs1 - pcpi_rs2) ^ 32'hecfbe137 :
-			instr_mulhu  ? (pcpi_rs1 + pcpi_rs2) ^ 32'h949ce5e8 : 1'bx;
-`else
+
 	assign pcpi_rd = shift_out ? (EXTRA_MUL_FFS ? rd_q : rd) >> 32 : (EXTRA_MUL_FFS ? rd_q : rd);
-`endif
+
 endmodule
 
 
@@ -2411,30 +2149,21 @@ module picorv32_pcpi_div (
 			running <= 0;
 			pcpi_ready <= 1;
 			pcpi_wr <= 1;
-`ifdef RISCV_FORMAL_ALTOPS
-			case (1)
-				instr_div:  pcpi_rd <= (pcpi_rs1 - pcpi_rs2) ^ 32'h7f8529ec;
-				instr_divu: pcpi_rd <= (pcpi_rs1 - pcpi_rs2) ^ 32'h10e8fd70;
-				instr_rem:  pcpi_rd <= (pcpi_rs1 - pcpi_rs2) ^ 32'h8da68fa5;
-				instr_remu: pcpi_rd <= (pcpi_rs1 - pcpi_rs2) ^ 32'h3138d0e1;
-			endcase
-`else
+
 			if (instr_div || instr_divu)
 				pcpi_rd <= outsign ? -quotient : quotient;
 			else
 				pcpi_rd <= outsign ? -dividend : dividend;
-`endif
+
 		end else begin
 			if (divisor <= dividend) begin
 				dividend <= dividend - divisor;
 				quotient <= quotient | quotient_msk;
 			end
 			divisor <= divisor >> 1;
-`ifdef RISCV_FORMAL_ALTOPS
-			quotient_msk <= quotient_msk >> 5;
-`else
+
 			quotient_msk <= quotient_msk >> 1;
-`endif
+
 		end
 	end
 endmodule
@@ -2512,27 +2241,7 @@ module picorv32_axi #(
 	input  [31:0] irq,
 	output [31:0] eoi,
 
-`ifdef RISCV_FORMAL
-	output        rvfi_valid,
-	output [63:0] rvfi_order,
-	output [31:0] rvfi_insn,
-	output        rvfi_trap,
-	output        rvfi_halt,
-	output        rvfi_intr,
-	output [ 4:0] rvfi_rs1_addr,
-	output [ 4:0] rvfi_rs2_addr,
-	output [31:0] rvfi_rs1_rdata,
-	output [31:0] rvfi_rs2_rdata,
-	output [ 4:0] rvfi_rd_addr,
-	output [31:0] rvfi_rd_wdata,
-	output [31:0] rvfi_pc_rdata,
-	output [31:0] rvfi_pc_wdata,
-	output [31:0] rvfi_mem_addr,
-	output [ 3:0] rvfi_mem_rmask,
-	output [ 3:0] rvfi_mem_wmask,
-	output [31:0] rvfi_mem_rdata,
-	output [31:0] rvfi_mem_wdata,
-`endif
+
 
 	// Trace Interface
 	output        trace_valid,
@@ -2626,27 +2335,7 @@ module picorv32_axi #(
 		.irq(irq),
 		.eoi(eoi),
 
-`ifdef RISCV_FORMAL
-		.rvfi_valid    (rvfi_valid    ),
-		.rvfi_order    (rvfi_order    ),
-		.rvfi_insn     (rvfi_insn     ),
-		.rvfi_trap     (rvfi_trap     ),
-		.rvfi_halt     (rvfi_halt     ),
-		.rvfi_intr     (rvfi_intr     ),
-		.rvfi_rs1_addr (rvfi_rs1_addr ),
-		.rvfi_rs2_addr (rvfi_rs2_addr ),
-		.rvfi_rs1_rdata(rvfi_rs1_rdata),
-		.rvfi_rs2_rdata(rvfi_rs2_rdata),
-		.rvfi_rd_addr  (rvfi_rd_addr  ),
-		.rvfi_rd_wdata (rvfi_rd_wdata ),
-		.rvfi_pc_rdata (rvfi_pc_rdata ),
-		.rvfi_pc_wdata (rvfi_pc_wdata ),
-		.rvfi_mem_addr (rvfi_mem_addr ),
-		.rvfi_mem_rmask(rvfi_mem_rmask),
-		.rvfi_mem_wmask(rvfi_mem_wmask),
-		.rvfi_mem_rdata(rvfi_mem_rdata),
-		.rvfi_mem_wdata(rvfi_mem_wdata),
-`endif
+
 
 		.trace_valid(trace_valid),
 		.trace_data (trace_data)
@@ -2798,27 +2487,7 @@ module picorv32_wb #(
 	input  [31:0] irq,
 	output [31:0] eoi,
 
-`ifdef RISCV_FORMAL
-	output        rvfi_valid,
-	output [63:0] rvfi_order,
-	output [31:0] rvfi_insn,
-	output        rvfi_trap,
-	output        rvfi_halt,
-	output        rvfi_intr,
-	output [ 4:0] rvfi_rs1_addr,
-	output [ 4:0] rvfi_rs2_addr,
-	output [31:0] rvfi_rs1_rdata,
-	output [31:0] rvfi_rs2_rdata,
-	output [ 4:0] rvfi_rd_addr,
-	output [31:0] rvfi_rd_wdata,
-	output [31:0] rvfi_pc_rdata,
-	output [31:0] rvfi_pc_wdata,
-	output [31:0] rvfi_mem_addr,
-	output [ 3:0] rvfi_mem_rmask,
-	output [ 3:0] rvfi_mem_wmask,
-	output [31:0] rvfi_mem_rdata,
-	output [31:0] rvfi_mem_wdata,
-`endif
+
 
 	// Trace Interface
 	output        trace_valid,
@@ -2890,27 +2559,7 @@ module picorv32_wb #(
 		.irq(irq),
 		.eoi(eoi),
 
-`ifdef RISCV_FORMAL
-		.rvfi_valid    (rvfi_valid    ),
-		.rvfi_order    (rvfi_order    ),
-		.rvfi_insn     (rvfi_insn     ),
-		.rvfi_trap     (rvfi_trap     ),
-		.rvfi_halt     (rvfi_halt     ),
-		.rvfi_intr     (rvfi_intr     ),
-		.rvfi_rs1_addr (rvfi_rs1_addr ),
-		.rvfi_rs2_addr (rvfi_rs2_addr ),
-		.rvfi_rs1_rdata(rvfi_rs1_rdata),
-		.rvfi_rs2_rdata(rvfi_rs2_rdata),
-		.rvfi_rd_addr  (rvfi_rd_addr  ),
-		.rvfi_rd_wdata (rvfi_rd_wdata ),
-		.rvfi_pc_rdata (rvfi_pc_rdata ),
-		.rvfi_pc_wdata (rvfi_pc_wdata ),
-		.rvfi_mem_addr (rvfi_mem_addr ),
-		.rvfi_mem_rmask(rvfi_mem_rmask),
-		.rvfi_mem_wmask(rvfi_mem_wmask),
-		.rvfi_mem_rdata(rvfi_mem_rdata),
-		.rvfi_mem_wdata(rvfi_mem_wdata),
-`endif
+
 
 		.trace_valid(trace_valid),
 		.trace_data (trace_data)
