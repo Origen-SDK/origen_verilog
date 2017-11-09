@@ -105,7 +105,6 @@ GEM
       rake
     rake (10.5.0)
     ripper-tags (0.4.0)
-    rparsec (1.0)
     rspec (3.7.0)
       rspec-core (~> 3.7.0)
       rspec-expectations (~> 3.7.0)
@@ -129,8 +128,6 @@ GEM
       ruby-progressbar (~> 1.4)
     ruby-progressbar (1.9.0)
     scrub_rb (1.0.1)
-    sexp (0.2.1)
-      rparsec (>= 1.0)
     simplecov (0.14.1)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -163,7 +160,6 @@ DEPENDENCIES
   origen_updater
   origen_verilog!
   ripper-tags
-  sexp
   treetop
 
 BUNDLED WITH
