@@ -16,7 +16,7 @@ module OrigenVerilog
       if tree.nil? && !options[:quiet]
         parser.failure_reason =~ /^(Expected .+) (after|at)/m
         @last_error_msg = []
-        @last_error_msg << "#{Regexp.last_match(1).gsub("\n", '$NEWLINE')}:"
+        @last_error_msg << "#{Regexp.last_match(1).gsub("\n", '$NEWLINE')}:" if Regexp.last_match(1)
         if parser.failure_line >= data.lines.to_a.size
           @last_error_msg << 'EOF'
         else
@@ -26,7 +26,9 @@ module OrigenVerilog
         puts "Failed parsing Verilog file: #{file}"
         puts @last_error_msg
       end
-      tree
+      if tree
+        tree.to_ast
+      end
     end
 
     def self.last_error_msg

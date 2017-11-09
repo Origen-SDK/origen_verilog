@@ -40,7 +40,7 @@ def pre_parser
 end
 
 def s(type, *children)
-  OrigenVerilog::AST::Node.new(type, children)
+  Treetop.origen_verilog_parser.node.new(type, children)
 end
 
 RSpec.configure do |config|

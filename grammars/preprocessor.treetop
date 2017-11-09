@@ -23,21 +23,85 @@ module OrigenVerilog
       end
 
       rule source_items
-        #text_block / text_macro_definition
-        one_line_comment / block_comment / text_macro_definition / text_block
-      end
-
-      rule comment
-        one_line_comment / block_comment
+        comment / compiler_directive / macro_reference / text_block
       end
 
       rule text_block
-        (!comment !text_macro_definition .)+ {
+        (!(comment / compiler_directive / compiler_directive_terminator / macro_reference) .)+ {
           def to_ast
             n :text_block, text_value
           end
         }
       end
+
+      rule compiler_directive
+        text_macro_definition / undefine_compiler_directive / ifdef_directive / ifndef_directive /
+        include_compiler_directive
+      end
+
+      rule compiler_directive_terminator
+        "`else" / "`elsif" / "`endif"
+      end
+
+      ###########################################################################################
+      ## MACRO REFERENCE
+      ###########################################################################################
+
+      rule macro_reference
+        "`" name:(!illegal_macro_reference text_macro_identifier) {
+          def to_ast
+            n :macro_reference, name.text_value
+          end
+        }
+      end
+
+      rule illegal_macro_reference
+        "begin_keywords" /
+        "celldefine" /
+        "default_nettype" /
+        "define" /
+        "else" /
+        "elsif" /
+        "end_keywords" /
+        "endcelldefine" /
+        "endif" /
+        "ifdef" /
+        "ifndef" /
+        "include" /
+        "line" /
+        "nounconnected_drive" /
+        "pragma" /
+        "resetall" /
+        "timescale" /
+        "unconnected_drive" /
+        "undef"
+      end
+
+      ###########################################################################################
+      ## INCLUDE
+      ###########################################################################################
+
+      # include_compiler_directive ::=
+      # `include "filename"
+      rule include_compiler_directive
+        "`include" S '"' s filename s '"' {
+          def to_ast
+            n :include_compiler_directive, *elements_to_ast
+          end
+        }
+      end
+
+      rule filename
+        (!(N / comment / '"') .)+ {
+          def to_ast
+            text_value.strip
+          end
+        }
+      end
+
+      ###########################################################################################
+      ## DEFINE
+      ###########################################################################################
 
       # text_macro_definition ::=
       #   `define text_macro_name [ (list_of_formal_arguments) ]
@@ -49,7 +113,7 @@ module OrigenVerilog
         }
       end
       rule macro_text
-        ("\\" space* N / !N !one_line_comment .)* {
+        ("\\" s N / !(N / one_line_comment) .)* {
           def to_ast
             n :macro_text, text_value.strip.gsub(/\\\s*\n/, "\n") unless text_value.empty?
           end
@@ -79,6 +143,10 @@ module OrigenVerilog
         simple_identifier
       end
 
+      ###########################################################################################
+      ## UNDEF
+      ###########################################################################################
+
       # undefine_compiler_directive ::=
       #   `undef text_macro_identifier
       rule undefine_compiler_directive
@@ -87,6 +155,82 @@ module OrigenVerilog
             n :undefine_compiler_directive, *elements_to_ast
           end
         }
+      end
+
+      ###########################################################################################
+      ## IFDEF
+      ###########################################################################################
+
+
+      # ifdef_directive ::=
+      #   `ifdef text_macro_identifier
+      #   ifdef_group_of_lines
+      #   { `elsif text_macro_identifier elsif_group_of_lines }
+      #   [ `else else_group_of_lines ]
+      #   `endif
+      rule ifdef_directive
+        "`ifdef" S label:text_macro_identifier s contents:source_items* s
+        elsif_nodes:("`elsif" S label:text_macro_identifier s contents:source_items*)* s 
+        else_node:("`else" s contents:source_items*)? s 
+        "`endif"
+        {
+          def to_ast
+            node = n :ifdef, label.text_value, *elements_to_ast(contents.elements)
+            elsif_nodes.elements.each do |elsif_node|
+              if elsif_node.respond_to?(:contents)
+                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements)
+                node = node.updated(nil, node.children + [e])
+              end
+            end
+            if else_node.respond_to?(:contents)
+              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements))])
+            end
+            node
+          end
+        }
+      end
+
+      ###########################################################################################
+      ## IFNDEF
+      ###########################################################################################
+
+      # ifndef_directive ::=
+      #   `ifndef text_macro_identifier
+      #   ifndef_group_of_lines
+      #   { `elsif text_macro_identifier elsif_group_of_lines }
+      #   [ `else else_group_of_lines ]
+      #   `endif
+      rule ifndef_directive
+        "`ifndef" S label:text_macro_identifier s contents:source_items* s
+        elsif_nodes:("`elsif" S label:text_macro_identifier s contents:source_items*)* s 
+        else_node:("`else" s contents:source_items*)? s 
+        "`endif"
+        {
+          def to_ast
+            node = n :ifndef, label.text_value, *elements_to_ast(contents.elements)
+            elsif_nodes.elements.each do |elsif_node|
+              if elsif_node.respond_to?(:contents)
+                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements)
+                node = node.updated(nil, node.children + [e])
+              end
+            end
+            if else_node.respond_to?(:contents)
+              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements))])
+            end
+            node
+          end
+        }
+      end
+
+      ###########################################################################################
+      ## HELPERS
+      ###########################################################################################
+
+      # conditional_compilation_directive ::=
+      #   ifdef_directive
+      #   | ifndef_directive
+      rule conditional_compilation_directive
+        ifdef_directive / ifndef_directive
       end
 
       rule text_macro_identifier
@@ -126,22 +270,31 @@ module OrigenVerilog
         }
       end
 
+      rule comment
+        one_line_comment / block_comment
+      end
+
+
       rule space
         " " / "\t"
+      end
+
+      rule space_or_newline
+        space / N
       end
 
       rule space_or_comment
         (space / N / one_line_comment / block_comment)*
       end
 
-      # Optional space, including new lines
+      # Optional spaces
       rule s
-        (space / N)*
+        space*
       end
 
-      # Required space, including new lines
+      # Required spaces
       rule S
-        (space / N)+
+        space+
       end
 
       # Optional end of line

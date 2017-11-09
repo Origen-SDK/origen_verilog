@@ -61,8 +61,8 @@ module OrigenVerilog
       # Compiler directives
       #################################################################
       rule compiler_directive
-        (conditional_compilation_directive / error / text_macro_definition / undefine_compiler_directive /
-         timescale_compiler_directive
+        (error / timescale_compiler_directive
+        
         ) 1..1 {
           def to_ast
             n :compiler_directive, *elements_to_ast
@@ -74,51 +74,6 @@ module OrigenVerilog
         "`error" S message:string {
           def to_ast
             n :error, message.to_ast
-          end
-        }
-      end
-
-      # conditional_compilation_directive ::=
-      #   ifdef_directive
-      #   | ifndef_directive
-      rule conditional_compilation_directive
-        ifdef_directive / ifndef_directive
-      end
-
-      # ifdef_directive ::=
-      #   `ifdef text_macro_identifier
-      #   ifdef_group_of_lines
-      #   { `elsif text_macro_identifier elsif_group_of_lines }
-      #   [ `else else_group_of_lines ]
-      #   `endif
-      rule ifdef_directive
-        # TODO: Implement elsif and else branches
-        "`ifdef" S label:text_macro_identifier s contents:verilog_source_items+ s
-        ("`else" S else_contents:verilog_source_items+)? 
-        "`endif"
-        {
-          def to_ast
-            node = n :if_def, label.text_value, n(:ifdef_group, *elements_to_ast(contents.elements))
-            #if respond_to?(:else_contents)
-            #  node = node.updated(nil, node.children + [n(:else_group_of_lines, *elements_to_ast(else_contents.elements))])
-            #end
-            node
-          end
-        }
-      end
-
-      # ifndef_directive ::=
-      #   `ifndef text_macro_identifier
-      #   ifndef_group_of_lines
-      #   { `elsif text_macro_identifier elsif_group_of_lines }
-      #   [ `else else_group_of_lines ]
-      #   `endif
-      rule ifndef_directive
-        # TODO: Implement elsif and else branches
-        "`ifndef" S label:text_macro_identifier contents:verilog_source_items+ "`endif" {
-          def to_ast
-            n :if_ndef, label.text_value,
-              n(:ifndef_group, *elements_to_ast(contents.elements))
           end
         }
       end
