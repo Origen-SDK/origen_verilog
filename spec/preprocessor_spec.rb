@@ -10,24 +10,25 @@ describe "The Preprocessor" do
   it "it can parse the examples" do
     output_dir = "#{Origen.root}/output/preprocessor"
     approved_dir = "#{Origen.root}/approved/preprocessor"
-    FileUtils.mkdir_p output_dir
+    FileUtils.mkdir_p "#{output_dir}/picosoc"
     passed = true
     {
-      picorv32: {},
-      picosoc: {},
-      simpleuart: {},
-      spimemio: {}
+      "picosoc/picorv32.v" => {},
+      "picosoc/picosoc.v" => {},
+      "picosoc/simpleuart.v" => {},
+      "picosoc/spimemio.v" => {},
+      "test.v" => {source_dirs: ["#{Origen.root}/examples/dir1"]}
     }.each do |file, env|
-      pre_parser.parse_file("#{Origen.root}/examples/picosoc/#{file}.v").
-        process("#{output_dir}/#{file}.v", env)
+      pre_parser.parse_file("#{Origen.root}/examples/#{file}").
+        process("#{output_dir}/#{file}", env)
 
-        new = File.read("#{output_dir}/#{file}.v")
-        old = File.read("#{approved_dir}/#{file}.v")
+        new = File.read("#{output_dir}/#{file}")
+        old = File.read("#{approved_dir}/#{file}")
 
         if new != old
           puts "**** DIFF Detected ****"
-          puts "tkdiff #{approved_dir}/#{file}.v #{output_dir}/#{file}.v &"
-          puts "cp  #{output_dir}/#{file}.v #{approved_dir}/#{file}.v"
+          puts "tkdiff #{approved_dir}/#{file} #{output_dir}/#{file} &"
+          puts "cp  #{output_dir}/#{file} #{approved_dir}/#{file}"
           passed = fail
         end
     end

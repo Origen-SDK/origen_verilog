@@ -6,6 +6,24 @@ module OrigenVerilog
         process(ast)
       end
 
+      def on_include(node)
+        path = node.to_a[0]
+        file = path if File.exist?(path)
+        unless file
+          dir = ([Dir.pwd] + Array(env[:source_dirs])).find do |dir|
+            f = File.join(dir, path)
+            File.exist?(f)
+          end
+          file = File.join(dir, path) if dir
+        end
+        unless file
+          puts "The file #{path} could not be found!"
+          puts "#{node.file}:#{node.line_number}"
+          exit 1
+        end
+        inline process(Parser.parse_file(file)).children
+      end
+
       def on_define(node)
         n = node.find(:name)
         name = n.to_a[0]
