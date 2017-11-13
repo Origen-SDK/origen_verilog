@@ -10,8 +10,10 @@ module OrigenVerilog
   autoload :Processor, 'origen_verilog/processor'
 
   module Verilog
-    autoload :Parser, 'origen_verilog/verilog/parser'
-    autoload :Node,   'origen_verilog/verilog/node'
+    autoload :Parser,    'origen_verilog/verilog/parser'
+    autoload :Node,      'origen_verilog/verilog/node'
+    autoload :Processor, 'origen_verilog/verilog/processor'
+    autoload :Writer,    'origen_verilog/verilog/writer'
   end
   module Preprocessor
     autoload :Parser,    'origen_verilog/preprocessor/parser'

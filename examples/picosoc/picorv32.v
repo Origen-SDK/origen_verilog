@@ -188,6 +188,7 @@ module picorv32 #(
 	reg [31:0] cpuregs [0:regfile_size-1];
 
 	integer i;
+
 	initial begin
 		if (REGS_INIT_ZERO) begin
 			for (i = 0; i < regfile_size; i = i+1)

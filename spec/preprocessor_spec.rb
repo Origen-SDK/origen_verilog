@@ -22,15 +22,15 @@ describe "The Preprocessor" do
       pre_parser.parse_file("#{Origen.root}/examples/#{file}").
         process("#{output_dir}/#{file}", env)
 
-        new = File.read("#{output_dir}/#{file}")
-        old = File.read("#{approved_dir}/#{file}")
+      new = File.read("#{output_dir}/#{file}")
+      old = File.read("#{approved_dir}/#{file}")
 
-        if new != old
-          puts "**** DIFF Detected ****"
-          puts "tkdiff #{approved_dir}/#{file} #{output_dir}/#{file} &"
-          puts "cp  #{output_dir}/#{file} #{approved_dir}/#{file}"
-          passed = fail
-        end
+      if new != old
+        puts "**** DIFF Detected ****"
+        puts "tkdiff #{approved_dir}/#{file} #{output_dir}/#{file} &"
+        puts "cp  #{output_dir}/#{file} #{approved_dir}/#{file}"
+        passed = fail
+      end
     end
     passed.should == true
   end
