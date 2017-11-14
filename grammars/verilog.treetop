@@ -3,22 +3,6 @@ module OrigenVerilog
     grammar Grammar
       # Comments are from the formal syntax definition in 1364-2005
 
-      # A.1.1 Library source text
-      # 
-      # library_text ::= { library_description }
-      # library_description ::=
-      #   library_declaration
-      #   | include_statement
-      #   | config_declaration
-      # library_declaration ::=
-      #   library library_identifier file_path_spec [ { , file_path_spec } ]
-      #   [ -incdir file_path_spec { , file_path_spec } ] ;
-      # include_statement ::= include file_path_spec ;
-      
-
-      # A.1.2 Verilog source text
-
-      # source_text ::= { description }
       rule verilog_source
         verilog_source_items+ {
           def to_ast
@@ -27,12 +11,56 @@ module OrigenVerilog
         }
       end
 
+      rule verilog_library
+        verilog_library_items+ {
+          def to_ast
+            n :verilog_library, *elements_to_ast
+          end
+        }
+      end
+
+      # A.1.1 Library source text
+
+      # library_text ::= { library_description }
+      # library_description ::=
+      #   library_declaration
+      #   | include_statement
+      #   | config_declaration
+      rule verilog_library_items
+        S / N / block_comment / one_line_comment / compiler_directive / library_declaration /
+        include_statement / config_declaration
+      end
+
+      # library_declaration ::=
+      #   library library_identifier file_path_spec [ { , file_path_spec } ]
+      #   [ -incdir file_path_spec { , file_path_spec } ] ;
+      rule library_declaration
+        "library" S library_identifier S file_path_spec (s "," s file_path_spec)* s
+        ("-incdir" S file_path_spec (s "," s file_path_spec)*)? s ";" {
+          def to_ast
+            n :library_declaration, *elements_to_ast
+          end
+        }
+      end
+      # include_statement ::= include file_path_spec ;
+      rule include_statement
+        "include" S file_path_spec s ";" {
+          def to_ast
+            n :include_statement, *elements_to_ast
+          end
+        }
+      end
+      
+      # A.1.2 Verilog source text
+
+      # source_text ::= { description }
       # description ::=
       #   module_declaration
       #   | udp_declaration
       #   | config_declaration
       rule verilog_source_items
-        S / N / block_comment / one_line_comment / compiler_directive / module_declaration
+        S / N / block_comment / one_line_comment / compiler_directive / module_declaration /
+        udp_declaration / config_declaration
       end
 
       # module_declaration ::=
@@ -251,19 +279,86 @@ module OrigenVerilog
       #   design_statement
       #   {config_rule_statement}
       #   endconfig
+      rule config_declaration
+        "config" config_identifier s ";" s design_statement (s config_rule_statement)* s "endconfig" {
+          def to_ast
+            n :config_declaration, *elements_to_ast
+          end
+        }
+      end
       # design_statement ::= design { [library_identifier.]cell_identifier } ;
+      rule design_statement
+        "design" (s (library_identifier ".")? cell_identifier)* s ";" {
+          def to_ast
+            n :design_statement, *elements_to_ast
+          end
+        }
+      end
       # config_rule_statement ::=
       #   default_clause liblist_clause ;
       #   | inst_clause liblist_clause ;
       #   | inst_clause use_clause ;
       #   | cell_clause liblist_clause ;
       #   | cell_clause use_clause ;
+      rule config_rule_statement
+        ((default_clause S liblist_clause s ";") /
+         (inst_clause S liblist_clause s ";") /
+         (inst_clause S use_clause s ";") /
+         (cell_clause S liblist_clause s ";") /
+         (cell_clause S use_clause s ";")) {
+          def to_ast
+            n :config_rule_statement, *elements_to_ast
+          end
+        }
+      end
       # default_clause ::= default
+      rule default_clause
+        default {
+          def to_ast
+            n :default_clause, *elements_to_ast
+          end
+        }
+      end
       # inst_clause ::= instance inst_name
+      rule inst_clause
+        "instance" S inst_name {
+          def to_ast
+            n :inst_clause, *elements_to_ast
+          end
+        }
+      end
       # inst_name ::= topmodule_identifier{.instance_identifier}
+      rule inst_name
+        topmodule_identifier ("." instance_identifier)* {
+          def to_ast
+            n :inst_name, *elements_to_ast
+          end
+        }
+      end
       # cell_clause ::= cell [ library_identifier.]cell_identifier
+      rule cell_clause
+        "cell" S (library_identifier ".")? cell_identifier {
+          def to_ast
+            n :cell_clause, *elements_to_ast
+          end
+        }
+      end
       # liblist_clause ::= liblist { library_identifier }
+      rule liblist_clause
+        "liblist" (s library_identifier)* {
+          def to_ast
+            n :liblist_clause, *elements_to_ast
+          end
+        }
+      end
       # use_clause ::= use [library_identifier.]cell_identifier[:config]
+      rule use_clause
+        "use" S (library_identifier ".")? cell_identifier ":config"? {
+          def to_ast
+            n :use_clause, *elements_to_ast
+          end
+        }
+      end
 
       # A.2 Declarations
 
@@ -767,14 +862,32 @@ module OrigenVerilog
       # function_item_declaration ::=
       #   block_item_declaration
       #   | { attribute_instance } tf_input_declaration ;
+      rule function_item_declaration
+        (block_item_declaration /
+         ((s attribute_instance)* s tf_input_declaration s ";")) {
+          def to_ast
+            n :function_item_declaration, *elements_to_ast
+          end
+         }
+      end
       # function_port_list ::= { attribute_instance } tf_input_declaration { , { attribute_instance }
       #   tf_input_declaration }
+      rule function_port_list
+        (s attribute_instance)* s tf_input_declaration (s "," (s attribute_instance)* s tf_input_declaration )* {
+          def to_ast
+            n :function_port_list, *elements_to_ast
+          end
+        }
+      end
       # function_range_or_type ::=
       #   [ signed ] [ range ]
       #   | integer
       #   | real
       #   | realtime
       #   | time
+      rule function_range_or_type
+        (signed? range?) / integer / real / realtime / time
+      end
 
       # A.2.7 Task declarations
 
@@ -989,16 +1102,80 @@ module OrigenVerilog
       end
       # cmos_switch_instance ::= [ name_of_gate_instance ] ( output_terminal , input_terminal ,
       #   ncontrol_terminal , pcontrol_terminal )
+      rule cmos_switch_instance
+        name_of_gate_instance? s "(" s output_terminal s "," s input_terminal s "," s
+        ncontrol_terminal s "," s pcontrol_terminal s ")" {
+          def to_ast
+            n :cmos_switch_instance, *elements_to_ast
+          end
+        }
+      end
       # enable_gate_instance ::= [ name_of_gate_instance ] ( output_terminal , input_terminal , enable_terminal )
+      rule enable_gate_instance
+        name_of_gate_instance? s "(" s output_terminal s "," s input_terminal s "," s enable_terminal s ")" {
+          def to_ast
+            n :enable_gate_instance, *elements_to_ast
+          end
+        }
+      end
       # mos_switch_instance ::= [ name_of_gate_instance ] ( output_terminal , input_terminal , enable_terminal )
+      rule mos_switch_instance
+        name_of_gate_instance? s "(" s output_terminal s "," s input_terminal s "," s enable_terminal s ")" {
+          def to_ast
+            n :mos_switch_instance, *elements_to_ast
+          end
+        }
+      end
       # n_input_gate_instance ::= [ name_of_gate_instance ] ( output_terminal , input_terminal { , input_terminal } )
+      rule n_input_gate_instance
+        name_of_gate_instance? s "(" s output_terminal s "," s input_terminal (s "," input_terminal)* s ")" {
+          def to_ast
+            n :n_input_gate_instance, *elements_to_ast
+          end
+        }
+      end
       # n_output_gate_instance ::= [ name_of_gate_instance ] ( output_terminal { , output_terminal } ,
       #   input_terminal )
+      rule n_output_gate_instance
+        name_of_gate_instance? s "(" s output_terminal (s "," s output_terminal)* s "," input_terminal s ")" {
+          def to_ast
+            n :n_output_gate_instance, *elements_to_ast
+          end
+        }
+      end
       # pass_switch_instance ::= [ name_of_gate_instance ] ( inout_terminal , inout_terminal )
+      rule pass_switch_instance
+        name_of_gate_instance? s "(" s inout_terminal s "," s inout_terminal s ")" {
+          def to_ast
+            n :pass_switch_instance, *elements_to_ast
+          end
+        }
+      end
       # pass_enable_switch_instance ::= [ name_of_gate_instance ] ( inout_terminal , inout_terminal ,
       #   enable_terminal )
+      rule pass_enable_switch_instance
+        name_of_gate_instance? s "(" s inout_terminal s "," s inout_terminal s "," s enable_terminal s ")" {
+          def to_ast
+            n :pass_enable_switch_instance, *elements_to_ast
+          end
+        }
+      end
       # pull_gate_instance ::= [ name_of_gate_instance ] ( output_terminal )
+      rule pull_gate_instance
+        name_of_gate_instance? s "(" s output_terminal s ")" {
+          def to_ast
+            n :pull_gate_instance, *elements_to_ast
+          end
+        }
+      end
       # name_of_gate_instance ::= gate_instance_identifier [ range ]
+      rule name_of_gate_instance
+        gate_instance_identifier s range? {
+          def to_ast
+            n :name_of_gate_instance, *elements_to_ast
+          end
+        }
+      end
 
       # A.3.2 Primitive strengths
 
@@ -1381,40 +1558,202 @@ module OrigenVerilog
       #   | { attribute_instance } primitive udp_identifier ( udp_declaration_port_list ) ;
       #   udp_body
       #   endprimitive
+      rule udp_declaration
+        (((s attribute_instance)* s "primitive" S udp_identifier s "(" s udp_port_list s ")" s ";" s
+         udp_port_declaration (s udp_port_declaration)* s
+         udp_body s
+         "endprimitive") /
+         ((s attribute_instance)* s "primitive" S udp_identifier s "(" s udp_declaration_port_list s ")" s ";" s
+         udp_body s
+         "endprimitive")) {
+          def to_ast
+            n :udp_declaration, *elements_to_ast
+          end
+        }
+      end
 
       # A.5.2 UDP ports
 
       # udp_port_list ::= output_port_identifier , input_port_identifier { , input_port_identifier }
+      rule udp_port_list
+        output_port_identifier s "," s input_port_identifier (s "," s input_port_identifier)* {
+          def to_ast
+            n :udp_port_list, *elements_to_ast
+          end
+        }
+      end
       # udp_declaration_port_list ::=
       #   udp_output_declaration , udp_input_declaration { , udp_input_declaration }
+      rule udp_declaration_port_list
+        udp_output_declaration s "," s udp_input_declaration (s "," s udp_input_declaration)* {
+          def to_ast
+            n :udp_declaration_port_list, *elements_to_ast
+          end
+        }
+      end
       # udp_port_declaration ::=
       #   udp_output_declaration ;
       #   | udp_input_declaration ;
       #   | udp_reg_declaration ;
+      rule udp_port_declaration
+        ((udp_output_declaration s ";") /
+         (udp_input_declaration s ";") /
+         (udp_reg_declarations s ";")) {
+          def to_ast
+            n :udp_port_declaration, *elements_to_ast
+          end
+        }
+      end
       # udp_output_declaration ::=
       #   { attribute_instance } output port_identifier
       #   | { attribute_instance } output reg port_identifier [ = constant_expression ]
+      rule udp_output_declaration
+        (((s attribute_instance)* s "output" s reg s port_identifier (s "=" s constant_expression)?) /
+         ((s attribute_instance)* s "output" s port_identifier)) {
+          def to_ast
+            n :udp_output_declaration, *elements_to_ast
+          end
+        }
+      end
       # udp_input_declaration ::= { attribute_instance } input list_of_port_identifiers
+      rule udp_input_declaration
+        (s attribute_instance)* s "input" S list_of_port_identifiers {
+           def to_ast
+             n :udp_input_declaration, *elements_to_ast
+           end
+        }
+      end
       # udp_reg_declaration ::= { attribute_instance } reg variable_identifier
+      rule udp_reg_declaration
+        (s attribute_instance)* s "reg" S variable_identifier {
+           def to_ast
+             n :udp_reg_declaration, *elements_to_ast
+           end
+        }
+      end
 
       # A.5.3 UDP body
 
       # udp_body ::= combinational_body | sequential_body
+      rule udp_body
+        combinational_body / sequential_body
+      end
       # combinational_body ::= table combinational_entry { combinational_entry } endtable
+      rule combinational_body
+        "table" S combinational_entry (s combinational_entry)* s "endtable" {
+          def to_ast
+            n :combinational_body, *elements_to_ast
+          end
+        }
+      end
       # combinational_entry ::= level_input_list : output_symbol ;
+      rule combinational_entry
+        level_input_list s ":" s output_symbol s ";" {
+          def to_ast
+            n :combinational_entry, *elements_to_ast
+          end
+        }
+      end
       # sequential_body ::= [ udp_initial_statement ] table sequential_entry { sequential_entry } endtable
+      rule sequential_body
+        udp_initial_statement? s "table" S sequential_entry (s sequential_entry)* s "endtable" {
+          def to_ast
+            n :sequential_body, *elements_to_ast
+          end
+        }
+      end
       # udp_initial_statement ::= initial output_port_identifier = init_val ;
+      rule udp_initial_statement
+        "initial" S output_port_identifier s "=" s init_val s ";" {
+          def to_ast
+            n :udp_initial_statement, *elements_to_ast
+          end
+        }
+      end
       # init_val ::= 1'b0 | 1'b1 | 1'bx | 1'bX | 1'B0 | 1'B1 | 1'Bx | 1'BX | 1 | 0
+      rule init_val
+        "1'b0" / "1'b1" / "1'bx" / "1'bX" / "1'B0" / "1'B1" / "1'Bx" / "1'BX" / "1" / "0" {
+          def to_ast
+            n :init_val, text_value[-1]
+          end
+        }
+      end
       # sequential_entry ::= seq_input_list : current_state : next_state ;
+      rule sequential_entry
+        seq_input_list s ":" s current_state s ":" s next_state s ";" {
+          def to_ast
+            n :sequential_entry, *elements_to_ast
+          end
+        }
+      end
       # seq_input_list ::= level_input_list | edge_input_list
+      rule seq_input_list
+        level_input_list / edge_input_list
+      end
       # level_input_list ::= level_symbol { level_symbol }
+      rule level_input_list
+        level_symbol (s level_symbol)* {
+          def to_ast
+            n :level_input_list, *elements_to_ast
+          end
+        }
+      end
       # edge_input_list ::= { level_symbol } edge_indicator { level_symbol }
+      rule edge_input_list
+        (s level_symbol)* s edge_indicator (s level_symbol)* {
+          def to_ast
+            n :edge_input_list, *elements_to_ast
+          end
+        }
+      end
       # edge_indicator ::= ( level_symbol level_symbol ) | edge_symbol
+      rule edge_indicator
+        (("(" s level_symbol level_symbol s ")") / edge_symbol) {
+          def to_ast
+            n :edge_indicator, *elements_to_ast
+          end
+        }
+      end
       # current_state ::= level_symbol
+      rule current_state
+        level_symbol {
+          def to_ast
+            n :current_state, *elements_to_ast
+          end
+        }
+      end
       # next_state ::= output_symbol | -
+      rule next_state
+        (output_symbol / "-") {
+          def to_ast
+            n :next_state, *elements_to_ast
+          end
+        }
+      end
       # output_symbol ::= 0 | 1 | x | X
+      rule output_symbol
+        ("0" / "1" / "x" / "X") {
+          def to_ast
+            text_value
+          end
+        }
+      end
       # level_symbol ::= 0 | 1 | x | X | ? | b | B
+      rule level_symbol
+        ("0" / "1" / "x" / "X" / "?" / "b" / "B") {
+          def to_ast
+            text_value
+          end
+        }
+      end
       # edge_symbol ::= r | R | f | F | p | P | n | N | *
+      rule edge_symbol
+        ("r" / "R" / "f" / "F" / "p" / "P" / "n" / "N" / "*") {
+          def to_ast
+            text_value
+          end
+        }
+      end
 
       # A.5.4 UDP instantiation
 
@@ -1834,42 +2173,131 @@ module OrigenVerilog
       # pulsestyle_declaration ::=
       #   pulsestyle_onevent list_of_path_outputs ;
       #   | pulsestyle_ondetect list_of_path_outputs ;
+      rule pulsestyle_declaration
+        (("pulsestyle_onevent" S list_of_path_outputs s ";") /
+         ("pulsestyle_ondetect" S list_of_path_outputs s ";")) {
+          def to_ast
+            n :pulsestyle_declaration, *elements_to_ast
+          end
+         }
+      end
       # showcancelled_declaration ::=
       #   showcancelled list_of_path_outputs ;
       #   | noshowcancelled list_of_path_outputs ;
-      # 
+      rule showcancelled_declaration
+        (("showcancelled" S list_of_path_outputs s ";") /
+         ("noshowcancelled" S list_of_path_outputs s ";")) {
+          def to_ast
+            n :showcancelled_declaration, *elements_to_ast
+          end
+         }
+      end
+
       # A.7.2 Specify path declarations
-      # 
+
       # path_declaration ::=
       #   simple_path_declaration ;
       #   | edge_sensitive_path_declaration ;
       #   | state_dependent_path_declaration ;
+      rule path_declaration
+        ((edge_sensitive_path_declaration s ";") /
+         (state_dependent_path_declaration s ";") /
+         (simple_path_declaration s ";")) {
+          def to_ast
+            n :path_declaration, *elements_to_ast
+          end
+         }
+      end
       # simple_path_declaration ::=
       #   parallel_path_description = path_delay_value
       #   | full_path_description = path_delay_value
+      rule simple_path_declaration
+        ((parallel_path_description s "=" s path_delay_value) /
+         (full_path_description s "=" s path_delay_value)) {
+          def to_ast
+            n :simple_path_declaration, *elements_to_ast
+          end
+         }
+      end
       # parallel_path_description ::=
       #   ( specify_input_terminal_descriptor [ polarity_operator ] => specify_output_terminal_descriptor )
+      rule parallel_path_description
+        "(" s specify_input_terminal_descriptor s polarity_operator? s "=>" s specify_output_terminal_descriptor s ")" {
+          def to_ast
+            n :parallel_path_description, *elements_to_ast
+          end
+        }
+      end
       # full_path_description ::=
       #   ( list_of_path_inputs [ polarity_operator ] *> list_of_path_outputs )
+      rule full_path_description
+        "(" s list_of_path_inputs s polarity_operator? s "*>" s list_of_path_outputs s ")" {
+          def to_ast
+            n :full_path_description, *elements_to_ast
+          end
+        }
+      end
       # list_of_path_inputs ::=
       #   specify_input_terminal_descriptor { , specify_input_terminal_descriptor }
+      rule list_of_path_inputs
+        specify_input_terminal_descriptor (s "," s specify_input_terminal_descriptor) {
+          def to_ast
+            n :list_of_path_inputs, *elements_to_ast
+          end
+        }
+      end
       # list_of_path_outputs ::=
       #   specify_output_terminal_descriptor { , specify_output_terminal_descriptor }
-      # 
+      rule list_of_path_outputs
+        specify_output_terminal_descriptor (s "," s specify_output_terminal_descriptor) {
+          def to_ast
+            n :list_of_path_outputs, *elements_to_ast
+          end
+        }
+      end
+
       # A.7.3 Specify block terminals
-      # 
+
       # specify_input_terminal_descriptor ::=
       #   input_identifier [ [ constant_range_expression ] ]
+      rule specify_input_terminal_descriptor
+        input_identifier ("[" s constant_range_expression s "]")? {
+          def to_ast
+            n :specify_input_terminal_descriptor, *elements_to_ast
+          end
+        }
+      end
       # specify_output_terminal_descriptor ::=
       #   output_identifier [ [ constant_range_expression ] ]
+      rule specify_output_terminal_descriptor
+        output_identifier ("[" s constant_range_expression s "]")? {
+          def to_ast
+            n :specify_output_terminal_descriptor, *elements_to_ast
+          end
+        }
+      end
       # input_identifier ::= input_port_identifier | inout_port_identifier
+      rule input_identifier
+        input_port_identifier / inout_port_identifier
+      end
       # output_identifier ::= output_port_identifier | inout_port_identifier
-      # 
+      rule output_identifier
+        output_port_identifier / inout_port_identifier
+      end
+
       # A.7.4 Specify path delays
-      # 
+
       # path_delay_value ::=
       #   list_of_path_delay_expressions
       #   | ( list_of_path_delay_expressions )
+      rule path_delay_value
+        (list_of_path_delay_expressions /
+         ("(" s list_of_path_delay_expressions s ")")) {
+          def to_ast
+            n :path_delay_value, *elements_to_ast
+          end
+        }
+      end
       # list_of_path_delay_expressions ::=
       #   t_path_delay_expression
       #   | trise_path_delay_expression , tfall_path_delay_expression
@@ -1880,44 +2308,160 @@ module OrigenVerilog
       #   tz1_path_delay_expression , t1z_path_delay_expression , tz0_path_delay_expression ,
       #   t0x_path_delay_expression , tx1_path_delay_expression , t1x_path_delay_expression ,
       #   tx0_path_delay_expression , txz_path_delay_expression , tzx_path_delay_expression
+      rule list_of_path_delay_expressions
+        ((trise_path_delay_expression s "," s tfall_path_delay_expression) /
+         (trise_path_delay_expression s "," s tfall_path_delay_expression s "," s tz_path_delay_expression) /
+         (t01_path_delay_expression s "," s t10_path_delay_expression s "," s t0z_path_delay_expression s "," s
+          tz1_path_delay_expression s "," s t1z_path_delay_expression s "," s tz0_path_delay_expression) /
+         (t01_path_delay_expression s "," s t10_path_delay_expression s "," s t0z_path_delay_expression s "," s
+          tz1_path_delay_expression s "," s t1z_path_delay_expression s "," s tz0_path_delay_expression s "," s
+          t0x_path_delay_expression s "," s tx1_path_delay_expression s "," s t1x_path_delay_expression s "," s
+          tx0_path_delay_expression s "," s txz_path_delay_expression s "," s tzx_path_delay_expression) /
+         t_path_delay_expression) {
+          def to_ast
+            n :list_of_path_delay_expressions, *elements_to_ast
+          end
+         }
+      end
       # t_path_delay_expression ::= path_delay_expression
+      rule t_path_delay_expression
+        path_delay_expression
+      end
       # trise_path_delay_expression ::= path_delay_expression
+      rule trise_path_delay_expression
+        path_delay_expression
+      end
       # tfall_path_delay_expression ::= path_delay_expression
+      rule tfall_path_delay_expression
+        path_delay_expression
+      end
       # tz_path_delay_expression ::= path_delay_expression
+      rule tz_path_delay_expression
+        path_delay_expression
+      end
       # t01_path_delay_expression ::= path_delay_expression
+      rule t01_path_delay_expression
+        path_delay_expression
+      end
       # t10_path_delay_expression ::= path_delay_expression
+      rule t10_path_delay_expression
+        path_delay_expression
+      end
       # t0z_path_delay_expression ::= path_delay_expression
+      rule t0z_path_delay_expression
+        path_delay_expression
+      end
       # tz1_path_delay_expression ::= path_delay_expression
+      rule tz1_path_delay_expression
+        path_delay_expression
+      end
       # t1z_path_delay_expression ::= path_delay_expression
+      rule t1z_path_delay_expression
+        path_delay_expression
+      end
       # tz0_path_delay_expression ::= path_delay_expression
+      rule tz0_path_delay_expression
+        path_delay_expression
+      end
       # t0x_path_delay_expression ::= path_delay_expression
+      rule t0x_path_delay_expression
+        path_delay_expression
+      end
       # tx1_path_delay_expression ::= path_delay_expression
+      rule tx1_path_delay_expression
+        path_delay_expression
+      end
       # t1x_path_delay_expression ::= path_delay_expression
+      rule t1x_path_delay_expression
+        path_delay_expression
+      end
       # tx0_path_delay_expression ::= path_delay_expression
+      rule tx0_path_delay_expression
+        path_delay_expression
+      end
       # txz_path_delay_expression ::= path_delay_expression
+      rule txz_path_delay_expression
+        path_delay_expression
+      end
       # tzx_path_delay_expression ::= path_delay_expression
+      rule tzx_path_delay_expression
+        path_delay_expression
+      end
       # path_delay_expression ::= constant_mintypmax_expression
+      rule path_delay_expression
+        constant_mintypmax_expression
+      end
       # edge_sensitive_path_declaration ::=
       #   parallel_edge_sensitive_path_description = path_delay_value
       #   | full_edge_sensitive_path_description = path_delay_value
+      rule edge_sensitive_path_declaration
+        ((parallel_edge_sensitive_path_description s "=" s path_delay_value) /
+         (full_edge_sensitive_path_description s "=" s path_delay_value)) {
+          def to_ast
+            n :edge_sensitive_path_declaration, *elements_to_ast
+          end
+         }
+      end
       # parallel_edge_sensitive_path_description ::=
       #   ( [ edge_identifier ] specify_input_terminal_descriptor =>
       #     ( specify_output_terminal_descriptor [ polarity_operator ] : data_source_expression ) )
+      rule parallel_edge_sensitive_path_description
+        "(" s edge_identifier? s specify_input_terminal_descriptor s "=>" s
+        "(" s specify_output_terminal_descriptor s polarity_operator? s ":" s data_source_expression s ")" s ")" {
+          def to_ast
+            n :parallel_edge_sensitive_path_description, *elements_to_ast
+          end
+        }
+      end
       # full_edge_sensitive_path_description ::=
       #   ( [ edge_identifier ] list_of_path_inputs *>
       #     ( list_of_path_outputs [ polarity_operator ] : data_source_expression ) )
+      rule full_edge_sensitive_path_description
+        "(" s edge_identifier? s list_of_path_inputs s "*>" s
+        "(" s list_of_path_outputs s polarity_operator? s ":" s data_source_expression s ")" s ")" {
+          def to_ast
+            n :full_edge_sensitive_path_description, *elements_to_ast
+          end
+        }
+      end
       # data_source_expression ::= expression
+      rule data_source_expression
+        expression
+      end
       # edge_identifier ::= posedge | negedge
+      rule edge_identifier
+        ("posedge" / "negedge") {
+          def to_ast
+            n :edge_identifier, text_value
+          end
+        }
+      end
       # state_dependent_path_declaration ::=
       #   if ( module_path_expression ) simple_path_declaration
       #   | if ( module_path_expression ) edge_sensitive_path_declaration
       #   | ifnone simple_path_declaration
+      rule state_dependent_path_declaration
+        (("if" s "(" s module_path_expression s ")" s simple_path_declaration) /
+         ("if" s "(" s module_path_expression s ")" s edge_sensitive_path_declaration) /
+         ("ifnone" s simple_path_declaration)) {
+          def to_ast
+            n :state_dependent_path_declaration, *elements_to_ast
+          end
+         }
+       end
       # polarity_operator ::= + | -
-      # 
+      rule polarity_operator
+        ("+" / "-") {
+          def to_ast
+            n :polarity_operator, text_value
+          end
+        }
+      end
+
       # A.7.5 System timing checks
-      # 
+
       # A.7.5.1 System timing check commands
-      # 
+
       # system_timing_check ::=
       #   $setup_timing_check
       #   | $hold_timing_check
@@ -1931,41 +2475,151 @@ module OrigenVerilog
       #   | $period_timing_check
       #   | $width_timing_check
       #   | $nochange_timing_check
+      rule system_timing_check
+        (setup_timing_check /
+         hold_timing_check /
+         setuphold_timing_check /
+         recovery_timing_check /
+         removal_timing_check /
+         recrem_timing_check /
+         skew_timing_check /
+         timeskew_timing_check /
+         fullskew_timing_check /
+         period_timing_check /
+         width_timing_check /
+         nochange_timing_check) {
+          def to_ast
+            n :system_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $setup_timing_check ::=
       #   $setup ( data_event , reference_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule setup_timing_check
+        "$setup" s "(" s data_event s "," s reference_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :setup_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $hold_timing_check ::=
       #   $hold ( reference_event , data_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule hold_timing_check
+        "$hold" s "(" s reference_event s "," s data_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :hold_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $setuphold_timing_check ::=
       #   $setuphold ( reference_event , data_event , timing_check_limit , timing_check_limit
       #     [ , [ notifier ] [ , [ stamptime_condition ] [ , [ checktime_condition ]
       #     [ , [ delayed_reference ] [ , [ delayed_data ] ] ] ] ] ] ) ;
+      rule setuphold_timing_check
+        "$setuphold" s "(" s reference_event s "," s data_event s "," s timing_check_limit s "," s timing_check_limit s
+        (s "," s notifier? (s "," s stamptime_condition? (s "," s checktime_condition?
+        (s "," s delayed_reference? (s "," s delayed_data? )? )? )? )? )? s ")" s ";" {
+          def to_ast
+            n :setuphold_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $recovery_timing_check ::=
       #   $recovery ( reference_event , data_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule recovery_timing_check
+        "$recovery" s "(" s reference_event s "," s data_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :recovery_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $removal_timing_check ::=
       #   $removal ( reference_event , data_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule removal_timing_check
+        "$removal" s "(" s reference_event s "," s data_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :removal_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $recrem_timing_check ::=
       #   $recrem ( reference_event , data_event , timing_check_limit , timing_check_limit
       #     [ , [ notifier ] [ , [ stamptime_condition ] [ , [ checktime_condition ]
       #     [ , [ delayed_reference ] [ , [ delayed_data ] ] ] ] ] ] ) ;
+      rule recrem_timing_check
+        "$recrem" s "(" s reference_event s "," s data_event s "," s timing_check_limit s "," s timing_check_limit s
+        (s "," s notifier? (s "," s stamptime_condition? (s "," s checktime_condition?
+        (s "," s delayed_reference? (s "," s delayed_data? )? )? )? )? )? s ")" s ";" {
+          def to_ast
+            n :recrem_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $skew_timing_check ::=
       #   $skew ( reference_event , data_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule skew_timing_check
+        "$skew" s "(" s reference_event s "," s data_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :skew_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $timeskew_timing_check ::=
       #   $timeskew ( reference_event , data_event , timing_check_limit
       #     [ , [ notifier ] [ , [ event_based_flag ] [ , [ remain_active_flag ] ] ] ] ) ;
+      rule timeskew_timing_check
+        "$timeskew" s "(" s reference_event s "," s data_event s "," s timing_check_limit s
+        (s "," s notifier? (s "," s event_based_flag? (s "," s remain_active_flag?)? )? )? s ")" s ";" {
+          def to_ast
+            n :timeskew_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $fullskew_timing_check ::=
       #   $fullskew ( reference_event , data_event , timing_check_limit , timing_check_limit
       #     [ , [ notifier ] [ , [ event_based_flag ] [ , [ remain_active_flag ] ] ] ] ) ;
+      rule fullskew_timing_check
+        "$fullskew" s "(" s reference_event s "," s data_event s "," s timing_check_limit s "," s timing_check_limit s
+        (s "," s notifier? (s "," s event_based_flag? (s "," s remain_active_flag? )? )? )? s ")" s ";" {
+          def to_ast
+            n :fullskew_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $period_timing_check ::=
       #   $period ( controlled_reference_event , timing_check_limit [ , [ notifier ] ] ) ;
+      rule period_timing_check
+        "$period" s "(" s controlled_reference_event s "," s timing_check_limit (s "," s notifier?)? s ")" s ";" {
+          def to_ast
+            n :period_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $width_timing_check ::=
       #   $width ( controlled_reference_event , timing_check_limit
       #     [ , threshold [ , notifier ] ] ) ;
+      rule width_timing_check
+        "$width" s "(" s controlled_reference_event s "," s timing_check_limit s
+        (s "," s threshold (s "," s notifier?)? )? s ")" s ";" {
+          def to_ast
+            n :width_timing_check, *elements_to_ast
+          end
+        }
+      end
       # $nochange_timing_check ::=
       #   $nochange ( reference_event , data_event , start_edge_offset ,
       #   end_edge_offset [ , [ notifier ] ] ) ;
-      # 
+      rule nochange_timing_check
+        "$nochange" s "(" s reference_event s "," s data_event s "," s start_edge_offset s "," s
+        end_edge_offset (s "," s  notifier?)? s ")" s ";" {
+          def to_ast
+            n :nochange_timing_check, *elements_to_ast
+          end
+        }
+      end
+
       # A.7.5.2 System timing check command arguments
-      # 
+
       # checktime_condition ::= mintypmax_expression
       # controlled_reference_event ::= controlled_timing_check_event
       # data_event ::= timing_check_event
@@ -1984,9 +2638,9 @@ module OrigenVerilog
       # start_edge_offset ::= mintypmax_expression
       # threshold ::= constant_expression
       # timing_check_limit ::= expression
-      # 
+
       # A.7.5.3 System timing check event definitions
-      # 
+
       # timing_check_event ::=
       #   [timing_check_event_control] specify_terminal_descriptor [ &&& timing_check_condition ]
       # controlled_timing_check_event ::=
