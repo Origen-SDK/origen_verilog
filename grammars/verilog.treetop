@@ -2621,48 +2621,151 @@ module OrigenVerilog
       # A.7.5.2 System timing check command arguments
 
       # checktime_condition ::= mintypmax_expression
+      rule checktime_condition
+        mintypmax_expression
+      end
       # controlled_reference_event ::= controlled_timing_check_event
+      rule controlled_reference_event
+        controlled_timing_check_event
+      end
       # data_event ::= timing_check_event
+      rule data_event
+        timing_check_event
+      end
       # delayed_data ::=
       #   terminal_identifier
       #   | terminal_identifier [ constant_mintypmax_expression ]
+      rule delayed_data
+        ((terminal_identifier s "[" s constant_mintypmax_expression s "]") /
+          terminal_identifier) {
+          def to_ast
+            n :delayed_data, *elements_to_ast
+          end
+        }
+      end
       # delayed_reference ::=
       #   terminal_identifier
       #   | terminal_identifier [ constant_mintypmax_expression ]
+      rule delayed_reference
+        ((terminal_identifier s "[" s constant_mintypmax_expression s "]") /
+         terminal_identifier) {
+          def to_ast
+            n :delayed_reference, *elements_to_ast
+          end
+        }
+      end
       # end_edge_offset ::= mintypmax_expression
+      rule end_edge_offset
+        mintypmax_expression
+      end
       # event_based_flag ::= constant_expression
+      rule event_based_flag
+        constant_expression
+      end
       # notifier ::= variable_identifier
+      rule notifier
+        variable_identifier
+      end
       # reference_event ::= timing_check_event
+      rule reference_event
+        timing_check_event
+      end
       # remain_active_flag ::= constant_expression
+      rule remain_active_flag
+        constant_expression
+      end
       # stamptime_condition ::= mintypmax_expression
+      rule stamptime_condition
+        mintypmax_expression
+      end
       # start_edge_offset ::= mintypmax_expression
+      rule start_edge_offset
+        mintypmax_expression
+      end
       # threshold ::= constant_expression
+      rule threshold
+        constant_expression
+      end
       # timing_check_limit ::= expression
+      rule timing_check_limit
+        expression
+      end
 
       # A.7.5.3 System timing check event definitions
 
       # timing_check_event ::=
       #   [timing_check_event_control] specify_terminal_descriptor [ &&& timing_check_condition ]
+      rule timing_check_event
+        timing_check_event_control? s specify_terminal_descriptor (S "&&&" S timing_check_condition)? {
+          def to_ast
+            n :timing_check_event, *elements_to_ast
+          end
+        }
+      end
       # controlled_timing_check_event ::=
       #   timing_check_event_control specify_terminal_descriptor [ &&& timing_check_condition ]
+      rule controlled_timing_check_event
+        timing_check_event_control S specify_terminal_descriptor (S "&&&" S timing_check_condition)? {
+          def to_ast
+            n :controlled_timing_check_event, *elements_to_ast
+          end
+        }
+      end
       # timing_check_event_control ::=
       #   posedge
       #   | negedge
       #   | edge_control_specifier
+      rule timing_check_event_control
+        "posedge" / "negedge" / edge_control_specifier {
+          def to_ast
+            n :timing_check_event_control, text_value
+          end
+        }
+      end
       # specify_terminal_descriptor ::=
       #   specify_input_terminal_descriptor
       #   | specify_output_terminal_descriptor
+      rule specify_terminal_descriptor
+        specify_input_terminal_descriptor / specify_output_terminal_descriptor
+      end
       # edge_control_specifier ::= edge [ edge_descriptor { , edge_descriptor } ]
+      rule edge_control_specifier
+        "edge" (S edge_descriptor (s "," s edge_descriptor)*)? {
+          def to_ast
+            n :edge_control_specifier, *elements_to_ast
+          end
+        }
+      end
       # edge_descriptor2 ::=
       #   01
       #   | 10
       #   | z_or_x zero_or_one
       #   | zero_or_one z_or_x
+      rule edge_descriptor2
+        "01" / "10" / z_or_x s zero_or_one / zero_or_one s z_or_x {
+          def to_ast
+            n :edge_descriptor2, text_value
+          end
+        }
+      end
       # zero_or_one ::= 0 | 1
+      rule zero_or_one
+        "0" / "1"
+      end
       # z_or_x ::= x | X | z | Z
+      rule z_or_x
+        "x" / "X" / "z" / "Z"
+      end
       # timing_check_condition ::=
       #   scalar_timing_check_condition
       #   | ( scalar_timing_check_condition )
+      rule timing_check_condition
+        (scalar_timing_check_condition / "(" s scalar_timing_check_condition s ")") {
+          def to_ast
+            n :timing_check_condition, *elements_to_ast
+          end
+        }
+      end
       # scalar_timing_check_condition ::=
       #   expression
       #   | ~ expression
@@ -2670,8 +2773,27 @@ module OrigenVerilog
       #   | expression === scalar_constant
       #   | expression != scalar_constant
       #   | expression !== scalar_constant
+      rule scalar_timing_check_condition
+        ((expression s "==" s scalar_constant) /
+         (expression s "===" s scalar_constant) /
+         (expression s "!=" s scalar_constant) /
+         (expression s "!==" s scalar_constant) /
+         expression /
+         ("~" s expression)) {
+          def to_ast
+            n :scalar_timing_check_condition, *elements_to_ast
+          end
+         }
+      end
       # scalar_constant ::=
       #   1'b0 | 1'b1 | 1'B0 | 1'B1 | 'b0 | 'b1 | 'B0 | 'B1 | 1 | 0
+      rule scalar_constant
+        ("1'b0" / "1'b1" / "1'B0" / "1'B1" / "'b0" / "'b1" / "'B0" / "'B1" / "1" / "0") {
+          def to_ast
+            n :scalar_constant, text_value[-1]
+          end
+        }
+      end
 
       # A.8 Expressions
 
