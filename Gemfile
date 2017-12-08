@@ -9,7 +9,6 @@ gem 'byebug', '<9.1.0' # This version restriction required if you need Ruby < 2.
 gem 'ripper-tags'
 gem 'origen_doc_helpers'
 gem 'origen_updater'
-gem 'treetop'
 gem 'origen'
 # Uncomment these if you want to use a visual debugger (e.g. Visual Studio Code) to debug your app
 #gem 'ruby-debug-ide'

@@ -3,6 +3,7 @@ PATH
   specs:
     origen_verilog (0.1.0)
       ast (~> 2)
+      treetop
 
 GEM
   remote: https://rubygems.org/
@@ -160,7 +161,6 @@ DEPENDENCIES
   origen_updater
   origen_verilog!
   ripper-tags
-  treetop
 
 BUNDLED WITH
    1.15.4

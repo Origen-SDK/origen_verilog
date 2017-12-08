@@ -10,6 +10,10 @@ module OrigenVerilog
           ast
         end
       end
+
+      def to_s
+        Writer.new.to_s(self)
+      end
     end
   end
 end

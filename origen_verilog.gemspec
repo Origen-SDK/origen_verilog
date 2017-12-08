@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
 
   # Add any gems that your plugin needs to run within a host application
   spec.add_runtime_dependency "ast", "~> 2"
+  spec.add_runtime_dependency "treetop"
 end
