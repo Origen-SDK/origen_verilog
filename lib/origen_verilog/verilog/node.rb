@@ -37,11 +37,11 @@ module OrigenVerilog
         Evaluator.new.run(self)
       end
 
-      def to_model
+      def to_top_level
         unless type == :module_declaration
           fail 'Currently only modules support the to_model method'
         end
-        Model.new(ast: evaluate)
+        TopLevel.new(ast: evaluate)
       end
     end
   end

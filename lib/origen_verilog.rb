@@ -8,7 +8,7 @@ module OrigenVerilog
   autoload :Parser,    'origen_verilog/parser'
   autoload :Node,      'origen_verilog/node'
   autoload :Processor, 'origen_verilog/processor'
-  autoload :Model,     'origen_verilog/model'
+  autoload :TopLevel,  'origen_verilog/top_level'
 
   module Verilog
     autoload :Parser,    'origen_verilog/verilog/parser'

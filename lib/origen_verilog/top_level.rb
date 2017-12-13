@@ -1,8 +1,12 @@
 module OrigenVerilog
-  class Model
+  class TopLevel
     include Origen::TopLevel
 
+    attr_reader :name
+
     def initialize(options = {})
+      @name = options[:ast].to_a[0]
+
       options[:ast].pins.each do |node|
         name = node.to_a.last
         if node.type == :input_declaration
