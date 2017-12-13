@@ -37,11 +37,16 @@ module OrigenVerilog
         Evaluator.new.run(self)
       end
 
+      # Converts a module node to an Origen top-level model.
+      #
+      # This will re-load the Origen target with the resultant model instantiated
+      # as the global dut object.
       def to_top_level
         unless type == :module_declaration
           fail 'Currently only modules support the to_model method'
         end
-        TopLevel.new(ast: evaluate)
+        Origen.target.temporary = -> { TopLevel.new(ast: evaluate) }
+        Origen.load_target
       end
     end
   end
