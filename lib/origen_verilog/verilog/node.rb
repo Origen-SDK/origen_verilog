@@ -11,20 +11,43 @@ module OrigenVerilog
         end
       end
 
-      # Returns an array containing the names of all top-level modules in
-      # the AST
-      def module_names
-        find_all(:module_declaration).map { |n| n.to_a[0] }
-      end
-
       # Returns an array containing the AST node for all modules in the AST
       def modules
         find_all(:module_declaration)
       end
 
+      # Similar to the modules method, but removes any modules which are instantiated
+      # within other modules, therefore leaving only those which could be considered top
+      # level
+      def top_level_modules
+        mods = modules
+        modules.reject { |m| mods.any? { |mod| mod.instantiates?(m) } }
+      end
+
+      # Returns true if the node instantiates the given module node or module name
+      def instantiates?(module_or_name)
+        name = module_or_name.respond_to?(:to_a) ? module_or_name.to_a[0] : module_or_name
+        instantiations = find_all(:module_instantiation)
+        if instantiations.empty?
+          false
+        else
+          instantiations.any? { |i| i.to_a[0].to_s == name.to_s }
+        end
+      end
+
       # Returns the AST node for the module with the given name
       def module(name)
         find_all(:module_declaration).find { |n| n.to_a[0].to_s == name.to_s }
+      end
+
+      # Returns the name of the node, will raise an error if called on a node type for
+      # which the name extraction is not yet implemented
+      def name
+        if type == :module_declaration
+          to_a[0]
+        else
+          fail "Don't know how to extract the name from a #{type} node yet!"
+        end
       end
 
       # Returns an array containing all input, output and inout AST nodes

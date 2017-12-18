@@ -194,6 +194,9 @@ module OrigenVerilog
       # module_item ::=
       #   port_declaration ;
       #   | non_port_module_item
+      rule module_item
+        (port_declaration s ";") / non_port_module_item
+      end
       # module_or_generate_item ::=
       #   { attribute_instance } module_or_generate_item_declaration
       #   | { attribute_instance } local_parameter_declaration ;
@@ -619,8 +622,8 @@ module OrigenVerilog
       #   variable_identifier { dimension }
       #   | variable_identifier = constant_expression
       rule variable_type
-        ((variable_identifier (s dimension)*) /
-         (variable_identifier s "=" s constant_expression)) {
+        ((variable_identifier s "=" s constant_expression) /
+         (variable_identifier (s dimension)*)) {
           def to_ast
             n :variable_type, *elements_to_ast
           end

@@ -2335,6 +2335,72 @@ module OrigenVerilog
         r0
       end
 
+      module ModuleItem0
+        def port_declaration
+          elements[0]
+        end
+
+        def s
+          elements[1]
+        end
+
+      end
+
+      def _nt_module_item
+        start_index = index
+        if node_cache[:module_item].has_key?(index)
+          cached = node_cache[:module_item][index]
+          if cached
+            node_cache[:module_item][index] = cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+            @index = cached.interval.end
+          end
+          return cached
+        end
+
+        i0 = index
+        i1, s1 = index, []
+        r2 = _nt_port_declaration
+        s1 << r2
+        if r2
+          r3 = _nt_s
+          s1 << r3
+          if r3
+            if (match_len = has_terminal?(";", false, index))
+              r4 = true
+              @index += match_len
+            else
+              terminal_parse_failure('";"')
+              r4 = nil
+            end
+            s1 << r4
+          end
+        end
+        if s1.last
+          r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+          r1.extend(ModuleItem0)
+        else
+          @index = i1
+          r1 = nil
+        end
+        if r1
+          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+          r0 = r1
+        else
+          r5 = _nt_non_port_module_item
+          if r5
+            r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
+            r0 = r5
+          else
+            @index = i0
+            r0 = nil
+          end
+        end
+
+        node_cache[:module_item][start_index] = r0
+
+        r0
+      end
+
       module ModuleOrGenerateItem0
         def s1
           elements[0]
@@ -7738,23 +7804,6 @@ module OrigenVerilog
       end
 
       module VariableType0
-        def s
-          elements[0]
-        end
-
-        def dimension
-          elements[1]
-        end
-      end
-
-      module VariableType1
-        def variable_identifier
-          elements[0]
-        end
-
-      end
-
-      module VariableType2
         def variable_identifier
           elements[0]
         end
@@ -7770,6 +7819,23 @@ module OrigenVerilog
         def constant_expression
           elements[4]
         end
+      end
+
+      module VariableType1
+        def s
+          elements[0]
+        end
+
+        def dimension
+          elements[1]
+        end
+      end
+
+      module VariableType2
+        def variable_identifier
+          elements[0]
+        end
+
       end
 
       module VariableType3
@@ -7794,34 +7860,30 @@ module OrigenVerilog
         r2 = _nt_variable_identifier
         s1 << r2
         if r2
-          s3, i3 = [], index
-          loop do
-            i4, s4 = index, []
-            r5 = _nt_s
-            s4 << r5
-            if r5
-              r6 = _nt_dimension
-              s4 << r6
-            end
-            if s4.last
-              r4 = instantiate_node(SyntaxNode,input, i4...index, s4)
-              r4.extend(VariableType0)
+          r3 = _nt_s
+          s1 << r3
+          if r3
+            if (match_len = has_terminal?("=", false, index))
+              r4 = true
+              @index += match_len
             else
-              @index = i4
+              terminal_parse_failure('"="')
               r4 = nil
             end
+            s1 << r4
             if r4
-              s3 << r4
-            else
-              break
+              r5 = _nt_s
+              s1 << r5
+              if r5
+                r6 = _nt_constant_expression
+                s1 << r6
+              end
             end
           end
-          r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
-          s1 << r3
         end
         if s1.last
           r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
-          r1.extend(VariableType1)
+          r1.extend(VariableType0)
         else
           @index = i1
           r1 = nil
@@ -7836,26 +7898,30 @@ module OrigenVerilog
           r8 = _nt_variable_identifier
           s7 << r8
           if r8
-            r9 = _nt_s
-            s7 << r9
-            if r9
-              if (match_len = has_terminal?("=", false, index))
-                r10 = true
-                @index += match_len
+            s9, i9 = [], index
+            loop do
+              i10, s10 = index, []
+              r11 = _nt_s
+              s10 << r11
+              if r11
+                r12 = _nt_dimension
+                s10 << r12
+              end
+              if s10.last
+                r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
+                r10.extend(VariableType1)
               else
-                terminal_parse_failure('"="')
+                @index = i10
                 r10 = nil
               end
-              s7 << r10
               if r10
-                r11 = _nt_s
-                s7 << r11
-                if r11
-                  r12 = _nt_constant_expression
-                  s7 << r12
-                end
+                s9 << r10
+              else
+                break
               end
             end
+            r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
+            s7 << r9
           end
           if s7.last
             r7 = instantiate_node(SyntaxNode,input, i7...index, s7)

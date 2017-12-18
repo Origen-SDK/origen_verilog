@@ -26,9 +26,13 @@ module OrigenVerilog
 
   # Returns an AST for the given file
   def self.parse_file(file, options = {})
+    top_dir = Pathname.new(file).dirname
+    options[:source_dirs] ||= []
+    options[:source_dirs] << top_dir unless options[:source_dirs].include?(top_dir)
     # Evaluates all compiler directives
-    ast = Preprocessor::Parser.parse_file(file).process
+    ast = Preprocessor::Parser.parse_file(file, options).process(options)
+
     # Now parse as verilog
-    Verilog::Parser.parse(ast.to_s)
+    Verilog::Parser.parse(ast.to_s, options)
   end
 end
