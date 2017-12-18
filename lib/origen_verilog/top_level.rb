@@ -8,7 +8,6 @@ module OrigenVerilog
       @name = options[:ast].to_a[0]
 
       options[:ast].pins.each do |node|
-        name = node.to_a.last
         if node.type == :input_declaration
           direction = :input
         elsif node.type == :ouput_declaration
@@ -21,7 +20,10 @@ module OrigenVerilog
         else
           size = 1
         end
-        add_pin name, direction: direction, size: size
+        n = node.to_a.dup
+        while n.last.is_a?(String)
+          add_pin n.pop, direction: direction, size: size
+        end
       end
     end
   end
