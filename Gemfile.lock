@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    origen_verilog (0.2.2)
+    origen_verilog (0.3.0)
       ast (~> 2)
       treetop
 
@@ -163,4 +163,4 @@ DEPENDENCIES
   ripper-tags
 
 BUNDLED WITH
-   1.15.4
+   1.16.1
