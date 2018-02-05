@@ -118,7 +118,7 @@ module OrigenVerilog
       end
 
       rule time_number
-        (value:("1" / "10" / "100") s unit:("s" / "ms" / "us" / "ns" / "ps" / "fs")) {
+        (value:("100" / "10" / "1") s unit:("s" / "ms" / "us" / "ns" / "ps" / "fs")) {
           def to_ast
             n :time_number, value.text_value.to_i, unit.text_value
           end

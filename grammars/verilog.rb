@@ -1247,11 +1247,11 @@ module OrigenVerilog
 
         i0, s0 = index, []
         i1 = index
-        if (match_len = has_terminal?("1", false, index))
-          r2 = true
+        if (match_len = has_terminal?("100", false, index))
+          r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
           @index += match_len
         else
-          terminal_parse_failure('"1"')
+          terminal_parse_failure('"100"')
           r2 = nil
         end
         if r2
@@ -1269,11 +1269,11 @@ module OrigenVerilog
             r3 = SyntaxNode.new(input, (index-1)...index) if r3 == true
             r1 = r3
           else
-            if (match_len = has_terminal?("100", false, index))
-              r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+            if (match_len = has_terminal?("1", false, index))
+              r4 = true
               @index += match_len
             else
-              terminal_parse_failure('"100"')
+              terminal_parse_failure('"1"')
               r4 = nil
             end
             if r4

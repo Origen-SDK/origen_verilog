@@ -34,6 +34,10 @@ when "build"
   end
   exit 0
 
+when "parse"
+  require "origen_verilog/commands/parse"
+  exit 0
+
 ## Example of how to make a command to run unit tests, this simply invokes RSpec on
 ## the spec directory
 when "specs"
@@ -80,6 +84,7 @@ else
   # origen -h, you can do this by assigning the required text to @application_commands
   # before handing control back to Origen.
   @application_commands = <<-EOT
+ parse        Command to test/debug the verilog parser (similar to the sim:build command)
  tags         Build a tags file for this app
  build        Build/compile the latest grammar files
  specs        Run the specs (tests), -c will enable coverage
