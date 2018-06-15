@@ -162,14 +162,14 @@ module picorv32 #(
 	reg [4:0] reg_sh;
 
 	reg [31:0] next_insn_opcode;
-	reg [31:0] dbg_insn_opcode;
+	reg[31:0] dbg_insn_opcode;
 	reg [31:0] dbg_insn_addr;
 
 	wire dbg_mem_valid = mem_valid;
 	wire dbg_mem_instr = mem_instr;
 	wire dbg_mem_ready = mem_ready;
 	wire [31:0] dbg_mem_addr  = mem_addr;
-	wire [31:0] dbg_mem_wdata = mem_wdata;
+	wire[31:0] dbg_mem_wdata = mem_wdata;
 	wire [ 3:0] dbg_mem_wstrb = mem_wstrb;
 	wire [31:0] dbg_mem_rdata = mem_rdata;
 
