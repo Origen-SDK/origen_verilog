@@ -110,6 +110,8 @@ module picorv32 #(
 	input      [31:0] pcpi_rd,
 	input             pcpi_wait,
 	input             pcpi_ready,
+  input[1:0] issue4, 
+
 
 	// IRQ Interface
 	input      [31:0] irq,

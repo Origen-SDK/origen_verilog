@@ -5450,46 +5450,28 @@ module OrigenVerilog
       end
 
       module InputDeclaration0
-        def S
-          elements[0]
+        def s1
+          elements[1]
         end
 
-        def net_type
-          elements[1]
+        def s2
+          elements[3]
+        end
+
+        def s3
+          elements[5]
+        end
+
+        def s4
+          elements[7]
+        end
+
+        def list_of_port_identifiers
+          elements[8]
         end
       end
 
       module InputDeclaration1
-        def S
-          elements[0]
-        end
-
-        def signed
-          elements[1]
-        end
-      end
-
-      module InputDeclaration2
-        def S
-          elements[0]
-        end
-
-        def range
-          elements[1]
-        end
-      end
-
-      module InputDeclaration3
-        def S
-          elements[4]
-        end
-
-        def list_of_port_identifiers
-          elements[5]
-        end
-      end
-
-      module InputDeclaration4
         def to_ast
           n :input_declaration, *elements_to_ast
         end
@@ -5516,74 +5498,47 @@ module OrigenVerilog
         end
         s0 << r1
         if r1
-          i3, s3 = index, []
-          r4 = _nt_S
-          s3 << r4
-          if r4
-            r5 = _nt_net_type
-            s3 << r5
-          end
-          if s3.last
-            r3 = instantiate_node(SyntaxNode,input, i3...index, s3)
-            r3.extend(InputDeclaration0)
-          else
-            @index = i3
-            r3 = nil
-          end
-          if r3
-            r2 = r3
-          else
-            r2 = instantiate_node(SyntaxNode,input, index...index)
-          end
+          r2 = _nt_s
           s0 << r2
           if r2
-            i7, s7 = index, []
-            r8 = _nt_S
-            s7 << r8
-            if r8
-              r9 = _nt_signed
-              s7 << r9
-            end
-            if s7.last
-              r7 = instantiate_node(SyntaxNode,input, i7...index, s7)
-              r7.extend(InputDeclaration1)
+            r4 = _nt_net_type
+            if r4
+              r3 = r4
             else
-              @index = i7
-              r7 = nil
+              r3 = instantiate_node(SyntaxNode,input, index...index)
             end
-            if r7
-              r6 = r7
-            else
-              r6 = instantiate_node(SyntaxNode,input, index...index)
-            end
-            s0 << r6
-            if r6
-              i11, s11 = index, []
-              r12 = _nt_S
-              s11 << r12
-              if r12
-                r13 = _nt_range
-                s11 << r13
-              end
-              if s11.last
-                r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
-                r11.extend(InputDeclaration2)
-              else
-                @index = i11
-                r11 = nil
-              end
-              if r11
-                r10 = r11
-              else
-                r10 = instantiate_node(SyntaxNode,input, index...index)
-              end
-              s0 << r10
-              if r10
-                r14 = _nt_S
-                s0 << r14
-                if r14
-                  r15 = _nt_list_of_port_identifiers
-                  s0 << r15
+            s0 << r3
+            if r3
+              r5 = _nt_s
+              s0 << r5
+              if r5
+                r7 = _nt_signed
+                if r7
+                  r6 = r7
+                else
+                  r6 = instantiate_node(SyntaxNode,input, index...index)
+                end
+                s0 << r6
+                if r6
+                  r8 = _nt_s
+                  s0 << r8
+                  if r8
+                    r10 = _nt_range
+                    if r10
+                      r9 = r10
+                    else
+                      r9 = instantiate_node(SyntaxNode,input, index...index)
+                    end
+                    s0 << r9
+                    if r9
+                      r11 = _nt_s
+                      s0 << r11
+                      if r11
+                        r12 = _nt_list_of_port_identifiers
+                        s0 << r12
+                      end
+                    end
+                  end
                 end
               end
             end
@@ -5591,8 +5546,8 @@ module OrigenVerilog
         end
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(InputDeclaration3)
-          r0.extend(InputDeclaration4)
+          r0.extend(InputDeclaration0)
+          r0.extend(InputDeclaration1)
         else
           @index = i0
           r0 = nil
@@ -13166,15 +13121,15 @@ module OrigenVerilog
       end
 
       module TfInputDeclaration0
-        def S
+        def s1
           elements[1]
         end
 
-        def s1
+        def s2
           elements[3]
         end
 
-        def s2
+        def s3
           elements[6]
         end
 
@@ -13184,7 +13139,7 @@ module OrigenVerilog
       end
 
       module TfInputDeclaration1
-        def S
+        def s1
           elements[1]
         end
 
@@ -13192,7 +13147,7 @@ module OrigenVerilog
           elements[2]
         end
 
-        def s
+        def s2
           elements[3]
         end
 
@@ -13229,7 +13184,7 @@ module OrigenVerilog
         end
         s1 << r2
         if r2
-          r3 = _nt_S
+          r3 = _nt_s
           s1 << r3
           if r3
             r5 = _nt_reg
@@ -13294,7 +13249,7 @@ module OrigenVerilog
           end
           s13 << r14
           if r14
-            r15 = _nt_S
+            r15 = _nt_s
             s13 << r15
             if r15
               r16 = _nt_task_port_type
@@ -13333,19 +13288,19 @@ module OrigenVerilog
       end
 
       module TfOutputDeclaration0
-        def S
+        def s1
           elements[1]
         end
 
-        def s1
+        def s2
           elements[3]
         end
 
-        def s2
+        def s3
           elements[5]
         end
 
-        def s3
+        def s4
           elements[7]
         end
 
@@ -13355,7 +13310,7 @@ module OrigenVerilog
       end
 
       module TfOutputDeclaration1
-        def S
+        def s1
           elements[1]
         end
 
@@ -13363,7 +13318,7 @@ module OrigenVerilog
           elements[2]
         end
 
-        def s
+        def s2
           elements[3]
         end
 
@@ -13400,7 +13355,7 @@ module OrigenVerilog
         end
         s1 << r2
         if r2
-          r3 = _nt_S
+          r3 = _nt_s
           s1 << r3
           if r3
             r5 = _nt_reg
@@ -13469,7 +13424,7 @@ module OrigenVerilog
           end
           s14 << r15
           if r15
-            r16 = _nt_S
+            r16 = _nt_s
             s14 << r16
             if r16
               r17 = _nt_task_port_type
@@ -13508,19 +13463,19 @@ module OrigenVerilog
       end
 
       module TfInoutDeclaration0
-        def S
+        def s1
           elements[1]
         end
 
-        def s1
+        def s2
           elements[3]
         end
 
-        def s2
+        def s3
           elements[5]
         end
 
-        def s3
+        def s4
           elements[7]
         end
 
@@ -13530,7 +13485,7 @@ module OrigenVerilog
       end
 
       module TfInoutDeclaration1
-        def S
+        def s1
           elements[1]
         end
 
@@ -13538,7 +13493,7 @@ module OrigenVerilog
           elements[2]
         end
 
-        def s
+        def s2
           elements[3]
         end
 
@@ -13575,7 +13530,7 @@ module OrigenVerilog
         end
         s1 << r2
         if r2
-          r3 = _nt_S
+          r3 = _nt_s
           s1 << r3
           if r3
             r5 = _nt_reg
@@ -13644,7 +13599,7 @@ module OrigenVerilog
           end
           s14 << r15
           if r15
-            r16 = _nt_S
+            r16 = _nt_s
             s14 << r16
             if r16
               r17 = _nt_task_port_type
@@ -48639,57 +48594,33 @@ module OrigenVerilog
 
         i0, s0 = index, []
         i1 = index
-        if (match_len = has_terminal?('inout ', false, index))
-          r2 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-          @index += match_len
-        else
-          terminal_parse_failure('\'inout \'')
-          r2 = nil
-        end
+        r2 = _nt_inout_declaration
         if r2
           @index = i1
           r1 = nil
-          terminal_parse_failure('\'inout \'', true)
         else
-          @terminal_failures.pop
           @index = i1
           r1 = instantiate_node(SyntaxNode,input, index...index)
         end
         s0 << r1
         if r1
           i3 = index
-          if (match_len = has_terminal?('input ', false, index))
-            r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-            @index += match_len
-          else
-            terminal_parse_failure('\'input \'')
-            r4 = nil
-          end
+          r4 = _nt_input_declaration
           if r4
             @index = i3
             r3 = nil
-            terminal_parse_failure('\'input \'', true)
           else
-            @terminal_failures.pop
             @index = i3
             r3 = instantiate_node(SyntaxNode,input, index...index)
           end
           s0 << r3
           if r3
             i5 = index
-            if (match_len = has_terminal?('output ', false, index))
-              r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-              @index += match_len
-            else
-              terminal_parse_failure('\'output \'')
-              r6 = nil
-            end
+            r6 = _nt_output_declaration
             if r6
               @index = i5
               r5 = nil
-              terminal_parse_failure('\'output \'', true)
             else
-              @terminal_failures.pop
               @index = i5
               r5 = instantiate_node(SyntaxNode,input, index...index)
             end
