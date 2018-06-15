@@ -3,7 +3,8 @@ module OrigenVerilog
     class Processor < OrigenVerilog::Processor
       def run(ast, env)
         @env = env
-        process(ast)
+        ast = process(ast)
+        Concatenator.new.run(ast)
       end
 
       def on_include(node)
@@ -21,7 +22,8 @@ module OrigenVerilog
           puts "#{node.file}:#{node.line_number}"
           exit 1
         end
-        inline process(Parser.parse_file(file)).children
+        nodes = process(Parser.parse_file(file)).children
+        node.updated(:file, [file] + nodes)
       end
 
       def on_define(node)

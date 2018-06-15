@@ -14,6 +14,10 @@ module OrigenVerilog
       def to_s
         Writer.new.to_s(self)
       end
+
+      def parse_verilog(options = {})
+        VerilogParser.new.run(self, options)
+      end
     end
   end
 end

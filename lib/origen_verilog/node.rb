@@ -94,7 +94,7 @@ module Treetop
         properties[:input] ||= input
         properties[:interval] ||= interval
         properties[:file] ||= file
-        Treetop.origen_verilog_parser.node.new(type, children, properties || {})
+        Treetop.origen_verilog_parser.node.new(type, children, properties)
       end
 
       def elements_to_ast(elmnts = elements)

@@ -13,7 +13,11 @@ describe "The Verilog Parser" do
       #"picosoc/spimemio.v" => {},
       #"test.v" => {source_dirs: ["#{Origen.root}/examples/dir1"]}
     }.each do |file, env|
-      ast = verilog_parser.parse_file("#{Origen.root}/approved/preprocessor/#{file}").to_ast
+      ast = nil
+      begin
+        ast = verilog_parser.parse_file("#{Origen.root}/approved/preprocessor/#{file}").to_ast
+      rescue SystemExit
+      end
       ast.should be
     end
     passed.should == true

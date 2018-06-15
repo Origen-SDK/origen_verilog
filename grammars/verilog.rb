@@ -40755,6 +40755,12 @@ module OrigenVerilog
 
       end
 
+      module ConstantExpression3
+        def to_ast
+          n :constant_expression, *elements_to_ast
+        end
+      end
+
       def _nt_constant_expression
         start_index = index
         if node_cache[:constant_expression].has_key?(index)
@@ -40823,6 +40829,8 @@ module OrigenVerilog
         if r1
           r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
           r0 = r1
+          r0.extend(ConstantExpression3)
+          r0.extend(ConstantExpression3)
         else
           i11, s11 = index, []
           r12 = _nt_constant_primary
@@ -40846,6 +40854,8 @@ module OrigenVerilog
           if r11
             r11 = SyntaxNode.new(input, (index-1)...index) if r11 == true
             r0 = r11
+            r0.extend(ConstantExpression3)
+            r0.extend(ConstantExpression3)
           else
             @index = i0
             r0 = nil

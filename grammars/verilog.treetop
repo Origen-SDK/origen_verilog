@@ -2918,7 +2918,11 @@ module OrigenVerilog
       # See - https://stackoverflow.com/questions/4994036/left-recursion-elimination
       rule constant_expression
         ((unary_operator (s attribute_instance)* s constant_primary constant_expression_tail?) /
-        (constant_primary constant_expression_tail?))
+        (constant_primary constant_expression_tail?)) {
+          def to_ast
+            n :constant_expression, *elements_to_ast
+          end
+        }
       end
       rule constant_expression_tail
         ((s "?" (s attribute_instance)* s constant_expression s ":" s constant_expression constant_expression_tail?) /

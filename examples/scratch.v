@@ -23,6 +23,7 @@
 // `define DEBUGREGS
 // `define DEBUGASM
 // `define DEBUG
+`define NUMADDR 20
 
 `ifdef DEBUG
   `define debug(debug_command) debug_command
@@ -80,7 +81,8 @@ module picorv32 #(
 	parameter [31:0] LATCHED_IRQ = 32'h ffff_ffff,
 	parameter [31:0] PROGADDR_RESET = 32'h 0000_0000,
 	parameter [31:0] PROGADDR_IRQ = 32'h 0000_0010,
-	parameter [31:0] STACKADDR = 32'h ffff_ffff
+	parameter [31:0] STACKADDR = 32'h ffff_ffff,
+  parameter NUMADDR = 20
 ) (
 	input clk, resetn,
 	output reg trap,
@@ -112,6 +114,7 @@ module picorv32 #(
 	input             pcpi_ready,
   input[1:0] issue4, 
 
+  input [`NUMADDR-1:0] soc_addr,
 
 	// IRQ Interface
 	input      [31:0] irq,
