@@ -726,7 +726,7 @@ module OrigenVerilog
       # list_of_net_identifiers ::= net_identifier { dimension }
       #   { , net_identifier { dimension } }
       rule list_of_net_identifiers
-        net_identifier (s dimension)* (s "," net_identifier (s dimension)*)*
+        net_identifier (s dimension)* (s "," s net_identifier (s dimension)*)*
       end
       # list_of_param_assignments ::= param_assignment { , param_assignment }
       rule list_of_param_assignments

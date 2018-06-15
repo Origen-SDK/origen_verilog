@@ -9614,12 +9614,16 @@ module OrigenVerilog
       end
 
       module ListOfNetIdentifiers2
-        def s
+        def s1
           elements[0]
         end
 
-        def net_identifier
+        def s2
           elements[2]
+        end
+
+        def net_identifier
+          elements[3]
         end
 
       end
@@ -9686,33 +9690,37 @@ module OrigenVerilog
                 end
                 s7 << r9
                 if r9
-                  r10 = _nt_net_identifier
+                  r10 = _nt_s
                   s7 << r10
                   if r10
-                    s11, i11 = [], index
-                    loop do
-                      i12, s12 = index, []
-                      r13 = _nt_s
-                      s12 << r13
-                      if r13
-                        r14 = _nt_dimension
-                        s12 << r14
-                      end
-                      if s12.last
-                        r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
-                        r12.extend(ListOfNetIdentifiers1)
-                      else
-                        @index = i12
-                        r12 = nil
-                      end
-                      if r12
-                        s11 << r12
-                      else
-                        break
-                      end
-                    end
-                    r11 = instantiate_node(SyntaxNode,input, i11...index, s11)
+                    r11 = _nt_net_identifier
                     s7 << r11
+                    if r11
+                      s12, i12 = [], index
+                      loop do
+                        i13, s13 = index, []
+                        r14 = _nt_s
+                        s13 << r14
+                        if r14
+                          r15 = _nt_dimension
+                          s13 << r15
+                        end
+                        if s13.last
+                          r13 = instantiate_node(SyntaxNode,input, i13...index, s13)
+                          r13.extend(ListOfNetIdentifiers1)
+                        else
+                          @index = i13
+                          r13 = nil
+                        end
+                        if r13
+                          s12 << r13
+                        else
+                          break
+                        end
+                      end
+                      r12 = instantiate_node(SyntaxNode,input, i12...index, s12)
+                      s7 << r12
+                    end
                   end
                 end
               end

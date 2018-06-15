@@ -254,6 +254,9 @@ module picorv32 #(
 	reg        pcpi_int_wait;
 	reg        pcpi_int_ready;
 
+  // Issue #1
+  wire compare_0_1, compare_0_only, compare_1_only;
+
 	generate if (ENABLE_FAST_MUL) begin
 		picorv32_pcpi_fast_mul pcpi_mul (
 			.clk       (clk            ),
