@@ -375,6 +375,9 @@ module picorv32 #(
 			COMPRESSED_ISA && mem_la_secondword ? {mem_rdata_latched_noshuffle[15:0], mem_16bit_buffer} :
 			COMPRESSED_ISA && mem_la_firstword ? {16'bx, mem_rdata_latched_noshuffle[31:16]} : mem_rdata_latched_noshuffle;
 
+  // Issue #6 and #2
+  assign mem_xfre=mem_rdata_latched?1:0;
+
 	always @(posedge clk) begin
 		if (!resetn) begin
 			mem_la_firstword_reg <= 0;

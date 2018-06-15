@@ -2974,7 +2974,7 @@ module OrigenVerilog
       end
       rule expression_tail
         (s binary_operator (s attribute_instance)* s expression expression_tail?) /
-        (S "?" (s attribute_instance)* s expr2:expression2 s ":" s expr3:expression3 expression_tail?)
+        (s "?" (s attribute_instance)* s expr2:expression2 s ":" s expr3:expression3 expression_tail?)
       end
       # expression1 ::= expression
       rule expression1

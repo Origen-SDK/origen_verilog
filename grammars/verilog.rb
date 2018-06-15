@@ -41644,11 +41644,11 @@ module OrigenVerilog
       end
 
       module ExpressionTail3
-        def S
+        def s1
           elements[0]
         end
 
-        def s1
+        def s2
           elements[3]
         end
 
@@ -41656,11 +41656,11 @@ module OrigenVerilog
           elements[4]
         end
 
-        def s2
+        def s3
           elements[5]
         end
 
-        def s3
+        def s4
           elements[7]
         end
 
@@ -41744,7 +41744,7 @@ module OrigenVerilog
           r0 = r1
         else
           i12, s12 = index, []
-          r13 = _nt_S
+          r13 = _nt_s
           s12 << r13
           if r13
             if (match_len = has_terminal?("?", false, index))
