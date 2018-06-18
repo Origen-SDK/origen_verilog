@@ -230,15 +230,15 @@ module OrigenVerilog
         "`endif"
         {
           def to_ast
-            node = n :ifdef, label.text_value, *elements_to_ast(contents.elements)
+            node = n :ifdef, label.text_value, *elements_to_ast(contents.elements), number_of_lines: number_of_lines(contents.elements)
             elsif_nodes.elements.each do |elsif_node|
               if elsif_node.respond_to?(:contents)
-                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements)
+                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements), number_of_lines: number_of_lines(elsif_node.contents.elements)
                 node = node.updated(nil, node.children + [e])
               end
             end
             if else_node.respond_to?(:contents)
-              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements))])
+              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements), number_of_lines: number_of_lines(else_node.contents.elements))])
             end
             node
           end
@@ -262,15 +262,15 @@ module OrigenVerilog
         "`endif"
         {
           def to_ast
-            node = n :ifndef, label.text_value, *elements_to_ast(contents.elements)
+            node = n :ifndef, label.text_value, *elements_to_ast(contents.elements), number_of_lines: number_of_lines(contents.elements)
             elsif_nodes.elements.each do |elsif_node|
               if elsif_node.respond_to?(:contents)
-                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements)
+                e = n :elsif, elsif_node.label.text_value, *elements_to_ast(elsif_node.contents.elements), number_of_lines: number_of_lines(elsif_node.contents.elements)
                 node = node.updated(nil, node.children + [e])
               end
             end
             if else_node.respond_to?(:contents)
-              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements))])
+              node = node.updated(nil, node.children + [n(:else, *elements_to_ast(else_node.contents.elements), number_of_lines: number_of_lines(else_node.contents.elements))])
             end
             node
           end

@@ -2,13 +2,6 @@ require 'spec_helper'
 
 describe "The Verilog Parser" do
 
-  #it "scratch for debug" do
-  #  raw = verilog_parser.parse_file("#{Origen.root}/examples/scratch.v")
-  #  raw.should be
-  #  ast = raw.to_ast
-  #  debugger
-  #end
-
   it "it can parse the examples" do
     output_dir = "#{Origen.root}/output/verilog"
     FileUtils.mkdir_p "#{output_dir}/picosoc"
@@ -20,7 +13,11 @@ describe "The Verilog Parser" do
       #"picosoc/spimemio.v" => {},
       #"test.v" => {source_dirs: ["#{Origen.root}/examples/dir1"]}
     }.each do |file, env|
-      ast = verilog_parser.parse_file("#{Origen.root}/approved/preprocessor/#{file}").to_ast
+      ast = nil
+      begin
+        ast = verilog_parser.parse_file("#{Origen.root}/approved/preprocessor/#{file}").to_ast
+      rescue SystemExit
+      end
       ast.should be
     end
     passed.should == true

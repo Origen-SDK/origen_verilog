@@ -471,7 +471,7 @@ module OrigenVerilog
       # input_declaration ::= input [ net_type ] [ signed ] [ range ]
       #   list_of_port_identifiers
       rule input_declaration
-        "input" (S net_type)? (S signed)? (S range)? S list_of_port_identifiers {
+        "input" s net_type? s signed? s range? s list_of_port_identifiers {
           def to_ast
             n :input_declaration, *elements_to_ast
           end
@@ -726,7 +726,7 @@ module OrigenVerilog
       # list_of_net_identifiers ::= net_identifier { dimension }
       #   { , net_identifier { dimension } }
       rule list_of_net_identifiers
-        net_identifier (s dimension)* (s "," net_identifier (s dimension)*)*
+        net_identifier (s dimension)* (s "," s net_identifier (s dimension)*)*
       end
       # list_of_param_assignments ::= param_assignment { , param_assignment }
       rule list_of_param_assignments
@@ -958,8 +958,8 @@ module OrigenVerilog
       #   input [ reg ] [ signed ] [ range ] list_of_port_identifiers
       #   | input task_port_type list_of_port_identifiers
       rule tf_input_declaration
-        (("input" S reg? s signed? range? s list_of_port_identifiers) /
-         ("input" S task_port_type s list_of_port_identifiers)) {
+        (("input" s reg? s signed? range? s list_of_port_identifiers) /
+         ("input" s task_port_type s list_of_port_identifiers)) {
           def to_ast
             n :tf_input_declaration, *elements_to_ast
           end
@@ -969,8 +969,8 @@ module OrigenVerilog
       #   output [ reg ] [ signed ] [ range ] list_of_port_identifiers
       #   | output task_port_type list_of_port_identifiers
       rule tf_output_declaration
-        (("output" S reg? s signed? s range? s list_of_port_identifiers) /
-         ("output" S task_port_type s list_of_port_identifiers)) {
+        (("output" s reg? s signed? s range? s list_of_port_identifiers) /
+         ("output" s task_port_type s list_of_port_identifiers)) {
           def to_ast
             n :tf_output_declaration, *elements_to_ast
           end
@@ -980,8 +980,8 @@ module OrigenVerilog
       #   inout [ reg ] [ signed ] [ range ] list_of_port_identifiers
       #   | inout task_port_type list_of_port_identifiers
       rule tf_inout_declaration
-        (("inout" S reg? s signed? s range? s list_of_port_identifiers) /
-         ("inout" S task_port_type s list_of_port_identifiers)) {
+        (("inout" s reg? s signed? s range? s list_of_port_identifiers) /
+         ("inout" s task_port_type s list_of_port_identifiers)) {
           def to_ast
             n :tf_inout_declaration, *elements_to_ast
           end
@@ -2918,7 +2918,11 @@ module OrigenVerilog
       # See - https://stackoverflow.com/questions/4994036/left-recursion-elimination
       rule constant_expression
         ((unary_operator (s attribute_instance)* s constant_primary constant_expression_tail?) /
-        (constant_primary constant_expression_tail?))
+        (constant_primary constant_expression_tail?)) {
+          def to_ast
+            n :constant_expression, *elements_to_ast
+          end
+        }
       end
       rule constant_expression_tail
         ((s "?" (s attribute_instance)* s constant_expression s ":" s constant_expression constant_expression_tail?) /
@@ -2974,7 +2978,7 @@ module OrigenVerilog
       end
       rule expression_tail
         (s binary_operator (s attribute_instance)* s expression expression_tail?) /
-        (S "?" (s attribute_instance)* s expr2:expression2 s ":" s expr3:expression3 expression_tail?)
+        (s "?" (s attribute_instance)* s expr2:expression2 s ":" s expr3:expression3 expression_tail?)
       end
       # expression1 ::= expression
       rule expression1
@@ -3633,7 +3637,7 @@ module OrigenVerilog
       end
       # port_identifier ::= identifier
       rule port_identifier
-        !'inout ' !'input ' !'output ' identifier
+        !inout_declaration !input_declaration !output_declaration identifier
       end
       # real_identifier ::= identifier
       rule real_identifier

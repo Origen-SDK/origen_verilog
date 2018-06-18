@@ -23,6 +23,7 @@
 // `define DEBUGREGS
 // `define DEBUGASM
 // `define DEBUG
+`define NUMADDR 20
 
 `ifdef DEBUG
   `define debug(debug_command) debug_command
@@ -80,7 +81,8 @@ module picorv32 #(
 	parameter [31:0] LATCHED_IRQ = 32'h ffff_ffff,
 	parameter [31:0] PROGADDR_RESET = 32'h 0000_0000,
 	parameter [31:0] PROGADDR_IRQ = 32'h 0000_0010,
-	parameter [31:0] STACKADDR = 32'h ffff_ffff
+	parameter [31:0] STACKADDR = 32'h ffff_ffff,
+  parameter NUMADDR = 20
 ) (
 	input clk, resetn,
 	output reg trap,
@@ -110,6 +112,9 @@ module picorv32 #(
 	input      [31:0] pcpi_rd,
 	input             pcpi_wait,
 	input             pcpi_ready,
+  input[1:0] issue4, 
+
+  input [`NUMADDR-1:0] soc_addr,
 
 	// IRQ Interface
 	input      [31:0] irq,
@@ -160,14 +165,14 @@ module picorv32 #(
 	reg [4:0] reg_sh;
 
 	reg [31:0] next_insn_opcode;
-	reg [31:0] dbg_insn_opcode;
+	reg[31:0] dbg_insn_opcode;
 	reg [31:0] dbg_insn_addr;
 
 	wire dbg_mem_valid = mem_valid;
 	wire dbg_mem_instr = mem_instr;
 	wire dbg_mem_ready = mem_ready;
 	wire [31:0] dbg_mem_addr  = mem_addr;
-	wire [31:0] dbg_mem_wdata = mem_wdata;
+	wire[31:0] dbg_mem_wdata = mem_wdata;
 	wire [ 3:0] dbg_mem_wstrb = mem_wstrb;
 	wire [31:0] dbg_mem_rdata = mem_rdata;
 
@@ -251,6 +256,9 @@ module picorv32 #(
 	reg [31:0] pcpi_int_rd;
 	reg        pcpi_int_wait;
 	reg        pcpi_int_ready;
+
+  // Issue #1
+  wire compare_0_1, compare_0_only, compare_1_only;
 
 	generate if (ENABLE_FAST_MUL) begin
 		picorv32_pcpi_fast_mul pcpi_mul (
@@ -369,6 +377,9 @@ module picorv32 #(
 	assign mem_rdata_latched = COMPRESSED_ISA && mem_la_use_prefetched_high_word ? {16'bx, mem_16bit_buffer} :
 			COMPRESSED_ISA && mem_la_secondword ? {mem_rdata_latched_noshuffle[15:0], mem_16bit_buffer} :
 			COMPRESSED_ISA && mem_la_firstword ? {16'bx, mem_rdata_latched_noshuffle[31:16]} : mem_rdata_latched_noshuffle;
+
+  // Issue #6 and #2
+  assign mem_xfre=mem_rdata_latched?1:0;
 
 	always @(posedge clk) begin
 		if (!resetn) begin
