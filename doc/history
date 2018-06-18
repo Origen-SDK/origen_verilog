@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_4_0"></a>
+<h1><a href="#v0_4_0">Tag: v0.4.0</a></h1>
+
+##### Branch: 'master'
+
+##### by Stephen McGinty on 18-Jun-2018 11:44AM
+
+
+Various fixes for parse errors and added the ability to pass multiple files and basic
+compiler defines as runtime.
+
 <a class="anchor release_tag" name="v0_3_1"></a>
 <h1><a href="#v0_3_1">Tag: v0.3.1</a></h1>
 
