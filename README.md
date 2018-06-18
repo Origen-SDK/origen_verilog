@@ -27,3 +27,22 @@ ast.modules.first.to_top_level # Creates dut
 
 dut.pins.size   # => 60 (for example, depends on what was in the Verilog source)
 ~~~
+
+Additional files can be given up front, for example a parameters file:
+
+~~~ruby
+ast = OrigenVerilog.parse_file("/path/to/my_params.v /path/to/my_product.v")
+~~~
+
+Source directories to look for the given files (and any include statement file references within those files) can be given
+via an option, rather than supplying absolute paths if you prefer:
+
+~~~ruby
+ast = OrigenVerilog.parse_file("my_params.v my_product.v", source_dirs: ["/path/to"])
+~~~
+
+Basic compiler defines can also be given:
+
+~~~ruby
+ast = OrigenVerilog.parse_file("/path/to/my_product.v", defines: ["ADDR_WIDTH=10", "ENABLE_BLAH"])
+~~~
