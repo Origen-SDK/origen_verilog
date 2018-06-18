@@ -2,7 +2,7 @@ require 'ast'
 require 'treetop'
 module OrigenVerilog
   class Node < ::AST::Node
-    attr_reader :input, :interval, :file
+    attr_reader :input, :interval, :file, :number_of_lines
 
     # Returns the value at the root of an AST node like this:
     #
@@ -105,6 +105,13 @@ module Treetop
             elements_to_ast(e.elements)
           end
         end.compact.flatten
+      end
+
+      def number_of_lines(elmnts = elements)
+        elmnts.inject(0) do |sum, e|
+          lines = e.text_value.split("\n").size
+          sum + lines
+        end
       end
 
       def file

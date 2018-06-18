@@ -27,11 +27,28 @@
 
 
 
+
+
+
+
   
 
 
 
+
+
+
+
+
+
+
   
+
+
+
+
+
+
     
   
   
@@ -112,6 +129,27 @@ module picorv32 #(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// Trace Interface
 	output reg        trace_valid,
 	output reg [35:0] trace_data
@@ -175,6 +213,40 @@ module picorv32 #(
 		// avoid empty statement (which are unsupported by plain Verilog syntax).
 		begin end
 	endtask
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -764,6 +836,23 @@ module picorv32 #(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	always @(posedge clk) begin
 		is_lui_auipc_jal <= |{instr_lui, instr_auipc, instr_jal};
 		is_lui_auipc_jal_jalr_addi_add_sub <= |{instr_lui, instr_auipc, instr_jal, instr_jalr, instr_addi, instr_add, instr_sub};
@@ -1190,6 +1279,10 @@ module picorv32 #(
 		endcase
 
 
+
+
+
+
 	end
 
 	reg clear_prefetched_high_word_q;
@@ -1249,14 +1342,25 @@ module picorv32 #(
 			cpuregs_rs1 = decoded_rs1 ? cpuregs[decoded_rs1] : 0;
 			cpuregs_rs2 = decoded_rs2 ? cpuregs[decoded_rs2] : 0;
 
+
+
+
+
 		end else begin
 			decoded_rs = (cpu_state == cpu_state_ld_rs2) ? decoded_rs2 : decoded_rs1;
 
 			cpuregs_rs1 = decoded_rs ? cpuregs[decoded_rs] : 0;
 
+
+
+
 			cpuregs_rs2 = cpuregs_rs1;
 		end
 	end
+
+
+
+
 
 
 	assign launch_next_insn = cpu_state == cpu_state_fetch && decoder_trigger && (!ENABLE_IRQ || irq_delay || irq_active || !(irq_pending & ~irq_mask));
@@ -1837,7 +1941,170 @@ module picorv32 #(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// Formal Verification
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 endmodule
 
@@ -2077,6 +2344,13 @@ module picorv32_pcpi_fast_mul #(
 	assign pcpi_wait = 0;
 	assign pcpi_ready = active[EXTRA_MUL_FFS ? 3 : 1];
 
+
+
+
+
+
+
+
 	assign pcpi_rd = shift_out ? (EXTRA_MUL_FFS ? rd_q : rd) >> 32 : (EXTRA_MUL_FFS ? rd_q : rd);
 
 endmodule
@@ -2151,6 +2425,14 @@ module picorv32_pcpi_div (
 			pcpi_ready <= 1;
 			pcpi_wr <= 1;
 
+
+
+
+
+
+
+
+
 			if (instr_div || instr_divu)
 				pcpi_rd <= outsign ? -quotient : quotient;
 			else
@@ -2162,6 +2444,9 @@ module picorv32_pcpi_div (
 				quotient <= quotient | quotient_msk;
 			end
 			divisor <= divisor >> 1;
+
+
+
 
 			quotient_msk <= quotient_msk >> 1;
 
@@ -2241,6 +2526,27 @@ module picorv32_axi #(
 	// IRQ interface
 	input  [31:0] irq,
 	output [31:0] eoi,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2335,6 +2641,27 @@ module picorv32_axi #(
 
 		.irq(irq),
 		.eoi(eoi),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2490,6 +2817,27 @@ module picorv32_wb #(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// Trace Interface
 	output        trace_valid,
 	output [35:0] trace_data,
@@ -2559,6 +2907,27 @@ module picorv32_wb #(
 
 		.irq(irq),
 		.eoi(eoi),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
