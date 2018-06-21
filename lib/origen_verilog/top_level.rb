@@ -8,6 +8,7 @@ module OrigenVerilog
       @name = options[:ast].to_a[0]
 
       options[:ast].pins.each do |node|
+        node = node.evaluate  # Resolve any functions in the ranges
         if node.type == :input_declaration
           direction = :input
         elsif node.type == :ouput_declaration

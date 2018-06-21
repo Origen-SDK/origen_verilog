@@ -3,6 +3,15 @@ require 'origen_verilog/node'
 module OrigenVerilog
   class Parser
     def self.parse_file(path, options = {})
+      if !File.exist?(path) && options[:source_dirs]
+        dir = Array(options[:source_dirs]).find do |dir|
+          File.exist?(File.join(dir, path))
+        end
+        path = File.join(dir, path) if dir
+      end
+      unless File.exist?(path)
+        fail "File could not be found in the current dir, or any of the source dirs: #{path}"
+      end
       parse(File.read(path), options.merge(file: path))
     end
 

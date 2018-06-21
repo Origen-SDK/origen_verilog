@@ -68,7 +68,7 @@ module OrigenVerilog
         unless type == :module_declaration
           fail 'Currently only modules support the to_model method'
         end
-        Origen.target.temporary = -> { TopLevel.new(ast: evaluate) }
+        Origen.target.temporary = -> { TopLevel.new(ast: self) }
         Origen.load_target
       end
     end
