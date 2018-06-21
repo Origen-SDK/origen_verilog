@@ -1,3 +1,19 @@
+<a class="anchor release_tag" name="v0_5_0"></a>
+<h1><a href="#v0_5_0">Tag: v0.5.0</a></h1>
+
+##### Branch: 'master'
+
+##### by Stephen McGinty on 21-Jun-2018 17:18PM
+
+
+Now includes source paths when looking for the top-level (the last) file passed to the
+parse\_file command.
+
+No longer evaluates all Verilog when converting to a top-level Origen object. Only
+evaluates
+(i.e. evaluates formulas) on an as-needed basis, which helps since Verilog parameter
+resolution is not supported yet.
+
 <a class="anchor release_tag" name="v0_4_0"></a>
 <h1><a href="#v0_4_0">Tag: v0.4.0</a></h1>
 
