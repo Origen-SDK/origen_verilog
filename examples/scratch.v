@@ -2922,7 +2922,9 @@ module picorv32_wb #(
 `endif
 
 		.trace_valid(trace_valid),
-		.trace_data (trace_data)
+		.trace_data (trace_data),
+    // Test for issue parsing I/O names that start with input_
+		.input_trace_data (trace_data)
 	);
 
 	localparam IDLE = 2'b00;
