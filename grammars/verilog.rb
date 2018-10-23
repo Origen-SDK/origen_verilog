@@ -48593,12 +48593,6 @@ module OrigenVerilog
         r0
       end
 
-      module PortIdentifier0
-        def identifier
-          elements[3]
-        end
-      end
-
       def _nt_port_identifier
         start_index = index
         if node_cache[:port_identifier].has_key?(index)
@@ -48610,52 +48604,7 @@ module OrigenVerilog
           return cached
         end
 
-        i0, s0 = index, []
-        i1 = index
-        r2 = _nt_inout_declaration
-        if r2
-          @index = i1
-          r1 = nil
-        else
-          @index = i1
-          r1 = instantiate_node(SyntaxNode,input, index...index)
-        end
-        s0 << r1
-        if r1
-          i3 = index
-          r4 = _nt_input_declaration
-          if r4
-            @index = i3
-            r3 = nil
-          else
-            @index = i3
-            r3 = instantiate_node(SyntaxNode,input, index...index)
-          end
-          s0 << r3
-          if r3
-            i5 = index
-            r6 = _nt_output_declaration
-            if r6
-              @index = i5
-              r5 = nil
-            else
-              @index = i5
-              r5 = instantiate_node(SyntaxNode,input, index...index)
-            end
-            s0 << r5
-            if r5
-              r7 = _nt_identifier
-              s0 << r7
-            end
-          end
-        end
-        if s0.last
-          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(PortIdentifier0)
-        else
-          @index = i0
-          r0 = nil
-        end
+        r0 = _nt_identifier
 
         node_cache[:port_identifier][start_index] = r0
 
@@ -48684,6 +48633,9 @@ module OrigenVerilog
       end
 
       module SimpleIdentifier1
+      end
+
+      module SimpleIdentifier2
         def to_ast
           text_value
         end
@@ -48701,37 +48653,118 @@ module OrigenVerilog
         end
 
         i0, s0 = index, []
-        if has_terminal?(@regexps[gr = '\A[a-zA-Z_]'] ||= Regexp.new(gr), :regexp, index)
-          r1 = true
-          @index += 1
+        i1 = index
+        i2, s2 = index, []
+        i3 = index
+        if (match_len = has_terminal?("input", false, index))
+          r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+          @index += match_len
         else
-          terminal_parse_failure('[a-zA-Z_]')
+          terminal_parse_failure('"input"')
+          r4 = nil
+        end
+        if r4
+          r4 = SyntaxNode.new(input, (index-1)...index) if r4 == true
+          r3 = r4
+        else
+          if (match_len = has_terminal?("output", false, index))
+            r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+            @index += match_len
+          else
+            terminal_parse_failure('"output"')
+            r5 = nil
+          end
+          if r5
+            r5 = SyntaxNode.new(input, (index-1)...index) if r5 == true
+            r3 = r5
+          else
+            if (match_len = has_terminal?("inout", false, index))
+              r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
+              @index += match_len
+            else
+              terminal_parse_failure('"inout"')
+              r6 = nil
+            end
+            if r6
+              r6 = SyntaxNode.new(input, (index-1)...index) if r6 == true
+              r3 = r6
+            else
+              @index = i3
+              r3 = nil
+            end
+          end
+        end
+        s2 << r3
+        if r3
+          i7 = index
+          if has_terminal?(@regexps[gr = '\A[a-zA-Z0-9_]'] ||= Regexp.new(gr), :regexp, index)
+            r8 = true
+            @index += 1
+          else
+            terminal_parse_failure('[a-zA-Z0-9_]')
+            r8 = nil
+          end
+          if r8
+            @index = i7
+            r7 = nil
+            terminal_parse_failure('[a-zA-Z0-9_]', true)
+          else
+            @terminal_failures.pop
+            @index = i7
+            r7 = instantiate_node(SyntaxNode,input, index...index)
+          end
+          s2 << r7
+        end
+        if s2.last
+          r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
+          r2.extend(SimpleIdentifier0)
+        else
+          @index = i2
+          r2 = nil
+        end
+        if r2
+          @index = i1
           r1 = nil
+          terminal_parse_failure("<a sequence>", true)
+        else
+          @terminal_failures.pop
+          @index = i1
+          r1 = instantiate_node(SyntaxNode,input, index...index)
         end
         s0 << r1
         if r1
-          s2, i2 = [], index
-          loop do
-            if has_terminal?(@regexps[gr = '\A[a-zA-Z0-9_]'] ||= Regexp.new(gr), :regexp, index)
-              r3 = true
-              @index += 1
-            else
-              terminal_parse_failure('[a-zA-Z0-9_]')
-              r3 = nil
-            end
-            if r3
-              s2 << r3
-            else
-              break
-            end
+          if has_terminal?(@regexps[gr = '\A[a-zA-Z_]'] ||= Regexp.new(gr), :regexp, index)
+            r9 = true
+            @index += 1
+          else
+            terminal_parse_failure('[a-zA-Z_]')
+            r9 = nil
           end
-          r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
-          s0 << r2
+          s0 << r9
+          if r9
+            s10, i10 = [], index
+            loop do
+              if has_terminal?(@regexps[gr = '\A[a-zA-Z0-9_]'] ||= Regexp.new(gr), :regexp, index)
+                r11 = true
+                @index += 1
+              else
+                terminal_parse_failure('[a-zA-Z0-9_]')
+                r11 = nil
+              end
+              if r11
+                s10 << r11
+              else
+                break
+              end
+            end
+            r10 = instantiate_node(SyntaxNode,input, i10...index, s10)
+            s0 << r10
+          end
         end
         if s0.last
           r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(SimpleIdentifier0)
           r0.extend(SimpleIdentifier1)
+          r0.extend(SimpleIdentifier2)
         else
           @index = i0
           r0 = nil

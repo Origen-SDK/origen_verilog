@@ -6,7 +6,7 @@ describe "the combined pre and verilog parser" do
     ast = nil
 
     begin
-      ast = OrigenVerilog.parse_file("#{Origen.root}/examples/scratch.v").should be
+      ast = OrigenVerilog.parse_file("#{Origen.root}/examples/scratch.v")
     rescue SystemExit
     end
 
