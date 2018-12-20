@@ -18,12 +18,14 @@ module OrigenVerilog
         end
         if r = node.find(:range)
           size = r.to_a[0] - r.to_a[1] + 1
+          offset = r.to_a[1]
         else
           size = 1
+          offset = nil
         end
         n = node.to_a.dup
         while n.last.is_a?(String)
-          add_pin n.pop, direction: direction, size: size
+          add_pin n.pop.to_sym, direction: direction, size: size, offset: offset
         end
       end
     end
