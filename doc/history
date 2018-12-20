@@ -1,3 +1,15 @@
+<a class="anchor release_tag" name="v0_5_2"></a>
+<h1><a href="#v0_5_2">Tag: v0.5.2</a></h1>
+
+##### Branch: 'master'
+
+##### by Corey Engelken on 20-Dec-2018 07:28AM
+
+
+Added support for pin offsets when building the toplevel. Busses such as
+<code>portc[19:1]</code> should now create pins <code>portc19..portc1</code> instead of
+<code>portc18..portc0</code>.
+
 <a class="anchor release_tag" name="v0_5_1"></a>
 <h1><a href="#v0_5_1">Tag: v0.5.1</a></h1>
 
