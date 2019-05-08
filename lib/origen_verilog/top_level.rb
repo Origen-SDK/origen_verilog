@@ -7,13 +7,13 @@ module OrigenVerilog
     def initialize(options = {})
       @name = options[:ast].to_a[0]
 
-      options[:ast].pins(digital: true).each { |n| _add_pin_(n) }
-      options[:ast].pins(analog: true).each { |n| _add_pin_(n, true) }
+      options[:ast].pins(digital: true).each { |n| _add_pin_(n, :digital) }
+      options[:ast].pins(analog: true).each { |n| _add_pin_(n, :analog) }
     end
 
     private
 
-    def _add_pin_(node, analog = false)
+    def _add_pin_(node, type)
       node = node.evaluate  # Resolve any functions in the ranges
       if node.type == :input_declaration
         direction = :input
@@ -31,7 +31,7 @@ module OrigenVerilog
       end
       n = node.to_a.dup
       while n.last.is_a?(String)
-        add_pin n.pop.to_sym, direction: direction, size: size, offset: offset, analog: analog
+        add_pin n.pop.to_sym, direction: direction, size: size, offset: offset, type: type
       end
     end
   end
