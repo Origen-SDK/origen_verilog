@@ -587,11 +587,18 @@ module OrigenVerilog
       #   supply0 | supply1
       #   | tri | triand | trior | tri0 | tri1
       #   | uwire | wire | wand | wor
+      #
+      # !EXTENSION ADDED! - 'wire real', 'wreal' and 'real' types
       rule net_type
-        ("supply0" / "supply1" / "tri" / "triand" / "trior" / "tri0" / "tri1" /
+        ("wire real" / "wreal" / "real"/
+        "supply0" / "supply1" / "tri" / "triand" / "trior" / "tri0" / "tri1" /
         "uwire" / "wire" / "wand" / "wor") {
           def to_ast
-            text_value
+            if text_value == "wire real" || text_value == 'wreal'
+              "real"
+            else
+              text_value
+            end
           end
         }
       end

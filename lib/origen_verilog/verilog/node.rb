@@ -50,9 +50,39 @@ module OrigenVerilog
         end
       end
 
-      # Returns an array containing all input, output and inout AST nodes
-      def pins
-        find_all(:input_declaration, :output_declaration, :inout_declaration)
+      # Returns an array containing all input, output and inout AST nodes.
+      # Supply analog: true in the options to return only those pins defined as a
+      # real/wreal type and digital: true to return only the pins without a real/wreal
+      # type.
+      def pins(options = {})
+        pins = find_all(:input_declaration, :output_declaration, :inout_declaration)
+        if options[:analog] || options[:digital]
+          wreals = self.wreals.map { |n| n.to_a.last }
+          subset = []
+          pins.each do |pin|
+            attrs = pin.to_a
+            if attrs.include?('real') || wreals.include?(attrs.last)
+              subset << pin if options[:analog]
+            else
+              subset << pin if options[:digital]
+            end
+          end
+          subset
+        else
+          pins
+        end
+      end
+
+      # Returns an array containing all wire real/wreal declaration AST nodes, which have
+      # been declared as part of a module definition, returning something like this:
+      #       [
+      #         s(:net_declaration, "real", "vdd")),
+      #         s(:net_declaration, "real", "vddf")),
+      #       ]
+      def wreals
+        find_all(:non_port_module_item)
+          .map { |item| item.find(:net_declaration) }
+          .select { |net| net.to_a.include?('real') }
       end
 
       # Evaluates all functions and turns numbers into Ruby literals

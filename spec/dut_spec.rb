@@ -83,4 +83,30 @@ describe 'Parsing a Verilog file into an Origen DUT model' do
 
     dut.pin(:soc_addr).size.should == 10
   end
+
+  it "can identify WREAL pins" do
+    options = {}
+    options[:source_dirs] = ["#{Origen.root}/examples/dut/params"]
+    options[:defines] = ["USE_WREAL"]
+
+    begin
+      ast = OrigenVerilog.parse_file("#{Origen.root}/examples/dut/dut.v", options)
+    rescue SystemExit
+    end
+
+    dut_ast = ast.top_level_modules.first
+
+    dut_ast.pins.size.should == 7
+    dut_ast.pins(analog: true).size.should == 3
+    dut_ast.pins(digital: true).size.should == 4
+
+    dut_ast.to_top_level
+
+    dut.should be
+
+    dut.pin(:enable).analog?.should == false
+    dut.pin(:vdd).analog?.should == true
+    dut.pin(:vddc).analog?.should == true
+    dut.pin(:vddf).analog?.should == true
+  end
 end
