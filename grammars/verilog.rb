@@ -7375,9 +7375,9 @@ module OrigenVerilog
       module NetType0
         def to_ast
           if text_value == "wire real" || text_value == 'wreal'
-            "real"
+            n(:real)
           else
-            text_value
+            n(text_value.to_sym)
           end
         end
       end
