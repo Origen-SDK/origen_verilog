@@ -108,5 +108,6 @@ describe 'Parsing a Verilog file into an Origen DUT model' do
     dut.pin(:vdd).type.should == :analog
     dut.pin(:vddc).type.should == :analog
     dut.pin(:vddf).type.should == :analog
+    dut.has_pin?(:real).should == false
   end
 end

@@ -60,8 +60,7 @@ module OrigenVerilog
           wreals = self.wreals.map { |n| n.to_a.last }
           subset = []
           pins.each do |pin|
-            attrs = pin.to_a
-            if attrs.include?('real') || wreals.include?(attrs.last)
+            if pin.find(:real) || wreals.include?(pin.to_a.last)
               subset << pin if options[:analog]
             else
               subset << pin if options[:digital]
@@ -82,7 +81,7 @@ module OrigenVerilog
       def wreals
         find_all(:non_port_module_item)
           .map { |item| item.find(:net_declaration) }
-          .select { |net| net.to_a.include?('real') }
+          .select { |net| net.find(:real) }
       end
 
       # Evaluates all functions and turns numbers into Ruby literals
