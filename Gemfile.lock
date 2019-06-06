@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    origen_verilog (0.6.0)
+    origen_verilog (0.6.1)
       ast (~> 2)
       origen (>= 0.41.0)
       treetop
