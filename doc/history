@@ -1,3 +1,13 @@
+<a class="anchor release_tag" name="v0_6_2"></a>
+<h1><a href="#v0_6_2">Tag: v0.6.2</a></h1>
+
+##### Branch: 'master'
+
+##### by Stephen McGinty on 12-Jun-2019 01:41AM
+
+
+Added test and fix for an extracting pins bug introduced when adding WREAL support
+
 <a class="anchor release_tag" name="v0_6_1"></a>
 <h1><a href="#v0_6_1">Tag: v0.6.1</a></h1>
 
