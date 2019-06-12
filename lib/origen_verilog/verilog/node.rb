@@ -81,6 +81,7 @@ module OrigenVerilog
       def wreals
         find_all(:non_port_module_item)
           .map { |item| item.find(:net_declaration) }
+          .compact
           .select { |net| net.find(:real) }
       end
 

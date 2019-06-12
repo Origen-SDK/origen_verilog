@@ -20,4 +20,7 @@ module dut (
   wreal vddf;
   `endif
 
+  always @(*) begin
+    // To expose a bug extracting pins when wreal support was added
+  end
 endmodule
