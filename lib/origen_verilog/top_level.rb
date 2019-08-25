@@ -10,7 +10,7 @@ module OrigenVerilog
       @options = options
 
       pins = options[:ast].pins(digital: true).map { |p| [p, :digital] }.to_h
-      pins.merge(options[:ast].pins(analog: true).map { |p| [p, :analog] }.to_h)
+      pins.merge!(options[:ast].pins(analog: true).map { |p| [p, :analog] }.to_h)
 
       # Override any pin types from the user
       if options[:forced_pin_types]
