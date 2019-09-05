@@ -58,9 +58,6 @@ module OrigenVerilog
         pins = find_all(:input_declaration, :output_declaration, :inout_declaration)
         if options[:analog] || options[:digital]
           wreals = self.wreals.map { |n| n.to_a.last }
-          puts "wreals".green
-          puts wreals
-          #exit!
           subset = []
           pins.each do |pin|
             if pin.find(:real) || wreals.include?(pin.to_a.last)
