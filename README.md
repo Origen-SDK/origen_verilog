@@ -28,6 +28,28 @@ ast.modules.first.to_top_level # Creates dut
 dut.pins.size   # => 60 (for example, depends on what was in the Verilog source)
 ~~~
 
+The pin types OrigenVerilog comes up with can be overridden, either with `Strings`,
+which much be an exact match, or using `Regexp`s. These are be given as a `Hash`
+whose keys are pin names or regexes to try and the value are the overridden type.
+
+~~~ruby
+# Creates dut with pin types overridden, forcing all pins matching /vdd/ to be digital
+# and 'enable' to be analog.
+ast.modules.first.to_top_level(forced_pin_types: {'enable' => :analog, /vdd/ => :digital})
+~~~
+
+*Important:* If a pin matches multiple keys of the input, the first match will
+be used. Care must be taken if overlapping regexes or pin names are given.
+
+Pin roles are also given as an array of regexes or pin names to match. Pin roles indicate whether a given pin
+should be added as a `power pin`, `ground pin`, 'virtual pin`, or `other pin`.
+
+~~~ruby
+# Creates dut with power pins matching /vdd/, ground pins matching /gnd/,
+# 'pta1' and 'pta2' and other pins, and 'vt' as a virtual pin
+dut_ast.to_top_level(power_pins: [/vdd/], ground_pins: [/gnd/], other_pins: ['pta1', 'pta2'], virtual_pins: ['vt'])
+~~~
+
 Additional files can be given up front, for example a parameters file:
 
 ~~~ruby

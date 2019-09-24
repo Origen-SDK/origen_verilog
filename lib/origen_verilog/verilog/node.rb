@@ -94,11 +94,12 @@ module OrigenVerilog
       #
       # This will re-load the Origen target with the resultant model instantiated
       # as the global dut object.
-      def to_top_level
+      def to_top_level(options = {})
         unless type == :module_declaration
           fail 'Currently only modules support the to_model method'
         end
-        Origen.target.temporary = -> { TopLevel.new(ast: self) }
+        options[:ast] = self
+        Origen.target.temporary = -> { TopLevel.new(options) }
         Origen.load_target
       end
     end

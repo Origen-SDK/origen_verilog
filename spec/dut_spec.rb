@@ -110,4 +110,50 @@ describe 'Parsing a Verilog file into an Origen DUT model' do
     dut.pin(:vddf).type.should == :analog
     dut.has_pin?(:real).should == false
   end
+  
+  it 'can override toplevel pin roles' do
+    options = {}
+    options[:source_dirs] = ["#{Origen.root}/examples/dut/params"]
+
+    begin
+      ast = OrigenVerilog.parse_file("#{Origen.root}/examples/dut/dut.v", options)
+    rescue SystemExit
+    end
+
+    dut_ast = ast.top_level_modules.first
+
+    dut_ast.to_top_level(power_pins: [/vdd/])
+
+    dut.should be
+
+    dut.pin(:enable).type.should == :digital
+    dut.has_pin?(:vdd).should == false
+    dut.has_pin?(:vddc).should == false
+    dut.has_pin?(:vddf).should == false
+
+    dut.has_power_pin?(:vdd)
+    dut.has_power_pin?(:vddc)
+    dut.has_power_pin?(:vddf)
+  end
+  
+  it 'can override toplevel pin types' do
+    options = {}
+    options[:source_dirs] = ["#{Origen.root}/examples/dut/params"]
+
+    begin
+      ast = OrigenVerilog.parse_file("#{Origen.root}/examples/dut/dut.v", options)
+    rescue SystemExit
+    end
+
+    dut_ast = ast.top_level_modules.first
+
+    dut_ast.to_top_level(forced_pin_types: {'enable' => :analog, /vdd/ => :digital})
+
+    dut.should be
+
+    dut.pin(:enable).type.should == :analog
+    dut.pin(:vdd).type.should == :digital
+    dut.pin(:vddc).type.should == :digital
+    dut.pin(:vddf).type.should == :digital
+  end
 end
