@@ -1,3 +1,14 @@
+<a class="anchor release_tag" name="v0_6_3"></a>
+<h1><a href="#v0_6_3">Tag: v0.6.3</a></h1>
+
+##### Branch: 'master'
+
+##### by Corey Engelken on 24-Sep-2019 05:50AM
+
+
+Options to override pin types (analog/digital) and pin roles (ground, power, etc.) when
+using `#to\_top\_level`.
+
 <a class="anchor release_tag" name="v0_6_2"></a>
 <h1><a href="#v0_6_2">Tag: v0.6.2</a></h1>
 
