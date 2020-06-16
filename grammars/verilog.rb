@@ -7433,11 +7433,11 @@ module OrigenVerilog
               r0.extend(NetType0)
               r0.extend(NetType0)
             else
-              if (match_len = has_terminal?("supply0", false, index))
+              if (match_len = has_terminal?("wire logic", false, index))
                 r4 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                 @index += match_len
               else
-                terminal_parse_failure('"supply0"')
+                terminal_parse_failure('"wire logic"')
                 r4 = nil
               end
               if r4
@@ -7446,11 +7446,11 @@ module OrigenVerilog
                 r0.extend(NetType0)
                 r0.extend(NetType0)
               else
-                if (match_len = has_terminal?("supply1", false, index))
+                if (match_len = has_terminal?("logic", false, index))
                   r5 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                   @index += match_len
                 else
-                  terminal_parse_failure('"supply1"')
+                  terminal_parse_failure('"logic"')
                   r5 = nil
                 end
                 if r5
@@ -7459,11 +7459,11 @@ module OrigenVerilog
                   r0.extend(NetType0)
                   r0.extend(NetType0)
                 else
-                  if (match_len = has_terminal?("tri", false, index))
+                  if (match_len = has_terminal?("supply0", false, index))
                     r6 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                     @index += match_len
                   else
-                    terminal_parse_failure('"tri"')
+                    terminal_parse_failure('"supply0"')
                     r6 = nil
                   end
                   if r6
@@ -7472,11 +7472,11 @@ module OrigenVerilog
                     r0.extend(NetType0)
                     r0.extend(NetType0)
                   else
-                    if (match_len = has_terminal?("triand", false, index))
+                    if (match_len = has_terminal?("supply1", false, index))
                       r7 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                       @index += match_len
                     else
-                      terminal_parse_failure('"triand"')
+                      terminal_parse_failure('"supply1"')
                       r7 = nil
                     end
                     if r7
@@ -7485,11 +7485,11 @@ module OrigenVerilog
                       r0.extend(NetType0)
                       r0.extend(NetType0)
                     else
-                      if (match_len = has_terminal?("trior", false, index))
+                      if (match_len = has_terminal?("tri", false, index))
                         r8 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                         @index += match_len
                       else
-                        terminal_parse_failure('"trior"')
+                        terminal_parse_failure('"tri"')
                         r8 = nil
                       end
                       if r8
@@ -7498,11 +7498,11 @@ module OrigenVerilog
                         r0.extend(NetType0)
                         r0.extend(NetType0)
                       else
-                        if (match_len = has_terminal?("tri0", false, index))
+                        if (match_len = has_terminal?("triand", false, index))
                           r9 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                           @index += match_len
                         else
-                          terminal_parse_failure('"tri0"')
+                          terminal_parse_failure('"triand"')
                           r9 = nil
                         end
                         if r9
@@ -7511,11 +7511,11 @@ module OrigenVerilog
                           r0.extend(NetType0)
                           r0.extend(NetType0)
                         else
-                          if (match_len = has_terminal?("tri1", false, index))
+                          if (match_len = has_terminal?("trior", false, index))
                             r10 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                             @index += match_len
                           else
-                            terminal_parse_failure('"tri1"')
+                            terminal_parse_failure('"trior"')
                             r10 = nil
                           end
                           if r10
@@ -7524,11 +7524,11 @@ module OrigenVerilog
                             r0.extend(NetType0)
                             r0.extend(NetType0)
                           else
-                            if (match_len = has_terminal?("uwire", false, index))
+                            if (match_len = has_terminal?("tri0", false, index))
                               r11 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                               @index += match_len
                             else
-                              terminal_parse_failure('"uwire"')
+                              terminal_parse_failure('"tri0"')
                               r11 = nil
                             end
                             if r11
@@ -7537,11 +7537,11 @@ module OrigenVerilog
                               r0.extend(NetType0)
                               r0.extend(NetType0)
                             else
-                              if (match_len = has_terminal?("wire", false, index))
+                              if (match_len = has_terminal?("tri1", false, index))
                                 r12 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                                 @index += match_len
                               else
-                                terminal_parse_failure('"wire"')
+                                terminal_parse_failure('"tri1"')
                                 r12 = nil
                               end
                               if r12
@@ -7550,11 +7550,11 @@ module OrigenVerilog
                                 r0.extend(NetType0)
                                 r0.extend(NetType0)
                               else
-                                if (match_len = has_terminal?("wand", false, index))
+                                if (match_len = has_terminal?("uwire", false, index))
                                   r13 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                                   @index += match_len
                                 else
-                                  terminal_parse_failure('"wand"')
+                                  terminal_parse_failure('"uwire"')
                                   r13 = nil
                                 end
                                 if r13
@@ -7563,11 +7563,11 @@ module OrigenVerilog
                                   r0.extend(NetType0)
                                   r0.extend(NetType0)
                                 else
-                                  if (match_len = has_terminal?("wor", false, index))
+                                  if (match_len = has_terminal?("wire", false, index))
                                     r14 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                                     @index += match_len
                                   else
-                                    terminal_parse_failure('"wor"')
+                                    terminal_parse_failure('"wire"')
                                     r14 = nil
                                   end
                                   if r14
@@ -7576,11 +7576,11 @@ module OrigenVerilog
                                     r0.extend(NetType0)
                                     r0.extend(NetType0)
                                   else
-                                    if (match_len = has_terminal?("logic", false, index))
+                                    if (match_len = has_terminal?("wand", false, index))
                                       r15 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                                       @index += match_len
                                     else
-                                      terminal_parse_failure('"logic"')
+                                      terminal_parse_failure('"wand"')
                                       r15 = nil
                                     end
                                     if r15
@@ -7589,11 +7589,11 @@ module OrigenVerilog
                                       r0.extend(NetType0)
                                       r0.extend(NetType0)
                                     else
-                                      if (match_len = has_terminal?("wire logic", false, index))
+                                      if (match_len = has_terminal?("wor", false, index))
                                         r16 = instantiate_node(SyntaxNode,input, index...(index + match_len))
                                         @index += match_len
                                       else
-                                        terminal_parse_failure('"wire logic"')
+                                        terminal_parse_failure('"wor"')
                                         r16 = nil
                                       end
                                       if r16

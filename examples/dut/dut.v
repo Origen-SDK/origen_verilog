@@ -20,6 +20,8 @@ module dut (
   wreal vddf;
   `endif
 
+  wire logic sv_wire_logic;
+  wire logic [3:0] sv_wire_logic_bus;
   logic sv_logic;
   logic [2:0] sv_logic_bus; 
 

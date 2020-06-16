@@ -592,9 +592,9 @@ module OrigenVerilog
       # !EXTENSION ADDED! - 'wire logic' and  'logic' types
       rule net_type
         ("wire real" / "wreal" / "real"/
+        "wire logic" / "logic" /
         "supply0" / "supply1" / "tri" / "triand" / "trior" / "tri0" / "tri1" /
-        "uwire" / "wire" / "wand" / "wor" /
-        "logic" / "wire logic") {
+        "uwire" / "wire" / "wand" / "wor") {
           def to_ast
             if text_value == "wire real" || text_value == 'wreal'
               n(:real)
