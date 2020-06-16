@@ -20,9 +20,6 @@ module dut (
   wreal vddf;
   `endif
 
-  logic sv_logic;
-  logic [2:0] sv_logic_bus; 
-
   always @(*) begin
     // To expose a bug extracting pins when wreal support was added
   end

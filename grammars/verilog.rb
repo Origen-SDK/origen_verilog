@@ -7576,36 +7576,8 @@ module OrigenVerilog
                                     r0.extend(NetType0)
                                     r0.extend(NetType0)
                                   else
-                                    if (match_len = has_terminal?("logic", false, index))
-                                      r15 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                                      @index += match_len
-                                    else
-                                      terminal_parse_failure('"logic"')
-                                      r15 = nil
-                                    end
-                                    if r15
-                                      r15 = SyntaxNode.new(input, (index-1)...index) if r15 == true
-                                      r0 = r15
-                                      r0.extend(NetType0)
-                                      r0.extend(NetType0)
-                                    else
-                                      if (match_len = has_terminal?("wire logic", false, index))
-                                        r16 = instantiate_node(SyntaxNode,input, index...(index + match_len))
-                                        @index += match_len
-                                      else
-                                        terminal_parse_failure('"wire logic"')
-                                        r16 = nil
-                                      end
-                                      if r16
-                                        r16 = SyntaxNode.new(input, (index-1)...index) if r16 == true
-                                        r0 = r16
-                                        r0.extend(NetType0)
-                                        r0.extend(NetType0)
-                                      else
-                                        @index = i0
-                                        r0 = nil
-                                      end
-                                    end
+                                    @index = i0
+                                    r0 = nil
                                   end
                                 end
                               end
