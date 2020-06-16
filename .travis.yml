@@ -1,7 +1,8 @@
 language: ruby
 rvm:
-  - 2.2.2
-  - 2.4.1
+  - 2.4.7
+  - 2.5.6
+  - 2.6.4
 script:
   - bundle exec origen -v
   - bundle exec origen specs -c
