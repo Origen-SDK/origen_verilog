@@ -24,6 +24,7 @@ module dut (
   wire logic [3:0] sv_wire_logic_bus;
   logic sv_logic;
   logic [2:0] sv_logic_bus; 
+  logic [2:0] [15:0] sv_logic_bus_array; 
 
   always @(*) begin
     // To expose a bug extracting pins when wreal support was added

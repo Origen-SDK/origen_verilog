@@ -11193,9 +11193,64 @@ module OrigenVerilog
           elements[7]
         end
 
+        def s5
+          elements[9]
+        end
+
+        def s6
+          elements[11]
+        end
+
+        def dimension_constant_expression3
+          elements[12]
+        end
+
+        def s7
+          elements[13]
+        end
+
+        def s8
+          elements[15]
+        end
+
+        def dimension_constant_expression4
+          elements[16]
+        end
+
+        def s9
+          elements[17]
+        end
+
       end
 
       module Dimension1
+        def s1
+          elements[1]
+        end
+
+        def dimension_constant_expression1
+          elements[2]
+        end
+
+        def s2
+          elements[3]
+        end
+
+        def s3
+          elements[5]
+        end
+
+        def dimension_constant_expression2
+          elements[6]
+        end
+
+        def s4
+          elements[7]
+        end
+
+      end
+
+      module Dimension2
         def to_ast
           n :dimension, *elements_to_ast
         end
@@ -11212,51 +11267,110 @@ module OrigenVerilog
           return cached
         end
 
-        i0, s0 = index, []
+        i0 = index
+        i1, s1 = index, []
         if (match_len = has_terminal?("[", false, index))
-          r1 = true
+          r2 = true
           @index += match_len
         else
           terminal_parse_failure('"["')
-          r1 = nil
+          r2 = nil
         end
-        s0 << r1
-        if r1
-          r2 = _nt_s
-          s0 << r2
-          if r2
-            r3 = _nt_dimension_constant_expression
-            s0 << r3
-            if r3
-              r4 = _nt_s
-              s0 << r4
-              if r4
+        s1 << r2
+        if r2
+          r3 = _nt_s
+          s1 << r3
+          if r3
+            r4 = _nt_dimension_constant_expression
+            s1 << r4
+            if r4
+              r5 = _nt_s
+              s1 << r5
+              if r5
                 if (match_len = has_terminal?(":", false, index))
-                  r5 = true
+                  r6 = true
                   @index += match_len
                 else
                   terminal_parse_failure('":"')
-                  r5 = nil
+                  r6 = nil
                 end
-                s0 << r5
-                if r5
-                  r6 = _nt_s
-                  s0 << r6
-                  if r6
-                    r7 = _nt_dimension_constant_expression
-                    s0 << r7
-                    if r7
-                      r8 = _nt_s
-                      s0 << r8
-                      if r8
+                s1 << r6
+                if r6
+                  r7 = _nt_s
+                  s1 << r7
+                  if r7
+                    r8 = _nt_dimension_constant_expression
+                    s1 << r8
+                    if r8
+                      r9 = _nt_s
+                      s1 << r9
+                      if r9
                         if (match_len = has_terminal?("]", false, index))
-                          r9 = true
+                          r10 = true
                           @index += match_len
                         else
                           terminal_parse_failure('"]"')
-                          r9 = nil
+                          r10 = nil
                         end
-                        s0 << r9
+                        s1 << r10
+                        if r10
+                          r11 = _nt_s
+                          s1 << r11
+                          if r11
+                            if (match_len = has_terminal?("[", false, index))
+                              r12 = true
+                              @index += match_len
+                            else
+                              terminal_parse_failure('"["')
+                              r12 = nil
+                            end
+                            s1 << r12
+                            if r12
+                              r13 = _nt_s
+                              s1 << r13
+                              if r13
+                                r14 = _nt_dimension_constant_expression
+                                s1 << r14
+                                if r14
+                                  r15 = _nt_s
+                                  s1 << r15
+                                  if r15
+                                    if (match_len = has_terminal?(":", false, index))
+                                      r16 = true
+                                      @index += match_len
+                                    else
+                                      terminal_parse_failure('":"')
+                                      r16 = nil
+                                    end
+                                    s1 << r16
+                                    if r16
+                                      r17 = _nt_s
+                                      s1 << r17
+                                      if r17
+                                        r18 = _nt_dimension_constant_expression
+                                        s1 << r18
+                                        if r18
+                                          r19 = _nt_s
+                                          s1 << r19
+                                          if r19
+                                            if (match_len = has_terminal?("]", false, index))
+                                              r20 = true
+                                              @index += match_len
+                                            else
+                                              terminal_parse_failure('"]"')
+                                              r20 = nil
+                                            end
+                                            s1 << r20
+                                          end
+                                        end
+                                      end
+                                    end
+                                  end
+                                end
+                              end
+                            end
+                          end
+                        end
                       end
                     end
                   end
@@ -11265,13 +11379,88 @@ module OrigenVerilog
             end
           end
         end
-        if s0.last
-          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(Dimension0)
-          r0.extend(Dimension1)
+        if s1.last
+          r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+          r1.extend(Dimension0)
         else
-          @index = i0
-          r0 = nil
+          @index = i1
+          r1 = nil
+        end
+        if r1
+          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+          r0 = r1
+          r0.extend(Dimension2)
+          r0.extend(Dimension2)
+        else
+          i21, s21 = index, []
+          if (match_len = has_terminal?("[", false, index))
+            r22 = true
+            @index += match_len
+          else
+            terminal_parse_failure('"["')
+            r22 = nil
+          end
+          s21 << r22
+          if r22
+            r23 = _nt_s
+            s21 << r23
+            if r23
+              r24 = _nt_dimension_constant_expression
+              s21 << r24
+              if r24
+                r25 = _nt_s
+                s21 << r25
+                if r25
+                  if (match_len = has_terminal?(":", false, index))
+                    r26 = true
+                    @index += match_len
+                  else
+                    terminal_parse_failure('":"')
+                    r26 = nil
+                  end
+                  s21 << r26
+                  if r26
+                    r27 = _nt_s
+                    s21 << r27
+                    if r27
+                      r28 = _nt_dimension_constant_expression
+                      s21 << r28
+                      if r28
+                        r29 = _nt_s
+                        s21 << r29
+                        if r29
+                          if (match_len = has_terminal?("]", false, index))
+                            r30 = true
+                            @index += match_len
+                          else
+                            terminal_parse_failure('"]"')
+                            r30 = nil
+                          end
+                          s21 << r30
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+          if s21.last
+            r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
+            r21.extend(Dimension1)
+          else
+            @index = i21
+            r21 = nil
+          end
+          if r21
+            r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
+            r0 = r21
+            r0.extend(Dimension2)
+            r0.extend(Dimension2)
+          else
+            @index = i0
+            r0 = nil
+          end
         end
 
         node_cache[:dimension][start_index] = r0
@@ -11280,6 +11469,61 @@ module OrigenVerilog
       end
 
       module Range0
+        def s1
+          elements[1]
+        end
+
+        def msb_constant_expression1
+          elements[2]
+        end
+
+        def s2
+          elements[3]
+        end
+
+        def s3
+          elements[5]
+        end
+
+        def lsb_constant_expression1
+          elements[6]
+        end
+
+        def s4
+          elements[7]
+        end
+
+        def s5
+          elements[9]
+        end
+
+        def s6
+          elements[11]
+        end
+
+        def msb_constant_expression2
+          elements[12]
+        end
+
+        def s7
+          elements[13]
+        end
+
+        def s8
+          elements[15]
+        end
+
+        def lsb_constant_expression2
+          elements[16]
+        end
+
+        def s9
+          elements[17]
+        end
+
+      end
+
+      module Range1
         def s1
           elements[1]
         end
@@ -11306,7 +11550,7 @@ module OrigenVerilog
 
       end
 
-      module Range1
+      module Range2
         def to_ast
           n :range, *elements_to_ast
         end
@@ -11323,51 +11567,110 @@ module OrigenVerilog
           return cached
         end
 
-        i0, s0 = index, []
+        i0 = index
+        i1, s1 = index, []
         if (match_len = has_terminal?("[", false, index))
-          r1 = true
+          r2 = true
           @index += match_len
         else
           terminal_parse_failure('"["')
-          r1 = nil
+          r2 = nil
         end
-        s0 << r1
-        if r1
-          r2 = _nt_s
-          s0 << r2
-          if r2
-            r3 = _nt_msb_constant_expression
-            s0 << r3
-            if r3
-              r4 = _nt_s
-              s0 << r4
-              if r4
+        s1 << r2
+        if r2
+          r3 = _nt_s
+          s1 << r3
+          if r3
+            r4 = _nt_msb_constant_expression
+            s1 << r4
+            if r4
+              r5 = _nt_s
+              s1 << r5
+              if r5
                 if (match_len = has_terminal?(":", false, index))
-                  r5 = true
+                  r6 = true
                   @index += match_len
                 else
                   terminal_parse_failure('":"')
-                  r5 = nil
+                  r6 = nil
                 end
-                s0 << r5
-                if r5
-                  r6 = _nt_s
-                  s0 << r6
-                  if r6
-                    r7 = _nt_lsb_constant_expression
-                    s0 << r7
-                    if r7
-                      r8 = _nt_s
-                      s0 << r8
-                      if r8
+                s1 << r6
+                if r6
+                  r7 = _nt_s
+                  s1 << r7
+                  if r7
+                    r8 = _nt_lsb_constant_expression
+                    s1 << r8
+                    if r8
+                      r9 = _nt_s
+                      s1 << r9
+                      if r9
                         if (match_len = has_terminal?("]", false, index))
-                          r9 = true
+                          r10 = true
                           @index += match_len
                         else
                           terminal_parse_failure('"]"')
-                          r9 = nil
+                          r10 = nil
                         end
-                        s0 << r9
+                        s1 << r10
+                        if r10
+                          r11 = _nt_s
+                          s1 << r11
+                          if r11
+                            if (match_len = has_terminal?("[", false, index))
+                              r12 = true
+                              @index += match_len
+                            else
+                              terminal_parse_failure('"["')
+                              r12 = nil
+                            end
+                            s1 << r12
+                            if r12
+                              r13 = _nt_s
+                              s1 << r13
+                              if r13
+                                r14 = _nt_msb_constant_expression
+                                s1 << r14
+                                if r14
+                                  r15 = _nt_s
+                                  s1 << r15
+                                  if r15
+                                    if (match_len = has_terminal?(":", false, index))
+                                      r16 = true
+                                      @index += match_len
+                                    else
+                                      terminal_parse_failure('":"')
+                                      r16 = nil
+                                    end
+                                    s1 << r16
+                                    if r16
+                                      r17 = _nt_s
+                                      s1 << r17
+                                      if r17
+                                        r18 = _nt_lsb_constant_expression
+                                        s1 << r18
+                                        if r18
+                                          r19 = _nt_s
+                                          s1 << r19
+                                          if r19
+                                            if (match_len = has_terminal?("]", false, index))
+                                              r20 = true
+                                              @index += match_len
+                                            else
+                                              terminal_parse_failure('"]"')
+                                              r20 = nil
+                                            end
+                                            s1 << r20
+                                          end
+                                        end
+                                      end
+                                    end
+                                  end
+                                end
+                              end
+                            end
+                          end
+                        end
                       end
                     end
                   end
@@ -11376,13 +11679,88 @@ module OrigenVerilog
             end
           end
         end
-        if s0.last
-          r0 = instantiate_node(SyntaxNode,input, i0...index, s0)
-          r0.extend(Range0)
-          r0.extend(Range1)
+        if s1.last
+          r1 = instantiate_node(SyntaxNode,input, i1...index, s1)
+          r1.extend(Range0)
         else
-          @index = i0
-          r0 = nil
+          @index = i1
+          r1 = nil
+        end
+        if r1
+          r1 = SyntaxNode.new(input, (index-1)...index) if r1 == true
+          r0 = r1
+          r0.extend(Range2)
+          r0.extend(Range2)
+        else
+          i21, s21 = index, []
+          if (match_len = has_terminal?("[", false, index))
+            r22 = true
+            @index += match_len
+          else
+            terminal_parse_failure('"["')
+            r22 = nil
+          end
+          s21 << r22
+          if r22
+            r23 = _nt_s
+            s21 << r23
+            if r23
+              r24 = _nt_msb_constant_expression
+              s21 << r24
+              if r24
+                r25 = _nt_s
+                s21 << r25
+                if r25
+                  if (match_len = has_terminal?(":", false, index))
+                    r26 = true
+                    @index += match_len
+                  else
+                    terminal_parse_failure('":"')
+                    r26 = nil
+                  end
+                  s21 << r26
+                  if r26
+                    r27 = _nt_s
+                    s21 << r27
+                    if r27
+                      r28 = _nt_lsb_constant_expression
+                      s21 << r28
+                      if r28
+                        r29 = _nt_s
+                        s21 << r29
+                        if r29
+                          if (match_len = has_terminal?("]", false, index))
+                            r30 = true
+                            @index += match_len
+                          else
+                            terminal_parse_failure('"]"')
+                            r30 = nil
+                          end
+                          s21 << r30
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+          if s21.last
+            r21 = instantiate_node(SyntaxNode,input, i21...index, s21)
+            r21.extend(Range1)
+          else
+            @index = i21
+            r21 = nil
+          end
+          if r21
+            r21 = SyntaxNode.new(input, (index-1)...index) if r21 == true
+            r0 = r21
+            r0.extend(Range2)
+            r0.extend(Range2)
+          else
+            @index = i0
+            r0 = nil
+          end
         end
 
         node_cache[:range][start_index] = r0
